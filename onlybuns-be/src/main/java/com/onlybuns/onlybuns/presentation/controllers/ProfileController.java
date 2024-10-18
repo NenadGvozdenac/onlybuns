@@ -15,9 +15,15 @@ import com.onlybuns.onlybuns.presentation.dtos.requests.RegisterUserDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserLoginDto;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Profile Controller", description = "Endpoints for user registration, login, and profile management")
 @RestController
-@RequestMapping
+@RequestMapping("/auth")
 public class ProfileController extends BaseController {
+
     private final UserServiceInterface userService;
 
     @Autowired
@@ -25,44 +31,36 @@ public class ProfileController extends BaseController {
         this.userService = userService;
     }
     
-    /***
-     * Registers a new user
-     * Codes: 
-     * - 200: User registered successfully
-     * - 400: Invalid user data
-     * - 409: User with the same email or username already exists
-     * @param registerUserDto RegisterUserDto
-     * @return UserLoginDto
-     */
-    @PostMapping("/auth/register")
+    @Operation(summary = "Register a new user", 
+               description = "This endpoint allows for the registration of a new user. "
+                           + "The request body should contain valid user data. "
+                           + "Returns a token upon successful registration.")
+    @ApiResponse(responseCode = "200", description = "User registered successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid user data provided")
+    @ApiResponse(responseCode = "409", description = "User with the same email or username already exists")
+    @PostMapping("/register")
     public ResponseEntity<UserLoginDto> registerUser(@RequestBody RegisterUserDto registerUserDto) {
         var result = userService.registerUser(registerUserDto);
         return createResponse(result);
     }
 
-    /***
-     * Logs in a user
-     * Codes: 
-     * - 200: User logged in successfully
-     * - 404: User not found
-     * - 401: Incorrect password
-     * @param loginUserDto LoginUserDto
-     * @return UserLoginDto
-     */
-    @PostMapping("/auth/login")
+    @Operation(summary = "Login a user", 
+               description = "This endpoint allows a user to log in by providing valid credentials. "
+                           + "A token is returned upon successful authentication.")
+    @ApiResponse(responseCode = "200", description = "User logged in successfully")
+    @ApiResponse(responseCode = "401", description = "Incorrect password")
+    @ApiResponse(responseCode = "404", description = "User not found")
+    @PostMapping("/login")
     public ResponseEntity<UserLoginDto> loginUser(@RequestBody LoginUserDto loginUserDto) {
         var result = userService.loginUser(loginUserDto);
         return createResponse(result);
     }
 
-    /***
-     * Gets a user by id
-     * Codes: 
-     * - 200: User found
-     * - 404: User not found
-     * @param id Long
-     * @return UserDto
-     */
+    @Operation(summary = "Get user by ID", 
+               description = "Retrieve user information by their unique ID. "
+                           + "Returns the user's details if found.")
+    @ApiResponse(responseCode = "200", description = "User found")
+    @ApiResponse(responseCode = "404", description = "User not found")
     @GetMapping("/user/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
         var result = userService.getUser(id);
