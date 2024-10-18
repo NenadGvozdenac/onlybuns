@@ -1,0 +1,67 @@
+package com.onlybuns.onlybuns.core.config;
+
+import java.io.IOException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.onlybuns.onlybuns.domain.services.JwtService;
+import com.onlybuns.onlybuns.domain.services.UserInfoService;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private UserInfoService userDetailsService;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // Retrieve the Authorization header
+        String authHeader = request.getHeader("Authorization");
+        String token = null;
+        String username = null;
+
+        // Check if the header starts with "Bearer "
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7); // Extract token
+            username = jwtService.extractUsername(token); // Extract username from token
+        }
+
+        System.out.println("Token: " + token);
+        System.out.println("Username: " + username);
+
+        // If the token is valid and no authentication is set in the context
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            System.out.println("Checking token for user: " + userDetails);
+            // Validate token and set authentication
+            if (jwtService.validateToken(token, userDetails)) {
+                System.out.println("Token is valid! User details: " + userDetails);
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    null
+                );
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+
+        // Continue the filter chain
+        filterChain.doFilter(request, response);
+    }
+}
