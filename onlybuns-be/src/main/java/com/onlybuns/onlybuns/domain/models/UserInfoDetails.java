@@ -1,6 +1,7 @@
 package com.onlybuns.onlybuns.domain.models;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -15,7 +16,7 @@ public class UserInfoDetails implements UserDetails {
     public UserInfoDetails(User user) {
         this.username = user.getUsername(); // Assuming 'name' is used as 'username'
         this.password = user.getPassword();
-        this.authorities = null; // Assuming authorities are not stored in the UserInfo object
+        this.authorities = List.of(new SimpleGrantedAuthority(user.getRole().toString()));
     }
 
     @Override
