@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.onlybuns.onlybuns.domain.services.JwtService;
-import com.onlybuns.onlybuns.domain.services.UserInfoService;
+import com.onlybuns.onlybuns.domain.services.UserService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
-    private UserInfoService userDetailsService;
+    private UserService userDetailsService;
 
     @Autowired
     private JwtService jwtService;
