@@ -1,5 +1,7 @@
 package com.onlybuns.onlybuns.presentation.dtos.responses;
 
+import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -18,4 +20,5 @@ public class UserDto {
     private String name;
     private String surname;
     private String email;
+    private AddressDto address;
 }

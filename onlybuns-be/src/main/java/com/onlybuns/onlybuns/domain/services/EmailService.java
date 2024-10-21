@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.onlybuns.onlybuns.core.misc.EmailParser;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.models.EmailAuthentication;
-import com.onlybuns.onlybuns.infrastructure.repositories.EmailRepository;
-import com.onlybuns.onlybuns.infrastructure.repositories.UserRepository;
+import com.onlybuns.onlybuns.infrastructure.interfaces.EmailRepository;
+import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.requests.EmailDto;
 
 import jakarta.mail.MessagingException;

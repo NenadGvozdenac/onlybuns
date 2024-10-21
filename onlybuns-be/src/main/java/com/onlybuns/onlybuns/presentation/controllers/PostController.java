@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 
@@ -75,5 +74,4 @@ public class PostController extends BaseController {
         var result = postService.updatePost(postDto, getLoggedInUsername());
         return createResponse(result);
     }
-
 }

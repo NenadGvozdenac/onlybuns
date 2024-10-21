@@ -12,18 +12,12 @@ import com.onlybuns.onlybuns.domain.models.Post;
 import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryInterface;
-import com.onlybuns.onlybuns.infrastructure.repositories.PostRepository;
-import com.onlybuns.onlybuns.infrastructure.repositories.UserRepository;
+import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
-import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
-
 import jakarta.transaction.Transactional;
 
 @Service
 public class PostService extends BaseService implements PostServiceInterface {
-    
-    @Autowired
-    private PostRepository postRepository;
 
     @Autowired
     private PostRepositoryInterface postRepositoryjpa;
@@ -80,14 +74,14 @@ public class PostService extends BaseService implements PostServiceInterface {
             List<Post> posts = postRepositoryjpa.findAll(Sort.by(Sort.Direction.DESC, "dateOfCreation"));
 
             List<PostDto> postDtos = posts.stream()
-            .map(post -> {
-                PostDto postDto = new PostDto();
-                postDto.setId(post.getId());
-                postDto.setDescription(post.getDescription());
-                postDto.setDateOfCreation(post.getDateOfCreation());
-                postDto.setNumberOfLikes(post.getNumberOfLikes());
-                return postDto;
-            })
+                .map(post -> {
+                    PostDto postDto = new PostDto();
+                    postDto.setId(post.getId());
+                    postDto.setDescription(post.getDescription());
+                    postDto.setDateOfCreation(post.getDateOfCreation());
+                    postDto.setNumberOfLikes(post.getNumberOfLikes());
+                    return postDto;
+                })
             .collect(Collectors.toList());
 
             return Result.success(postDtos);

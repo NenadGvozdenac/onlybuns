@@ -1,4 +1,4 @@
-package com.onlybuns.onlybuns.infrastructure.repositories;
+package com.onlybuns.onlybuns.infrastructure.interfaces;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -11,20 +11,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlybuns.onlybuns.core.misc.Result;
+import com.onlybuns.onlybuns.domain.models.Address;
 import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.domain.models.UserInfoDetails;
 import com.onlybuns.onlybuns.domain.models.UserRole;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.UserServiceInterface;
-import com.onlybuns.onlybuns.infrastructure.repositories.UserRepository;
+import com.onlybuns.onlybuns.infrastructure.interfaces.AddressRepository;
+import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.requests.LoginUserDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.RegisterUserDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserLoginDto;
 
 @Service
-public class UserInfoService extends BaseService implements UserDetailsService, UserServiceInterface {
+public class UserService extends BaseService implements UserDetailsService, UserServiceInterface {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
 
     @Autowired
     private JwtService jwtService;
@@ -64,6 +69,17 @@ public class UserInfoService extends BaseService implements UserDetailsService, 
                 return Result.failure("Invalid email: " + registerUserDto.getEmail(), 411);
             }
 
+            var addressDto = registerUserDto.getAddress();
+
+            Address address = new Address();
+            
+            address.setCity(addressDto.getCity());
+            address.setCountry(addressDto.getCountry());
+            address.setStreet(addressDto.getStreet());
+            address.setNumber(addressDto.getNumber());
+
+            address = addressRepository.save(address);
+
             // Map RegisterUserDto to the User entity
             User newUser = new User();
             newUser.setUsername(registerUserDto.getUsername());
@@ -74,6 +90,7 @@ public class UserInfoService extends BaseService implements UserDetailsService, 
             newUser.setRole(UserRole.USER);
             newUser.setActive(true);
             newUser.setVerified(false);
+            newUser.setAddress(address);
 
             // Save the new user in the repository
             var user = userRepository.save(newUser);
@@ -87,6 +104,7 @@ public class UserInfoService extends BaseService implements UserDetailsService, 
             userDto.setSurname(user.getSurname());
             userDto.setUsername(user.getUsername());
             userDto.setEmail(user.getEmail());
+            userDto.setAddress(addressDto);
 
             return Result.success(userDto);
         } catch (Exception e) {
