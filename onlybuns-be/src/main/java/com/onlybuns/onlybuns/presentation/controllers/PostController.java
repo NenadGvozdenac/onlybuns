@@ -4,16 +4,18 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
-import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -49,6 +51,28 @@ public class PostController extends BaseController {
     @GetMapping("/all")
     public ResponseEntity<List<PostDto>> getAllPosts(){
         var result = postService.getAllPosts();
+        return createResponse(result);
+    }
+
+    @Operation(summary = "Delete post by id", 
+               description = "This endpoint allows authors of the post to delete their post")
+    @ApiResponse(responseCode = "404", description = "Posts doesn't exist")
+    @ApiResponse(responseCode = "409", description = "User that wants to delete doesn't exist")
+    @ApiResponse(responseCode = "403", description = "User is not the owner of the post")   
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<String> deletePost(@PathVariable Long id){
+        var result = postService.deletePost(id, getLoggedInUsername());
+        return createResponse(result);
+    }
+
+    @Operation(summary = "Update post", 
+               description = "This endpoint allows authors of the post to delete their post")
+    @ApiResponse(responseCode = "404", description = "Posts doesn't exist")
+    @ApiResponse(responseCode = "409", description = "User that wants to update post doesn't exist")
+    @ApiResponse(responseCode = "403", description = "User is not the owner of the post")   
+    @PutMapping
+    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto){
+        var result = postService.updatePost(postDto, getLoggedInUsername());
         return createResponse(result);
     }
 

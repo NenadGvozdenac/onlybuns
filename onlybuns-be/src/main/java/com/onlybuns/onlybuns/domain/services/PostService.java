@@ -60,7 +60,7 @@ public class PostService extends BaseService implements PostServiceInterface {
 
                 PostDto postDto = new PostDto();
                 postDto.setNumberOfLikes(post.getNumberOfLikes());
-                postDto.setDesctiption(post.getDesctiption());
+                postDto.setDescription(post.getDescription());
                 postDto.setDateOfCreation(post.getDateOfCreation());
 
                 return Result.success(postDto);       
@@ -83,7 +83,7 @@ public class PostService extends BaseService implements PostServiceInterface {
             .map(post -> {
                 PostDto postDto = new PostDto();
                 postDto.setId(post.getId());
-                postDto.setDesctiption(post.getDesctiption());
+                postDto.setDescription(post.getDescription());
                 postDto.setDateOfCreation(post.getDateOfCreation());
                 postDto.setNumberOfLikes(post.getNumberOfLikes());
                 return postDto;
@@ -95,5 +95,59 @@ public class PostService extends BaseService implements PostServiceInterface {
         }catch(Exception e){
             return Result.failure("Posts not found.", 404);
         }        
-    }   
+    }
+    
+    @Override
+    @Transactional
+    public Result<String> deletePost(Long postId, String userUsername){
+
+        var postOptional = postRepositoryjpa.findById(postId);
+        if (postOptional.isEmpty()) {
+            return Result.failure("Post doesn't exist", 404);
+        }
+        
+        var userOptional = userRepository.findByUsername(userUsername);
+        if (userOptional.isEmpty()) {
+            return Result.failure("User doesn't exist", 409);
+        }
+        
+        Post post = postOptional.get();
+        User user = userOptional.get();
+        
+        if (user.getId().equals(post.getUser().getId())) {
+            postRepositoryjpa.deleteById(post.getId());
+            return Result.success("Post deleted successfully");
+        }else {
+            return Result.failure("User is not the owner of the post", 403);
+        }
+            
+    }
+
+    @Override
+    @Transactional
+    public Result<PostDto> updatePost(PostDto postDto, String userUsername){
+        
+        var postOptional = postRepositoryjpa.findById(postDto.getId());
+        if (postOptional.isEmpty()) {
+            return Result.failure("Post doesn't exist", 404);
+        }
+
+        var userOptional = userRepository.findByUsername(userUsername);
+        if (userOptional.isEmpty()) {
+            return Result.failure("User doesn't exist", 409);
+        }
+
+        Post post = postOptional.get();
+        User user = userOptional.get();
+
+        if (user.getId().equals(post.getUser().getId())) {
+            post.setDescription(postDto.getDescription());
+            postRepositoryjpa.save(post);
+            return Result.success(postDto);
+        }else {
+            return Result.failure("User is not the owner of the post", 403);
+        }
+
+    }
+
 }

@@ -39,18 +39,14 @@ public class Post {
     private LocalDateTime dateOfCreation;
 
     @Column(nullable = true)
-    private String desctiption;
+    private String description;
 
     @Column(nullable = false)
     private int numberOfLikes;
 
     @Column(nullable = false)
     private boolean isDeleted;
-
-    // @OneToMany
-    // @JoinColumn(name = "likes_user", nullable = true)
-    // private List<User> usersThatLiked;
-
+    
     @ManyToMany
     @JoinTable(
         name = "post_likes",
