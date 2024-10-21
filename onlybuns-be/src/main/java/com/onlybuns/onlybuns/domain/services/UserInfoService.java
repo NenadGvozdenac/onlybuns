@@ -79,7 +79,7 @@ public class UserInfoService extends BaseService implements UserDetailsService, 
             var user = userRepository.save(newUser);
 
             // Send a verification email
-            emailService.send(user.getEmail());
+            emailService.send(user.getEmail(), true);
 
             // Create a UserDto object to return
             var userDto = new UserDto();
