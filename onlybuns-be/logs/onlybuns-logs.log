@@ -674,3 +674,328 @@ Consider renaming one of the beans or enabling overriding by setting spring.main
 2024-10-19T10:23:32.695Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
 2024-10-19T10:25:08.168Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : User with this email: nenadgvozdenacsrb@gmail.com, or username: nenadg, already exists.
 2024-10-19T10:27:31.825Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-5] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T10:17:40.474Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T10:17:40.491Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T10:17:47.191Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 7.518 seconds (process running for 8.217)
+2024-10-21T10:29:31.709Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T10:29:31.715Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T10:29:40.242Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 9.337 seconds (process running for 10.166)
+2024-10-21T10:31:17.185Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:10:52.178Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T12:10:52.183Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T12:10:57.934Z ERROR 1 --- [onlybuns] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.onlybuns.onlybuns.presentation.controllers.PostController required a bean of type 'com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface' in your configuration.
+
+2024-10-21T12:14:14.879Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T12:14:14.883Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T12:14:20.500Z ERROR 1 --- [onlybuns] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field postRepository in com.onlybuns.onlybuns.domain.services.PostService required a bean of type 'com.onlybuns.onlybuns.infrastructure.repositories.PostRepository' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+
+Action:
+
+Consider defining a bean of type 'com.onlybuns.onlybuns.infrastructure.repositories.PostRepository' in your configuration.
+
+2024-10-21T12:15:29.957Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T12:15:29.962Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T12:15:34.316Z ERROR 1 --- [onlybuns] [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : FATAL: the database system is starting up
+2024-10-21T12:15:34.319Z ERROR 1 --- [onlybuns] [main] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+2024-10-21T12:15:34.321Z ERROR 1 --- [onlybuns] [main] o.s.b.web.embedded.tomcat.TomcatStarter  : Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name 'jwtAuthFilter': Unsatisfied dependency expressed through field 'userDetailsService': Error creating bean with name 'userInfoService': Unsatisfied dependency expressed through field 'userRepository': Error creating bean with name 'userRepository' defined in com.onlybuns.onlybuns.infrastructure.repositories.UserRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
+2024-10-21T12:15:34.410Z ERROR 1 --- [onlybuns] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.context.ApplicationContextException: Unable to start web server
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:165) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:619) ~[spring-context-6.1.13.jar!/:6.1.13]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at com.onlybuns.onlybuns.OnlybunsApplication.main(OnlybunsApplication.java:9) ~[!/:0.0.1-SNAPSHOT]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:102) ~[onlybuns.jar:0.0.1-SNAPSHOT]
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64) ~[onlybuns.jar:0.0.1-SNAPSHOT]
+	at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:40) ~[onlybuns.jar:0.0.1-SNAPSHOT]
+Caused by: org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:147) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.<init>(TomcatWebServer.java:107) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:516) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:222) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:188) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:162) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	... 15 common frames omitted
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'jwtAuthFilter': Unsatisfied dependency expressed through field 'userDetailsService': Error creating bean with name 'userInfoService': Unsatisfied dependency expressed through field 'userRepository': Error creating bean with name 'userRepository' defined in com.onlybuns.onlybuns.infrastructure.repositories.UserRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:211) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:174) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:169) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAdaptableBeans(ServletContextInitializerBeans.java:154) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.servlet.ServletContextInitializerBeans.<init>(ServletContextInitializerBeans.java:87) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.getServletContextInitializerBeans(ServletWebServerApplicationContext.java:266) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:240) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.springframework.boot.web.embedded.tomcat.TomcatStarter.onStartup(TomcatStarter.java:52) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4412) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1203) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1193) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145) ~[na:na]
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:749) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:772) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1203) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1193) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145) ~[na:na]
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:749) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:203) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.StandardService.startInternal(StandardService.java:415) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:870) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.startup.Tomcat.start(Tomcat.java:437) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:128) ~[spring-boot-3.3.4.jar!/:3.3.4]
+	... 20 common frames omitted
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userInfoService': Unsatisfied dependency expressed through field 'userRepository': Error creating bean with name 'userRepository' defined in com.onlybuns.onlybuns.infrastructure.repositories.UserRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1443) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1353) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	... 62 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'userRepository' defined in com.onlybuns.onlybuns.infrastructure.repositories.UserRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:377) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:135) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1705) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1454) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1443) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1353) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	... 76 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'jpaSharedEM_entityManagerFactory': Cannot resolve reference to bean 'entityManagerFactory' while setting constructor argument
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:377) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:135) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveConstructorArguments(ConstructorResolver.java:682) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:509) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1355) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1185) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:562) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	... 89 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	... 101 common frames omitted
+Caused by: org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:276) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:221) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:189) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:171) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1431) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1502) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.13.jar!/:6.1.13]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390) ~[spring-orm-6.1.13.jar!/:6.1.13]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.13.jar!/:6.1.13]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.1.13.jar!/:6.1.13]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.13.jar!/:6.1.13]
+	... 108 common frames omitted
+Caused by: org.hibernate.HibernateException: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.determineDialect(DialectFactoryImpl.java:191) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.buildDialect(DialectFactoryImpl.java:87) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentWithDefaults(JdbcEnvironmentInitiator.java:153) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:364) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:124) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:78) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-6.5.3.Final.jar!/:6.5.3.Final]
+	... 123 common frames omitted
+
+2024-10-21T12:17:27.039Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T12:17:27.044Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T12:17:34.376Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 7.959 seconds (process running for 8.551)
+2024-10-21T12:21:34.386Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T12:21:34.391Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T12:21:42.390Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 8.869 seconds (process running for 9.665)
+2024-10-21T12:27:46.061Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T12:27:46.066Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T12:27:53.340Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 8.035 seconds (process running for 8.653)
+2024-10-21T12:33:45.369Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:33:57.032Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-9] c.o.o.p.controllers.BaseController       : User is not verified
+2024-10-21T12:34:01.604Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : User is not verified
+2024-10-21T12:35:09.898Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : User with this email: string@gmail.com, or username: string, already exists.
+2024-10-21T12:35:25.443Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:36:55.116Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-9] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:37:11.362Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : Post not found.
+2024-10-21T12:43:19.543Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:22.068Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:22.701Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-4] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:23.017Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:23.179Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-5] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:23.312Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-8] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:23.461Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:23.617Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-9] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:23.763Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:23.909Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:24.062Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:24.214Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:24.378Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-4] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:24.504Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:24.666Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-5] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:24.813Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-8] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:24.979Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:25.144Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-9] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:25.307Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:25.468Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:25.636Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:25.803Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:25.988Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-4] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:26.726Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:26.905Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-5] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:27.063Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-8] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:27.243Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:27.520Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-9] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:27.688Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:27.846Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:28.015Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:28.191Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:28.332Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-4] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T12:43:28.498Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T13:39:49.384Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T13:39:49.389Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T13:39:56.523Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 7.831 seconds (process running for 8.554)
+2024-10-21T13:41:23.712Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T13:42:19.590Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-4] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T13:42:55.642Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T13:43:10.928Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-8] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T13:43:50.167Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Post not found.
+2024-10-21T13:43:55.878Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-9] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T13:44:49.721Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T13:45:28.126Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-5] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T13:52:22.372Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T13:54:31.502Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T13:54:31.508Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T13:54:39.371Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 8.806 seconds (process running for 9.591)
+2024-10-21T13:55:11.795Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T13:56:59.462Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T13:56:59.466Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T13:57:06.527Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 7.684 seconds (process running for 8.27)
+2024-10-21T13:58:17.830Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T13:59:03.103Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T13:59:46.309Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:00:07.237Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T14:01:32.977Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T14:01:32.980Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T14:01:40.897Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 8.623 seconds (process running for 9.248)
+2024-10-21T14:02:07.265Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T14:05:42.535Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T14:05:42.542Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T14:05:49.854Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 8.04 seconds (process running for 8.662)
+2024-10-21T14:06:14.588Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:07:12.399Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T14:07:12.403Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T14:07:19.903Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 8.219 seconds (process running for 8.825)
+2024-10-21T14:07:42.025Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : User already liked this post.
+2024-10-21T14:12:17.866Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : User already liked this post.
+2024-10-21T14:13:45.801Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T14:13:45.807Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T14:13:54.526Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 9.588 seconds (process running for 10.241)
+2024-10-21T14:15:16.079Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-9] c.o.o.p.controllers.BaseController       : User with this email: string@gmail.com, or username: string, already exists.
+2024-10-21T14:16:04.653Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:16:19.829Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:17:04.976Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-8] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:17:42.029Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:20:36.039Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-9] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:20:39.502Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : User already liked this post.
+2024-10-21T14:21:15.378Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:21:31.547Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-4] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:21:34.602Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-5] c.o.o.p.controllers.BaseController       : User already liked this post.
+2024-10-21T14:23:05.275Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : User that is supposed to do the liking is not found.
+2024-10-21T14:23:12.505Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Post not found.
+2024-10-21T14:29:04.545Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:52:15.803Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T14:52:15.807Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T14:52:23.120Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 7.979 seconds (process running for 8.678)
+2024-10-21T14:53:10.605Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:53:33.494Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T14:54:22.596Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T15:06:43.799Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-21T15:06:43.803Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-21T15:06:51.825Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 8.708 seconds (process running for 9.355)
+2024-10-21T15:07:46.322Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T15:08:14.336Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : User already liked this post.
+2024-10-21T15:09:00.966Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T15:09:12.167Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-8] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-21T15:09:15.792Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : User already liked this post.
+2024-10-21T15:09:29.966Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-9] c.o.o.p.controllers.BaseController       : Operation was successful
