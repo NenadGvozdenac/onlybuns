@@ -42,6 +42,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/public", "/").permitAll() // Allow public endpoints
                 .requestMatchers("/auth/login", "/auth/register").permitAll() // Allow login and register
+                .requestMatchers("/email/verify").permitAll() // Allow email verification
                 .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")     // TODO: Implement when needed
                 .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")   // TODO: Implement when needed
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()

@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlybuns.onlybuns.core.misc.EmailParser;
+import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.models.EmailAuthentication;
 import com.onlybuns.onlybuns.infrastructure.repositories.EmailRepository;
+import com.onlybuns.onlybuns.infrastructure.repositories.UserRepository;
+import com.onlybuns.onlybuns.presentation.dtos.requests.EmailDto;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -22,6 +25,9 @@ public class EmailService {
     private EmailRepository emailRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private JavaMailSender mailSender;
     
     @Autowired
@@ -32,14 +38,14 @@ public class EmailService {
     }
 
     @Transactional
-    public EmailAuthentication send(String email) throws MessagingException {
+    public EmailAuthentication send(String email, boolean sendEmail) throws MessagingException {
         EmailAuthentication emailAuthentication = new EmailAuthentication();
         emailAuthentication.setEmail(email);
         emailAuthentication.setCreatedAt(LocalDateTime.now());
         emailAuthentication.setToken(UUID.randomUUID().toString());
         emailAuthentication.generateEmailLink();
 
-        sendVerificationEmail(email, emailAuthentication.getEmailLink());
+        if(sendEmail) sendVerificationEmail(email, emailAuthentication.getEmailLink());
 
         return emailRepository.save(emailAuthentication);
     }
@@ -136,5 +142,31 @@ public class EmailService {
 
     public boolean isValidEmail(String email) {
         return emailParser.isValidEmail(email);
+    }
+
+    @Transactional
+    public Result<String> verifyEmail(EmailDto emailDto) {
+        try {
+            var email = emailDto.getEmail();
+            
+            var userOptional = userRepository.findByEmail(email);
+
+            System.out.println("Email: " + email);
+            System.out.println("User found: " + userOptional.isPresent());
+    
+            if(userOptional.isEmpty()) {
+                return Result.failure("Invalid email provided", 400);
+            }
+    
+            var user = userOptional.get();
+    
+            user.setVerified(true);
+    
+            userRepository.save(user);
+    
+            return Result.success("User verified successfully");
+        } catch(Exception e) {
+            return Result.failure("Error verifying user", 500);
+        }
     }
 }
