@@ -888,3 +888,4 @@ java.lang.NullPointerException: Cannot invoke "com.onlybuns.onlybuns.domain.mode
 2024-10-22T14:56:09.241Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
 2024-10-22T15:00:14.496Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
 2024-10-22T15:01:26.397Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+
