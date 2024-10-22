@@ -18,4 +18,6 @@ public class ProfileDto {
     private String email;
     private AddressDto address;
     private List<PostDto> activePosts;
+    private List<UserDto> followers;
+    private List<UserDto> following;
 }

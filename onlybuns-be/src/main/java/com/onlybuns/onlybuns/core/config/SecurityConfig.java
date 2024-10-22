@@ -41,7 +41,7 @@ public class SecurityConfig {
             .cors(cors -> cors.disable()) // Disable CORS for stateless APIs
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/public", "/").permitAll() // Allow public endpoints
-                .requestMatchers("/auth/login", "/auth/register").permitAll() // Allow login and register
+                .requestMatchers("/auth/login", "/auth/register", "/profile").permitAll() // Allow login and register
                 .requestMatchers("/post/all").permitAll() // Allow getting posts to all users
                 .requestMatchers("/email/verify").permitAll() // Allow email verification
                 .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")     // TODO: Implement when needed

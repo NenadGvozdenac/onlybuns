@@ -150,15 +150,16 @@ public class EmailService {
             var email = emailDto.getEmail();
             
             var userOptional = userRepository.findByEmail(email);
-
-            System.out.println("Email: " + email);
-            System.out.println("User found: " + userOptional.isPresent());
     
             if(userOptional.isEmpty()) {
                 return Result.failure("Invalid email provided", 400);
             }
     
             var user = userOptional.get();
+
+            if(user.isVerified()) {
+                return Result.failure("User is already verified", 410);
+            }
     
             user.setVerified(true);
     
