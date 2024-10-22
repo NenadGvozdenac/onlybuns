@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.onlybuns.onlybuns.core.misc.EmailParser;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.models.EmailAuthentication;
+import com.onlybuns.onlybuns.domain.serviceinterfaces.EmailServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.EmailRepository;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.requests.EmailDto;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
-public class EmailService {
+public class EmailService implements EmailServiceInterface {
     @Autowired
     private EmailRepository emailRepository;
 
@@ -115,8 +116,9 @@ public class EmailService {
             "            <h1>Email Verification</h1>\n" +
             "            <p>Hello,</p>\n" +
             "            <p>Thank you for signing up with OnlyBuns! To complete your registration, please verify your email address by clicking the button below:</p>\n" +
-            "            <b href=\"" + emailLink + "\" class=\"button\">Verify Your Email</b>\n" +
+            "            <a href=\"" + emailLink + "\" class=\"button\" type=\"button\" target=\"_blank\">Verify Your Email</a>\n" +
             "            <p>If you didn't create an account, no further action is required.</p>\n" +
+            "            <p>If the button doesn't work, click the next link: <br><a href=\"" + emailLink + "\" target=\"_blank\">" + emailLink + "</a></p>\n" +
             "            <p>Thank you, and welcome aboard!</p>\n" +
             "        </div>\n" +
             "        <div class=\"footer\">\n" +
@@ -165,6 +167,37 @@ public class EmailService {
     
             userRepository.save(user);
     
+            return Result.success("User verified successfully");
+        } catch(Exception e) {
+            return Result.failure("Error verifying user", 500);
+        }
+    }
+
+    @Override
+    public Result<String> verifyEmail(String token) {
+        try {
+            var emailToken = emailRepository.findByToken(token);
+
+            if(emailToken == null) {
+                return Result.failure("Invalid token provided", 400);
+            }
+
+            var userOptional = userRepository.findByEmail(emailToken.getEmail());
+
+            if(userOptional.isEmpty()) {
+                return Result.failure("Invalid email provided", 400);
+            }
+
+            var user = userOptional.get();
+
+            if(user.isVerified()) {
+                return Result.failure("User is already verified", 410);
+            }
+
+            user.setVerified(true);
+
+            userRepository.save(user);
+
             return Result.success("User verified successfully");
         } catch(Exception e) {
             return Result.failure("Error verifying user", 500);

@@ -1,7 +1,5 @@
 package com.onlybuns.onlybuns.presentation.dtos.requests;
 
-import java.time.LocalDateTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

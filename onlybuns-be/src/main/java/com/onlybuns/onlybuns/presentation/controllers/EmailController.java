@@ -2,6 +2,7 @@ package com.onlybuns.onlybuns.presentation.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,20 @@ public class EmailController extends BaseController {
     @PostMapping("/verify")
     public ResponseEntity<String> verifyUser(@RequestBody EmailDto emailDto) {
         var result = emailService.verifyEmail(emailDto);
+        return createResponse(result);
+    }
+
+    @Operation(summary = "Verify a user by their token", 
+    description = "This endpoint allows for the verification of a user by their email. "
+                + "The request body should contain the user's email. "
+                + "Returns a message indicating the result of the verification.")
+    @ApiResponse(responseCode = "200", description = "User registered successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid email provided")
+    @ApiResponse(responseCode = "410", description = "User already verified")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @PostMapping("/verify/{email_token}")
+    public ResponseEntity<String> verifyUser(@PathVariable String email_token) {
+        var result = emailService.verifyEmail(email_token);
         return createResponse(result);
     }
 }

@@ -21,3 +21,128 @@
 2024-10-22T15:39:35.868Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
 2024-10-22T15:39:35.885Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
 2024-10-22T15:39:55.890Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 21.249 seconds (process running for 24.096)
+2024-10-22T18:09:30.382Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T18:09:30.394Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T18:09:46.630Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 18.544 seconds (process running for 21.992)
+2024-10-22T18:11:19.204Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-4] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:11:36.879Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : User is not verified
+2024-10-22T18:15:16.624Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T18:15:16.637Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T18:15:34.853Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 19.656 seconds (process running for 21.034)
+2024-10-22T18:16:12.283Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Invalid token provided
+2024-10-22T18:16:16.993Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-5] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:16:27.571Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-8] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:19:18.388Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:19:35.158Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:26:36.555Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T18:26:36.566Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T18:26:50.494Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 15.606 seconds (process running for 17.152)
+2024-10-22T18:29:46.483Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception
+
+org.springframework.security.core.userdetails.UsernameNotFoundException: User not found: nenadg
+	at com.onlybuns.onlybuns.domain.services.UserService.lambda$loadUserByUsername$0(UserService.java:52) ~[!/:0.0.1-SNAPSHOT]
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403) ~[na:na]
+	at com.onlybuns.onlybuns.domain.services.UserService.loadUserByUsername(UserService.java:52) ~[!/:0.0.1-SNAPSHOT]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:355) ~[spring-aop-6.1.13.jar!/:6.1.13]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:716) ~[spring-aop-6.1.13.jar!/:6.1.13]
+	at com.onlybuns.onlybuns.domain.services.UserService$$SpringCGLIB$$0.loadUserByUsername(<generated>) ~[!/:0.0.1-SNAPSHOT]
+	at com.onlybuns.onlybuns.core.config.JwtAuthFilter.doFilterInternal(JwtAuthFilter.java:45) ~[!/:0.0.1-SNAPSHOT]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$0(ObservationFilterChainDecorator.java:323) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:224) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.3.3.jar!/:6.3.3]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195) ~[spring-webmvc-6.1.13.jar!/:6.1.13]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230) ~[spring-security-config-6.3.3.jar!/:6.3.3]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:113) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.13.jar!/:6.1.13]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.30.jar!/:na]
+	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na]
+
+2024-10-22T18:30:46.796Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:30:55.478Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : Username already exists
+2024-10-22T18:33:22.157Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T18:33:22.160Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T18:33:43.898Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 23.311 seconds (process running for 24.944)
+2024-10-22T18:34:39.761Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:38:38.879Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T18:38:38.893Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T18:38:56.192Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 18.961 seconds (process running for 21.383)
+2024-10-22T18:39:30.459Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:43:57.860Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T18:43:57.867Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T18:44:15.556Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 19.129 seconds (process running for 20.838)
+2024-10-22T18:44:38.341Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:54:52.664Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T18:54:52.667Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T18:55:12.576Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 21.761 seconds (process running for 23.682)
+2024-10-22T18:55:51.313Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:56:52.860Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T18:57:01.097Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful

@@ -5,4 +5,5 @@ import com.onlybuns.onlybuns.presentation.dtos.requests.EmailDto;
 
 public interface EmailServiceInterface {
     public Result<String> verifyEmail(EmailDto emailDto);
+    public Result<String> verifyEmail(String token);
 }

@@ -11,7 +11,6 @@ import com.onlybuns.onlybuns.domain.serviceinterfaces.ProfileServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.UpdateProfileDto;
-import com.onlybuns.onlybuns.presentation.dtos.responses.CommentDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.ImageDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.ProfileDto;
