@@ -11,6 +11,7 @@ import com.onlybuns.onlybuns.domain.serviceinterfaces.ProfileServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.UpdateProfileDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.ImageDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.ProfileDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
@@ -57,9 +58,10 @@ public class ProfileService implements ProfileServiceInterface {
 
         profile.setActivePosts(user.getPosts().stream().map(post -> 
             new PostDto(post.getId(), 
-            post.getDateOfCreation(), 
-            post.getDescription(), 
-            post.getNumberOfLikes()))
+                new ImageDto(post.getImage().getData(), post.getImage().getMimetype(), post.getImage().getUploadedAt()),
+                post.getDateOfCreation(), 
+                post.getDescription(), 
+                post.getNumberOfLikes()))
         .collect(Collectors.toList()));
 
         profile.setFollowing(user.getFollowing().stream().map(follower -> 

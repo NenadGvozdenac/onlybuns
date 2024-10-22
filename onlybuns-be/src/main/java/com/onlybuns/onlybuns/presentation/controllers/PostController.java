@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
+import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,7 +59,7 @@ public class PostController extends BaseController {
     @ApiResponse(responseCode = "404", description = "Posts doesn't exist")
     @ApiResponse(responseCode = "409", description = "User that wants to delete doesn't exist")
     @ApiResponse(responseCode = "403", description = "User is not the owner of the post")   
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id){
         var result = postService.deletePost(id, getLoggedInUsername());
         return createResponse(result);
@@ -70,8 +71,8 @@ public class PostController extends BaseController {
     @ApiResponse(responseCode = "409", description = "User that wants to update post doesn't exist")
     @ApiResponse(responseCode = "403", description = "User is not the owner of the post")   
     @PutMapping
-    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto){
-        var result = postService.updatePost(postDto, getLoggedInUsername());
+    public ResponseEntity<PostDto> updatePost(@RequestBody UpdatePostDto updatePostDto){
+        var result = postService.updatePost(updatePostDto, getLoggedInUsername());
         return createResponse(result);
     }
 }
