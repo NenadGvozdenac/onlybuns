@@ -1,26 +1,32 @@
-# Use the official Maven image to build the application
+# Stage 1: Build the Spring Boot application using Maven
 FROM maven:3.8.5-openjdk-17 AS build
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the pom.xml to download dependencies
+COPY pom.xml .
+
+# Pre-download dependencies without building the project to speed up future builds
+RUN mvn dependency:go-offline
+
+# Copy the rest of the project source code
+COPY src ./src
+
+# Package the application, skipping the tests for faster builds in dev environments
+RUN mvn clean package -DskipTests
+
+# Stage 2: Run the application using Maven and enable hot-reload
+FROM maven:3.8.5-openjdk-17
 
 # Set the working directory
 WORKDIR /app
 
-# Copy only the pom.xml file to install dependencies first
-COPY pom.xml .
+# Copy the application source code from the build stage for hot-reloading
+COPY --from=build /app /app
 
-# Download dependencies
-RUN mvn dependency:go-offline
+# Expose the port on which the Spring Boot application will run
+EXPOSE 8080
 
-# Copy the rest of the source code
-COPY src ./src
-
-# Package the application
-RUN mvn clean package -DskipTests
-
-# Use the official OpenJDK image to run the application
-FROM openjdk:17-jdk-slim
-
-# Copy the built JAR file from the build stage
-COPY --from=build /app/target/onlybuns-0.0.1-SNAPSHOT.jar onlybuns.jar
-
-# Set the entry point for the container
-ENTRYPOINT ["java", "-jar", "onlybuns.jar"]
+# Command to run the application in development mode, using spring-boot:run for hot-reloading
+CMD ["mvn", "spring-boot:run"]

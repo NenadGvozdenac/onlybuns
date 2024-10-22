@@ -146,3 +146,82 @@ org.springframework.security.core.userdetails.UsernameNotFoundException: User no
 2024-10-22T18:55:51.313Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
 2024-10-22T18:56:52.860Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
 2024-10-22T18:57:01.097Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T19:50:33.126Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T19:50:33.133Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T19:50:47.455Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 16.378 seconds (process running for 18.778)
+2024-10-22T20:18:17.489Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T20:18:17.505Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T20:18:39.002Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 24.136 seconds (process running for 28.7)
+2024-10-22T20:28:48.980Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T20:28:48.990Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T20:29:03.522Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 16.427 seconds (process running for 18.099)
+2024-10-22T20:33:54.089Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T20:33:54.114Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T20:34:10.761Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 18.432 seconds (process running for 19.629)
+2024-10-22T20:36:56.654Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T20:36:56.672Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T20:37:10.194Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 15.109 seconds (process running for 16.195)
+2024-10-22T20:43:29.438Z  INFO 62 --- [onlybuns] [restartedMain] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication using Java 17.0.2 with PID 62 (/app/target/classes started by root in /app)
+2024-10-22T20:43:29.446Z  INFO 62 --- [onlybuns] [restartedMain] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T20:43:29.889Z ERROR 62 --- [onlybuns] [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+java.lang.IllegalStateException: No Docker Compose file found in directory '/app/.'
+	at org.springframework.util.Assert.state(Assert.java:97) ~[spring-core-6.1.13.jar:6.1.13]
+	at org.springframework.boot.docker.compose.lifecycle.DockerComposeLifecycleManager.getComposeFile(DockerComposeLifecycleManager.java:149) ~[spring-boot-docker-compose-3.3.4.jar:3.3.4]
+	at org.springframework.boot.docker.compose.lifecycle.DockerComposeLifecycleManager.start(DockerComposeLifecycleManager.java:109) ~[spring-boot-docker-compose-3.3.4.jar:3.3.4]
+	at org.springframework.boot.docker.compose.lifecycle.DockerComposeListener.onApplicationEvent(DockerComposeListener.java:53) ~[spring-boot-docker-compose-3.3.4.jar:3.3.4]
+	at org.springframework.boot.docker.compose.lifecycle.DockerComposeListener.onApplicationEvent(DockerComposeListener.java:35) ~[spring-boot-docker-compose-3.3.4.jar:3.3.4]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:185) ~[spring-context-6.1.13.jar:6.1.13]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:178) ~[spring-context-6.1.13.jar:6.1.13]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:156) ~[spring-context-6.1.13.jar:6.1.13]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:138) ~[spring-context-6.1.13.jar:6.1.13]
+	at org.springframework.boot.context.event.EventPublishingRunListener.multicastInitialEvent(EventPublishingRunListener.java:136) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.context.event.EventPublishingRunListener.contextLoaded(EventPublishingRunListener.java:98) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplicationRunListeners.lambda$contextLoaded$4(SpringApplicationRunListeners.java:72) ~[spring-boot-3.3.4.jar:3.3.4]
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[na:na]
+	at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:118) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:112) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplicationRunListeners.contextLoaded(SpringApplicationRunListeners.java:72) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.prepareContext(SpringApplication.java:433) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352) ~[spring-boot-3.3.4.jar:3.3.4]
+	at com.onlybuns.onlybuns.OnlybunsApplication.main(OnlybunsApplication.java:9) ~[classes/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-3.3.4.jar:3.3.4]
+
+2024-10-22T20:47:26.635Z  INFO 66 --- [onlybuns] [restartedMain] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication using Java 17.0.2 with PID 66 (/app/target/classes started by root in /app)
+2024-10-22T20:47:26.639Z  INFO 66 --- [onlybuns] [restartedMain] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "development"
+2024-10-22T20:47:26.929Z ERROR 66 --- [onlybuns] [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+java.lang.IllegalStateException: No Docker Compose file found in directory '/app/.'
+	at org.springframework.util.Assert.state(Assert.java:97) ~[spring-core-6.1.13.jar:6.1.13]
+	at org.springframework.boot.docker.compose.lifecycle.DockerComposeLifecycleManager.getComposeFile(DockerComposeLifecycleManager.java:149) ~[spring-boot-docker-compose-3.3.4.jar:3.3.4]
+	at org.springframework.boot.docker.compose.lifecycle.DockerComposeLifecycleManager.start(DockerComposeLifecycleManager.java:109) ~[spring-boot-docker-compose-3.3.4.jar:3.3.4]
+	at org.springframework.boot.docker.compose.lifecycle.DockerComposeListener.onApplicationEvent(DockerComposeListener.java:53) ~[spring-boot-docker-compose-3.3.4.jar:3.3.4]
+	at org.springframework.boot.docker.compose.lifecycle.DockerComposeListener.onApplicationEvent(DockerComposeListener.java:35) ~[spring-boot-docker-compose-3.3.4.jar:3.3.4]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:185) ~[spring-context-6.1.13.jar:6.1.13]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:178) ~[spring-context-6.1.13.jar:6.1.13]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:156) ~[spring-context-6.1.13.jar:6.1.13]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:138) ~[spring-context-6.1.13.jar:6.1.13]
+	at org.springframework.boot.context.event.EventPublishingRunListener.multicastInitialEvent(EventPublishingRunListener.java:136) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.context.event.EventPublishingRunListener.contextLoaded(EventPublishingRunListener.java:98) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplicationRunListeners.lambda$contextLoaded$4(SpringApplicationRunListeners.java:72) ~[spring-boot-3.3.4.jar:3.3.4]
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[na:na]
+	at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:118) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:112) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplicationRunListeners.contextLoaded(SpringApplicationRunListeners.java:72) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.prepareContext(SpringApplication.java:433) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352) ~[spring-boot-3.3.4.jar:3.3.4]
+	at com.onlybuns.onlybuns.OnlybunsApplication.main(OnlybunsApplication.java:9) ~[classes/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-3.3.4.jar:3.3.4]
+

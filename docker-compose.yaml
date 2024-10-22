@@ -20,11 +20,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mydatabase
       SPRING_DATASOURCE_USERNAME: myuser
       SPRING_DATASOURCE_PASSWORD: secret
-      SPRING_OUTPUT_FILE: /logs/myapp.log
+    volumes:
+      - './onlybuns-be:/app'  # Mount source code
     depends_on:
       - postgres
-    volumes:
-      - ./logs:/logs
+    networks:
+      - default
 
   # Frontend service (Vue.js App)
   onlybuns-frontend:
@@ -33,6 +34,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - '5173:5173'
+    volumes:
+      - './onlybuns-fe:/app'
+      - '/app/node_modules'
     depends_on:
       - onlybuns-backend
     networks:
