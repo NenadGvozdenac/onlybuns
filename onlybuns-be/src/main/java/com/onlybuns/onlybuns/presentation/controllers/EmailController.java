@@ -31,6 +31,7 @@ public class EmailController extends BaseController {
                 + "Returns a message indicating the result of the verification.")
     @ApiResponse(responseCode = "200", description = "User registered successfully")
     @ApiResponse(responseCode = "400", description = "Invalid email provided")
+    @ApiResponse(responseCode = "410", description = "User already verified")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping("/verify")
     public ResponseEntity<String> verifyUser(@RequestBody EmailDto emailDto) {

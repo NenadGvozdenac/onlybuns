@@ -2,58 +2,53 @@ package com.onlybuns.onlybuns.presentation.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.onlybuns.onlybuns.domain.serviceinterfaces.UserServiceInterface;
-import com.onlybuns.onlybuns.presentation.dtos.requests.LoginUserDto;
-import com.onlybuns.onlybuns.presentation.dtos.requests.RegisterUserDto;
-import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
-import com.onlybuns.onlybuns.presentation.dtos.responses.UserLoginDto;
+import com.onlybuns.onlybuns.domain.serviceinterfaces.ProfileServiceInterface;
+import com.onlybuns.onlybuns.presentation.dtos.requests.UpdateProfileDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.ProfileDto;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-@Tag(name = "Profile Controller", description = "Endpoints for user registration, login, and profile management")
+@Tag(name = "Profile Controller", description = "Endpoints for profile management")
+@RequestMapping("/profile")
 @RestController
-@RequestMapping("/auth")
 public class ProfileController extends BaseController {
-
-    private final UserServiceInterface userService;
+    private ProfileServiceInterface profileService;
 
     @Autowired
-    public ProfileController(UserServiceInterface userService) {
-        this.userService = userService;
+    public ProfileController(ProfileServiceInterface profileService) {
+        this.profileService = profileService;
     }
     
-    @Operation(summary = "Register a new user", 
-               description = "This endpoint allows for the registration of a new user. "
-                           + "The request body should contain valid user data. "
-                           + "Returns user info upon successful registration.")
-    @ApiResponse(responseCode = "200", description = "User registered successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid user data provided")
-    @ApiResponse(responseCode = "409", description = "User with the same email or username already exists")
-    @ApiResponse(responseCode = "411", description = "Invalid email")
-    @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody RegisterUserDto registerUserDto) {
-        var result = userService.registerUser(registerUserDto);
+    @Operation(summary = "Get profile", 
+               description = "This endpoint allows for the retrieval of a user's profile. "
+                           + "The request should contain the username of the user whose profile is to be retrieved.")
+    @ApiResponse(responseCode = "200", description = "Profile retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "User not found")
+    @Parameter(name = "username", description = "Username of the user whose profile is to be retrieved", required = false)
+    @GetMapping
+    public ResponseEntity<ProfileDto> getProfile(@RequestParam(required = false) String username) {
+        var result = profileService.getProfile(username == null ? getLoggedInUsername() : username);
         return createResponse(result);
     }
 
-    @Operation(summary = "Login a user", 
-               description = "This endpoint allows a user to log in by providing valid credentials. "
-                           + "A token is returned upon successful authentication.")
-    @ApiResponse(responseCode = "200", description = "User logged in successfully")
-    @ApiResponse(responseCode = "401", description = "Incorrect password")
-    @ApiResponse(responseCode = "403", description = "User is not verified")
-    @ApiResponse(responseCode = "409", description = "User is not active")
+    @Operation(summary = "Update profile", 
+               description = "This endpoint allows for the update of a user's profile. "
+                           + "The request should contain the username of the user whose profile is to be updated.")
+    @ApiResponse(responseCode = "200", description = "Profile updated successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid password")
     @ApiResponse(responseCode = "404", description = "User not found")
-    @PostMapping("/login")
-    public ResponseEntity<UserLoginDto> loginUser(@RequestBody LoginUserDto loginUserDto) {
-        var result = userService.loginUser(loginUserDto);
+    @PutMapping
+    public ResponseEntity<ProfileDto> updateProfile(@RequestBody UpdateProfileDto updateProfileDto) {
+        var result = profileService.updateProfile(getLoggedInUsername(), updateProfileDto);
         return createResponse(result);
     }
 }
