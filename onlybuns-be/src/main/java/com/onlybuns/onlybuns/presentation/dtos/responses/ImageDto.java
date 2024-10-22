@@ -3,13 +3,13 @@ package com.onlybuns.onlybuns.presentation.dtos.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImageDto {
-    private String link;
+    private String data;
     private String mimeType;
-    private String uploadedAt;
-    private String uploadedBy;
+    private LocalDateTime uploadedAt;
 }

@@ -3,6 +3,7 @@ package com.onlybuns.onlybuns.domain.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,10 @@ import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
+import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.CommentDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.GetAllPostDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.ImageDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 import jakarta.transaction.Transactional;
 
@@ -56,6 +61,8 @@ public class PostService extends BaseService implements PostServiceInterface {
                 postDto.setNumberOfLikes(post.getNumberOfLikes());
                 postDto.setDescription(post.getDescription());
                 postDto.setDateOfCreation(post.getDateOfCreation());
+                var imageDto = new ImageDto(post.getImage().getData(), post.getImage().getMimetype(),post.getImage().getUploadedAt());
+                postDto.setImage(imageDto);
 
                 return Result.success(postDto);       
             }else{
@@ -68,18 +75,32 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Override
     @Transactional
-    public Result<List<PostDto>> getAllPosts(){
+    public Result<List<GetAllPostDto>> getAllPosts(){
 
         try{
             List<Post> posts = postRepositoryjpa.findAll(Sort.by(Sort.Direction.DESC, "dateOfCreation"));
 
-            List<PostDto> postDtos = posts.stream()
+            List<GetAllPostDto> postDtos = posts.stream()
                 .map(post -> {
-                    PostDto postDto = new PostDto();
+                    GetAllPostDto postDto = new GetAllPostDto();
                     postDto.setId(post.getId());
                     postDto.setDescription(post.getDescription());
                     postDto.setDateOfCreation(post.getDateOfCreation());
                     postDto.setNumberOfLikes(post.getNumberOfLikes());
+                    var imageDto = new ImageDto(post.getImage().getData(), post.getImage().getMimetype(),post.getImage().getUploadedAt());
+                    postDto.setImage(imageDto);
+                    
+                    List<CommentDto> commentDtos = post.getComments().stream()
+                    .map(comment -> {
+                        CommentDto commentDto = new CommentDto();
+                        commentDto.setId(comment.getId());
+                        commentDto.setComment(comment.getComment());
+                        commentDto.setCommentedAt(comment.getCommentedAt());
+                        return commentDto;
+                    })
+                    .collect(Collectors.toList());
+                    postDto.setComments(commentDtos);
+
                     return postDto;
                 })
             .collect(Collectors.toList());
@@ -119,9 +140,9 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Override
     @Transactional
-    public Result<PostDto> updatePost(PostDto postDto, String userUsername){
+    public Result<PostDto> updatePost(UpdatePostDto updatePostDto, String userUsername){
         
-        var postOptional = postRepositoryjpa.findById(postDto.getId());
+        var postOptional = postRepositoryjpa.findById(updatePostDto.getId());
         if (postOptional.isEmpty()) {
             return Result.failure("Post doesn't exist", 404);
         }
@@ -135,8 +156,17 @@ public class PostService extends BaseService implements PostServiceInterface {
         User user = userOptional.get();
 
         if (user.getId().equals(post.getUser().getId())) {
-            post.setDescription(postDto.getDescription());
+            post.setDescription(updatePostDto.getDescription());
             postRepositoryjpa.save(post);
+
+            //response
+            PostDto postDto = new PostDto();
+            postDto.setDateOfCreation(post.getDateOfCreation());
+            postDto.setDescription(post.getDescription());
+            postDto.setNumberOfLikes(post.getNumberOfLikes());
+            postDto.setId(post.getId());
+            var imageDto = new ImageDto(post.getImage().getData(), post.getImage().getMimetype(),post.getImage().getUploadedAt());
+            postDto.setImage(imageDto);
             return Result.success(postDto);
         }else {
             return Result.failure("User is not the owner of the post", 403);
