@@ -40,6 +40,9 @@ public class UserService extends BaseService implements UserDetailsService, User
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private BloomFilterService bloomFilterService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userDetail = userRepository.findByUsername(username);
@@ -58,10 +61,19 @@ public class UserService extends BaseService implements UserDetailsService, User
                 return Result.failure("Passwords do not match", 400);
             }
 
-            // Check if a user with the same email or username already exists
-            if (userRepository.findByEmail(registerUserDto.getEmail()).isPresent() || 
-                userRepository.findByUsername(registerUserDto.getUsername()).isPresent()) {
-                return Result.failure("User with this email: " + registerUserDto.getEmail() + ", or username: " + registerUserDto.getUsername() + ", already exists.", 409);
+            // Check if username exists in bloom filter
+            if (bloomFilterService.contains(registerUserDto.getUsername())) {
+                // Check if a user with the same username exists for real, because bloom filter is not 100% accurate
+                if(userRepository.findByUsername(registerUserDto.getUsername()).isPresent()) {
+                    return Result.failure("Username already exists", 409);
+                }
+            }
+
+            // Check if a user with the same email exists
+            var userOptional = userRepository.findByEmail(registerUserDto.getEmail());
+
+            if(userOptional.isPresent()) {
+                return Result.failure("User with the same email already exists", 409);
             }
 
             // Check if the email is valid
@@ -94,6 +106,9 @@ public class UserService extends BaseService implements UserDetailsService, User
 
             // Save the new user in the repository
             var user = userRepository.save(newUser);
+
+            // Add the username to the bloom filter
+            bloomFilterService.add(user.getUsername());
 
             // Send a verification email
             emailService.send(user.getEmail(), true);
