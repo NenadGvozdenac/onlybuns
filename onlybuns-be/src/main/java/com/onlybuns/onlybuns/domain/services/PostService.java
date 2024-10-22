@@ -15,6 +15,8 @@ import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.CommentDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.GetAllPostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.ImageDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 import jakarta.transaction.Transactional;
@@ -73,20 +75,32 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Override
     @Transactional
-    public Result<List<PostDto>> getAllPosts(){
+    public Result<List<GetAllPostDto>> getAllPosts(){
 
         try{
             List<Post> posts = postRepositoryjpa.findAll(Sort.by(Sort.Direction.DESC, "dateOfCreation"));
 
-            List<PostDto> postDtos = posts.stream()
+            List<GetAllPostDto> postDtos = posts.stream()
                 .map(post -> {
-                    PostDto postDto = new PostDto();
+                    GetAllPostDto postDto = new GetAllPostDto();
                     postDto.setId(post.getId());
                     postDto.setDescription(post.getDescription());
                     postDto.setDateOfCreation(post.getDateOfCreation());
                     postDto.setNumberOfLikes(post.getNumberOfLikes());
                     var imageDto = new ImageDto(post.getImage().getData(), post.getImage().getMimetype(),post.getImage().getUploadedAt());
                     postDto.setImage(imageDto);
+                    
+                    List<CommentDto> commentDtos = post.getComments().stream()
+                    .map(comment -> {
+                        CommentDto commentDto = new CommentDto();
+                        commentDto.setId(comment.getId());
+                        commentDto.setComment(comment.getComment());
+                        commentDto.setCommentedAt(comment.getCommentedAt());
+                        return commentDto;
+                    })
+                    .collect(Collectors.toList());
+                    postDto.setComments(commentDtos);
+
                     return postDto;
                 })
             .collect(Collectors.toList());

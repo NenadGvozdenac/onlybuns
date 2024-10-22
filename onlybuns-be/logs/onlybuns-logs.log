@@ -870,3 +870,21 @@ java.lang.NullPointerException: Cannot invoke "com.onlybuns.onlybuns.domain.mode
 2024-10-22T13:28:03.882Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : User already liked this post.
 2024-10-22T13:28:06.211Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : Operation was successful
 2024-10-22T13:28:18.140Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T14:22:32.130Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T14:22:32.133Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T14:22:40.121Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 8.712 seconds (process running for 12.207)
+2024-10-22T14:27:54.656Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Starting OnlybunsApplication v0.0.1-SNAPSHOT using Java 17.0.2 with PID 1 (/onlybuns.jar started by root in /)
+2024-10-22T14:27:54.661Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : The following 1 profile is active: "default"
+2024-10-22T14:28:03.429Z  INFO 1 --- [onlybuns] [main] c.onlybuns.onlybuns.OnlybunsApplication  : Started OnlybunsApplication in 9.459 seconds (process running for 10.093)
+2024-10-22T14:37:17.723Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-4] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T14:45:08.547Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-8] c.o.o.p.controllers.BaseController       : Username already exists
+2024-10-22T14:45:21.720Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T14:46:12.313Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-9] c.o.o.p.controllers.BaseController       : Username already exists
+2024-10-22T14:46:40.535Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T14:46:45.554Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-10] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T14:47:07.461Z ERROR 1 --- [onlybuns] [http-nio-8080-exec-3] c.o.o.p.controllers.BaseController       : User not found.
+2024-10-22T14:47:14.788Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-5] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T14:48:06.367Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-2] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T14:56:09.241Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-6] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T15:00:14.496Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-7] c.o.o.p.controllers.BaseController       : Operation was successful
+2024-10-22T15:01:26.397Z  INFO 1 --- [onlybuns] [http-nio-8080-exec-1] c.o.o.p.controllers.BaseController       : Operation was successful

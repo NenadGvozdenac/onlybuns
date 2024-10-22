@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
 import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.GetAllPostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +50,7 @@ public class PostController extends BaseController {
                description = "This endpoint allows all users to get posts on their homepage")
     @ApiResponse(responseCode = "404", description = "Posts not found.")
     @GetMapping("/all")
-    public ResponseEntity<List<PostDto>> getAllPosts(){
+    public ResponseEntity<List<GetAllPostDto>> getAllPosts(){
         var result = postService.getAllPosts();
         return createResponse(result);
     }
