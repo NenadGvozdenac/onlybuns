@@ -16,8 +16,9 @@ class AuthService {
     // Login user
     async login(credentials) {
         const response = await axios.post(`${API_URL}/login`, credentials);
+
         // Store the token in local storage or any other storage mechanism
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('token', response.data.accessToken);
         return response.data; // Return the response data
     }
 
