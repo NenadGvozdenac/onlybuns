@@ -1,34 +1,33 @@
 package com.onlybuns.onlybuns.domain.models;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
+import lombok.Setter;
 
 @Entity
-@Table (name="images")
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Image {
-    
+@Getter
+@Setter
+@NoArgsConstructor
+public class IpLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String Data;
+    @Column(nullable = false)
+    private String ipAddress;
 
     @Column(nullable = false)
-    private LocalDateTime uploadedAt;
+    private Long timestamp;
 
     @Column(nullable = false)
-    private String mimetype;
-
+    private LocalDateTime createdAt;
 }

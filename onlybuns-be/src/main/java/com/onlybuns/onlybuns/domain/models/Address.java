@@ -35,4 +35,11 @@ public class Address {
 
     @OneToMany(mappedBy = "address")
     private List<User> users;
+
+    public Address(String street, Integer number, String city, String country) {
+        this.street = street;
+        this.number = number;
+        this.city = city;
+        this.country = country;
+    }
 }

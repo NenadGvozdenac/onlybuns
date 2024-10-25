@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.7.7",
+    "onlybuns-fe": "file:",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5"
   },

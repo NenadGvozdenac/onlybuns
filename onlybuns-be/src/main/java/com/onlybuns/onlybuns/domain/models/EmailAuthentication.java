@@ -33,6 +33,6 @@ public class EmailAuthentication {
     private String token;
 
     public void generateEmailLink() {
-        this.emailLink = "http://localhost:8080/email-authentications/" + this.token;
+        this.emailLink = "http://localhost:5173/email-authentications/" + this.token;
     }
 }
