@@ -18,6 +18,8 @@ import com.onlybuns.onlybuns.presentation.dtos.responses.CommentDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.GetAllPostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.ImageDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -90,6 +92,14 @@ public class PostService extends BaseService implements PostServiceInterface {
                     var imageDto = new ImageDto(post.getImage().getData(), post.getImage().getMimetype(),post.getImage().getUploadedAt());
                     postDto.setImage(imageDto);
                     
+                    List<UserDto> userDtos = post.getUsersThatLiked().stream()
+                    .map(user -> {
+                        UserDto userDto = new UserDto();
+                        userDto.setUsername(user.getUsername());
+                        return userDto;
+                    }).collect(Collectors.toList());
+                    postDto.setUsers(userDtos);
+
                     List<CommentDto> commentDtos = post.getComments().stream()
                     .map(comment -> {
                         CommentDto commentDto = new CommentDto();
