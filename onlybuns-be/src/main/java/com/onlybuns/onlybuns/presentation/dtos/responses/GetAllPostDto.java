@@ -20,4 +20,5 @@ public class GetAllPostDto {
     private LocalDateTime dateOfCreation;
     private String description;
     private int numberOfLikes;
+    private String username;
 }

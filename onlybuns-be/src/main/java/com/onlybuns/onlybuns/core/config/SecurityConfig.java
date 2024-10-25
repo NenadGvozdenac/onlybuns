@@ -39,6 +39,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
             .authorizeHttpRequests(auth -> auth
+                
                 .requestMatchers("/public", "/").permitAll() // Allow public endpoints
                 .requestMatchers("/auth/login", "/auth/register", "/profile").permitAll() // Allow login and register
                 .requestMatchers("/post/all").permitAll() // Allow getting posts to all users

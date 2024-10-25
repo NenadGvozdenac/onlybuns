@@ -86,6 +86,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                     postDto.setDescription(post.getDescription());
                     postDto.setDateOfCreation(post.getDateOfCreation());
                     postDto.setNumberOfLikes(post.getNumberOfLikes());
+                    postDto.setUsername(post.getUser().getUsername());
                     var imageDto = new ImageDto(post.getImage().getData(), post.getImage().getMimetype(),post.getImage().getUploadedAt());
                     postDto.setImage(imageDto);
                     
