@@ -2,7 +2,7 @@
     <Navbar />
     <div class="home">
         <h1>Welcome to OnlyBuns!</h1>
-        <p>Your one-stop shop for the best buns in town!</p>
+        <p>Your one-stop for the best buns in town!</p>
     </div>
     <div class="d-flex">
         <div class="col-10">
@@ -12,19 +12,22 @@
             <PersonContainer />
         </div>
     </div>
+    <Footer />
 </template>
 
 <script>
 import Navbar from '@/components/Unauthorized/Navbar.vue';
 import CardContainer from '@/components/Cards/CardContainer.vue';
-import PersonContainer from '@/components/People/PeopleContainer.vue';
+import PersonContainer from '@/components/People/PersonContainer.vue';
+import Footer from '@/components/Unauthorized/Footer.vue';
 
 export default {
     name: 'Home',
     components: {
         Navbar,
         CardContainer,
-        PersonContainer
+        PersonContainer,
+        Footer,
     }
 }
 </script>

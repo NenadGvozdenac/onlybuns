@@ -2,7 +2,7 @@
     <div class="container mt-5">
         <div class="row">
             <div class="row">
-                <div class="col-6" v-for="(card, index) in cards" :key="index">
+                <div class="col-4" v-for="(card, index) in cards" :key="index">
                     <CardComponent :image="card.image" :peopleCount="card.peopleCount" />
                 </div>
             </div>
