@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,8 +39,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
-            .authorizeHttpRequests(auth -> auth
-                
+            .cors(Customizer.withDefaults()) // Enable CORS
+            .authorizeHttpRequests(auth -> auth                
                 .requestMatchers("/public", "/").permitAll() // Allow public endpoints
                 .requestMatchers("/auth/login", "/auth/register", "/profile").permitAll() // Allow login and register
                 .requestMatchers("/post/all").permitAll() // Allow getting posts to all users
