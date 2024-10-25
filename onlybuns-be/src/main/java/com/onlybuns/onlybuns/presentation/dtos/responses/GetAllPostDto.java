@@ -21,4 +21,5 @@ public class GetAllPostDto {
     private String description;
     private int numberOfLikes;
     private String username;
+    private List<UserDto> users;
 }

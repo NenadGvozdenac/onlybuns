@@ -11,7 +11,8 @@
                         :description="card.description" 
                         :commentsCount="card.comments.length" 
                         :username="card.username" 
-                        :dateOfCreation="card.dateOfCreation" 
+                        :dateOfCreation="card.dateOfCreation"
+                        :usersThatLike="card.users"  
                     />
                 </div>
             </div>
@@ -26,7 +27,8 @@
                         :description="card.description"
                         :commentsCount="card.comments.length"
                         :username="card.username"
-                        :dateOfCreation="card.dateOfCreation"    
+                        :dateOfCreation="card.dateOfCreation"
+                        :usersThatLike="card.users"    
                     />
                 </div>
             </div>
@@ -41,7 +43,8 @@
                         :description="card.description"
                         :commentsCount="card.comments.length"
                         :username="card.username"
-                        :dateOfCreation="card.dateOfCreation" 
+                        :dateOfCreation="card.dateOfCreation"
+                        :usersThatLike="card.users"  
                     />
                 </div>
             </div>
@@ -71,8 +74,7 @@ export default {
         async getPosts(){
             
             try{
-                this.cards = await CardService.fetchPosts();
-                console.log(this.cards)        
+                this.cards = await CardService.fetchPosts();        
             }catch(error){
                 console.error("Failed to load cards: ", error)
             }
