@@ -55,6 +55,15 @@ public class PostController extends BaseController {
         return createResponse(result);
     }
 
+    @Operation(summary = "Get my posts in date order descending", 
+               description = "This endpoint allows users to get posts their on their homepage")
+    @ApiResponse(responseCode = "404", description = "Posts not found.")
+    @GetMapping("/myposts")
+    public ResponseEntity<List<GetAllPostDto>> getMyPosts(){
+        var result = postService.getMyPosts(getLoggedInUsername());
+        return createResponse(result);
+    }
+
     @Operation(summary = "Delete post by id", 
                description = "This endpoint allows authors of the post to delete their post")
     @ApiResponse(responseCode = "404", description = "Posts doesn't exist")
