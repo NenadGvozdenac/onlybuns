@@ -36,6 +36,39 @@ class CardService {
         }
     }
     
+    async deletePost(){
+        try {
+            const token = localStorage.getItem('token');
+        
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+    
+            const response = await axios.delete(`${API_URL}/${id}`, { headers });
+    
+            return response.data; 
+        } catch (error) {
+            console.error(`Error deleting post with ID ${id}:`, error);
+            throw error;
+        }
+    }
+
+    async updatePost(id, post) {
+        try {
+            const token = localStorage.getItem('token');
+        
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+    
+            const response = await axios.put(`${API_URL}`, post, { headers });
+    
+            return response.data; 
+        } catch (error) {
+            console.error(`Error updating post with ID ${id}:`, error);
+            throw error;
+        }
+    }
 
 }
 
