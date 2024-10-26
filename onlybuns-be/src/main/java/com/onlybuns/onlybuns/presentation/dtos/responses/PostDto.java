@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -16,4 +18,6 @@ public class PostDto {
     private LocalDateTime dateOfCreation;
     private String description;
     private int numberOfLikes;
+    private List<CommentDto> comments;
+    private List<UserDto> users;
 }
