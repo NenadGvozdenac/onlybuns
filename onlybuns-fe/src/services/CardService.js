@@ -35,7 +35,7 @@ class CardService {
         }
     }
     
-    async deletePost(){
+    async deletePost(id){
         try {
             const token = localStorage.getItem('token');
         
@@ -52,14 +52,19 @@ class CardService {
         }
     }
 
-    async updatePost(id, post) {
+    async updatePost(id, description) {
         try {
             const token = localStorage.getItem('token');
         
             const headers = {
                 Authorization: `Bearer ${token}`,
             };
-    
+
+            let post = {
+                id: id,
+                description: description
+            }
+            
             const response = await axios.put(`${API_URL}`, post, { headers });
     
             return response.data; 

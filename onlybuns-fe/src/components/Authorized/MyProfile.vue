@@ -26,7 +26,7 @@
                             <span class="user-info-label">Address:</span>
                             <span class="user-info-value">
                                 {{ user.address.street }} {{ user.address.number }}, {{ user.address.city }}, {{
-                                user.address.country }}
+                                    user.address.country }}
                             </span>
                         </div>
                         <div class="user-info-row">
@@ -45,10 +45,38 @@
             <!-- Right Column: User Posts -->
             <div>
                 <div v-if="user.activePosts.length" class="d-flex col-12 gap-3">
-                    <CardComponent v-for="post in user.activePosts" :key="post.id" :image="post.image"
-                        :description="post.description" :likesCount="post.numberOfLikes"
-                        :dateOfCreation="post.dateOfCreation" :username="user.username" :comments="post.comments"
-                        :id="post.id" :commentsCount="post.comments.length" :usersThatLike="post.users" />
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 0)" :key="index">
+                                <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
+                                    :likesCount="card.numberOfLikes" :description="card.description"
+                                    :commentsCount="card.comments.length" :username="user.username"
+                                    :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
+                                    :comments="card.comments" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 1)" :key="index">
+                            <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
+                                :likesCount="card.numberOfLikes" :description="card.description"
+                                :commentsCount="card.comments.length" :username="user.username"
+                                :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
+                                :comments="card.comments" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 2)" :key="index">
+                            <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
+                                :likesCount="card.numberOfLikes" :description="card.description"
+                                :commentsCount="card.comments.length" :username="user.username"
+                                :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
+                                :comments="card.comments" />
+                            </div>
+                        </div>
+                        
+                    </div>
+
                 </div>
                 <div v-else>
                     <p>No posts available</p>
@@ -64,7 +92,7 @@
 
 import Navbar from './Navbar.vue';
 import Footer from '../Unauthorized/Footer.vue';
-import CardComponent from '../Cards/CardComponent.vue';
+import ProfileCardsComponent from '../Cards/ProfileCardsComponent.vue';
 
 import ProfileService from '@/services/ProfileService';
 
@@ -73,7 +101,7 @@ export default {
     components: {
         Navbar,
         Footer,
-        CardComponent
+        ProfileCardsComponent
     },
     data() {
         return {
