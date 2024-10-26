@@ -6,7 +6,7 @@
                 <div v-for="(card, index) in cards.filter((_, i) => i % 3 === 0)" :key="index">
                     <CardComponent
                         :id="card.id" 
-                        :image="card.image.data" 
+                        :image="card.image" 
                         :likesCount="card.numberOfLikes" 
                         :description="card.description" 
                         :commentsCount="card.comments.length" 
@@ -23,7 +23,7 @@
                 <div v-for="(card, index) in cards.filter((_, i) => i % 3 === 1)" :key="index">
                     <CardComponent
                         :id="card.id"  
-                        :image="card.image.data" 
+                        :image="card.image" 
                         :likesCount="card.numberOfLikes" 
                         :description="card.description"
                         :commentsCount="card.comments.length"
@@ -40,7 +40,7 @@
                 <div v-for="(card, index) in cards.filter((_, i) => i % 3 === 2)" :key="index">
                     <CardComponent
                         :id="card.id"  
-                        :image="card.image.data" 
+                        :image="card.image" 
                         :likesCount="card.numberOfLikes" 
                         :description="card.description"
                         :commentsCount="card.comments.length"
