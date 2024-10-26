@@ -121,6 +121,54 @@ public class PostService extends BaseService implements PostServiceInterface {
             return Result.failure("Posts not found.", 404);
         }        
     }
+
+    @Override
+    @Transactional
+    public Result<List<GetAllPostDto>> getMyPosts(String username){
+
+        try{
+            List<Post> posts = postRepositoryjpa.findByUsername(username);
+
+            List<GetAllPostDto> postDtos = posts.stream()
+                .map(post -> {
+                    GetAllPostDto postDto = new GetAllPostDto();
+                    postDto.setId(post.getId());
+                    postDto.setDescription(post.getDescription());
+                    postDto.setDateOfCreation(post.getDateOfCreation());
+                    postDto.setNumberOfLikes(post.getNumberOfLikes());
+                    postDto.setUsername(post.getUser().getUsername());
+                    var imageDto = new ImageDto(post.getImage().getData(), post.getImage().getMimetype(),post.getImage().getUploadedAt());
+                    postDto.setImage(imageDto);
+                    
+                    List<UserDto> userDtos = post.getUsersThatLiked().stream()
+                    .map(user -> {
+                        UserDto userDto = new UserDto();
+                        userDto.setUsername(user.getUsername());
+                        return userDto;
+                    }).collect(Collectors.toList());
+                    postDto.setUsers(userDtos);
+
+                    List<CommentDto> commentDtos = post.getComments().stream()
+                    .map(comment -> {
+                        CommentDto commentDto = new CommentDto();
+                        commentDto.setId(comment.getId());
+                        commentDto.setComment(comment.getComment());
+                        commentDto.setCommentedAt(comment.getCommentedAt());
+                        return commentDto;
+                    })
+                    .collect(Collectors.toList());
+                    postDto.setComments(commentDtos);
+
+                    return postDto;
+                })
+            .collect(Collectors.toList());
+
+            return Result.success(postDtos);
+        
+        }catch(Exception e){
+            return Result.failure("Posts not found.", 404);
+        }        
+    }
     
     @Override
     @Transactional
