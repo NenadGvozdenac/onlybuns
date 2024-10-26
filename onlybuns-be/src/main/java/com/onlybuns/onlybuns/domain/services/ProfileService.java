@@ -114,7 +114,7 @@ public class ProfileService implements ProfileServiceInterface {
             return Result.failure("User not found.", 404);
         }
 
-        if (!passwordEncoder.matches(updateProfileDto.getPassword(), userOptional.get().getPassword())) {
+        if (!updateProfileDto.getPassword().equals(updateProfileDto.getConfirmPassword())) {
             return Result.failure("Invalid password.", 400);
         }
 

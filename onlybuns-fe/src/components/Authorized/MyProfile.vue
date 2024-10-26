@@ -6,6 +6,11 @@
             <!-- Left Column: User Details -->
             <div class="col-12">
                 <div class="user-card shadow-lg mt-3">
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            Update Profile
+                        </button>
+                    </div>
                     <div class="user-card-logo">
                         <img src="https://flowbite.com/docs/images/logo.svg" alt="Twitter Logo" class="h-8 me-2">
                     </div>
@@ -58,25 +63,23 @@
 
                         <div class="col-md-4">
                             <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 1)" :key="index">
-                            <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
-                                :likesCount="card.numberOfLikes" :description="card.description"
-                                :commentsCount="card.comments.length" :username="user.username"
-                                :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
-                                :comments="card.comments" />
+                                <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
+                                    :likesCount="card.numberOfLikes" :description="card.description"
+                                    :commentsCount="card.comments.length" :username="user.username"
+                                    :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
+                                    :comments="card.comments" />
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 2)" :key="index">
-                            <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
-                                :likesCount="card.numberOfLikes" :description="card.description"
-                                :commentsCount="card.comments.length" :username="user.username"
-                                :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
-                                :comments="card.comments" />
+                                <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
+                                    :likesCount="card.numberOfLikes" :description="card.description"
+                                    :commentsCount="card.comments.length" :username="user.username"
+                                    :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
+                                    :comments="card.comments" />
                             </div>
                         </div>
-                        
                     </div>
-
                 </div>
                 <div v-else>
                     <p>No posts available</p>
@@ -84,6 +87,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Add the Edit Profile Modal -->
+    <EditProfileModal :userData="user" @update-profile="updateProfile" ref="editProfileModal" />
 
     <Footer />
 </template>
@@ -93,6 +99,7 @@
 import Navbar from './Navbar.vue';
 import Footer from '../Unauthorized/Footer.vue';
 import ProfileCardsComponent from '../Cards/ProfileCardsComponent.vue';
+import EditProfileModal from '../Layout/EditProfileModal.vue';
 
 import ProfileService from '@/services/ProfileService';
 
@@ -101,7 +108,8 @@ export default {
     components: {
         Navbar,
         Footer,
-        ProfileCardsComponent
+        ProfileCardsComponent,
+        EditProfileModal
     },
     data() {
         return {
@@ -206,8 +214,18 @@ export default {
         getUser() {
             ProfileService.getProfile()
                 .then(response => {
-                    console.log(response)
                     this.user = response;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+
+        updateProfile(userData) {
+            ProfileService.updateProfile(userData)
+                .then(response => {
+                    this.getUser();
+                    this.$refs.editProfileModal.closeModal();
                 })
                 .catch(error => {
                     console.log(error);
