@@ -254,14 +254,14 @@
                             <textarea 
                                 id="descriptionToChange" 
                                 class="form-control border shadow-sm"
-                                rows="3" 
+                                rows="4" 
                                 v-model="descriptionToChange"
                                 style="resize: none;"
                             ></textarea>
                         </div>
 
                         <!-- Action Button -->
-                        <div class="px-3 pb-3">
+                        <div class="px-3 pb-3 mt-3">
                             <button class="btn btn-primary w-100 py-2 fw-semibold" @click="updatePost">
                                 Update Post
                             </button>
