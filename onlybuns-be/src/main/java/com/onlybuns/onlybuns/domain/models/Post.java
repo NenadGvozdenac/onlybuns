@@ -42,7 +42,7 @@ public class Post {
     private String description;
 
     @Column(nullable = false)
-    private int numberOfLikes;
+    private Integer numberOfLikes;
 
     @Column(nullable = false)
     private boolean isDeleted;

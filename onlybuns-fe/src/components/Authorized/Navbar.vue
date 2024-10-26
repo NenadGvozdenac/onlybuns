@@ -30,22 +30,18 @@
                 <hr class="dropdown-divider">
               </li>
               <li><a class="dropdown-item" href="#">Create Post</a></li>
+              <li><a class="dropdown-item" href="/trends">Trends</a></li>
             </ul>
           </li>
 
           <!-- Home link -->
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link active" aria-current="page" href="/">Home</a>
           </li>
 
           <!-- Home link -->
           <li v-if="!userNotLoggedIn()" class="nav-item">
             <a class="nav-link active btn btn-danger text-white" aria-current="page" @click="logout()">LOGOUT</a>
-          </li>
-
-          <!-- Login button -->
-          <li v-if="userNotLoggedIn()" class="nav-item">
-            <a class="btn btn-outline-primary ms-md-3" href="/login">Login</a>
           </li>
         </ul>
       </div>
@@ -63,8 +59,11 @@ export default {
     },
     logout() {
       AuthService.logout();
-      // Refresh page
-      location.reload();
+      // Mount the navbar again
+      // Redirect to login page
+      this.$router.push('/').then(() => {
+        window.location.reload();
+      });
     }
   }
 }
