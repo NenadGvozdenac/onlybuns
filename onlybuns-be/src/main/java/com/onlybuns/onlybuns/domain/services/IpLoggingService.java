@@ -52,4 +52,8 @@ public class IpLoggingService {
                         && ipLog.getCreatedAt().isAfter(LocalDateTime.now().minusMinutes(minutes)))
                 .toList().size();
     }
+
+    public boolean isBlocked(String remoteAddr) {
+        return getIpLogCountInPastTime(remoteAddr, 1) >= 5;
+    }
 }

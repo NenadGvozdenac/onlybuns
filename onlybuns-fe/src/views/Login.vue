@@ -61,6 +61,14 @@ export default {
                     this.modalTitle = 'Login Failed';
                     this.modalMessage = 'You aren\'t verified yet!';
                     this.showModal = true;
+                } else if( error.response.status === 429) {
+                    this.modalTitle = 'Login Failed';
+                    this.modalMessage = 'Too many requests. Please try again later.';
+                    this.showModal = true;
+                } else {
+                    this.modalTitle = 'Login Failed';
+                    this.modalMessage = 'An error occurred. Please try again later.';
+                    this.showModal = true;
                 }
             }
         },

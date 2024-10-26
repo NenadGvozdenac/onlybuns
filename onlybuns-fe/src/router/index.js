@@ -3,6 +3,7 @@ import HomeView from '../views/Home.vue'
 import LoginView from '../views/Login.vue'
 import RegisterView from '../views/Register.vue'
 import EmailVerifyView from '../views/EmailVerified.vue'
+import MyProfile from '@/components/Authorized/MyProfile.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/email-authentications/:token',
       name: 'email-verify',
       component: EmailVerifyView
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: MyProfile
     }
   ]
 })

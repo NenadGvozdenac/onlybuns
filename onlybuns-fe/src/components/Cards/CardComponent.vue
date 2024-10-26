@@ -264,9 +264,8 @@ export default {
         };
     },
     created() {
-
         this.likes = this.likesCount;
-        this.hasLiked = this.usersThatLike.some(user => user.username === this.myUsername);
+        this.hasLiked = this.usersThatLike != null ? this.usersThatLike.some(user => user.username === this.myUsername) : false;
     },
     computed: {
         truncatedDescription() {

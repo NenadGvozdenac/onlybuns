@@ -24,7 +24,6 @@ class CardService {
                 Authorization: `Bearer ${token}`,
             };
     
-
             // Make the request with headers
             const response = await axios.post(`${API_URL}/${id}/like`, {}, { headers });
     
