@@ -28,6 +28,9 @@ public class SecurityConfig {
     private JwtAuthFilter authFilter;
 
     @Autowired
+    private IpLoggingFilter ipLoggingFilter;
+
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Bean
@@ -54,6 +57,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No sessions
             )
             .authenticationProvider(authenticationProvider()) // Custom authentication provider
+            .addFilterBefore(ipLoggingFilter, UsernamePasswordAuthenticationFilter.class) // Log IPs before auth
             .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
     
         return http.build();
