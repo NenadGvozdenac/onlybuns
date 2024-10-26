@@ -10,6 +10,7 @@ import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 public interface PostServiceInterface {
     public Result<PostDto> likePost(Long postId, String userUsername);
     public Result<List<GetAllPostDto>> getAllPosts();
+    public Result<List<GetAllPostDto>> getMyPosts(String userUsername);
     public Result<String> deletePost(Long postId, String userUsername);
     public Result<PostDto> updatePost(UpdatePostDto updatePostDto, String userUsername);
 }
