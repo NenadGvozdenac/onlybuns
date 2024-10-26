@@ -12,7 +12,8 @@
                         :commentsCount="card.comments.length" 
                         :username="card.username" 
                         :dateOfCreation="card.dateOfCreation"
-                        :usersThatLike="card.users"  
+                        :usersThatLike="card.users" 
+                        :comments="card.comments" 
                     />
                 </div>
             </div>
@@ -28,7 +29,8 @@
                         :commentsCount="card.comments.length"
                         :username="card.username"
                         :dateOfCreation="card.dateOfCreation"
-                        :usersThatLike="card.users"    
+                        :usersThatLike="card.users"
+                        :comments="card.comments"     
                     />
                 </div>
             </div>
@@ -44,7 +46,8 @@
                         :commentsCount="card.comments.length"
                         :username="card.username"
                         :dateOfCreation="card.dateOfCreation"
-                        :usersThatLike="card.users"  
+                        :usersThatLike="card.users"
+                        :comments="card.comments"   
                     />
                 </div>
             </div>

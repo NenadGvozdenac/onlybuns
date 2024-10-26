@@ -32,11 +32,13 @@
                 <div class="d-flex">
                     <!-- Comments -->
                     <div class="d-flex align-items-center me-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" class="me-1 text-secondary">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
+                        <button class="icon-button" @click="showModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" class=" text-secondary">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                        </button>
                         <span>{{ commentsCount }}</span>
                     </div>
 
@@ -59,6 +61,83 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" :id="'commentModal-' + id" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" style="max-width: 1200px; margin-top: 2vh;">
+    <div class="modal-content border-0" style="min-height: 96vh;">
+      <div class="modal-header border-bottom-0 p-2">
+        <h5 class="modal-title text-sm" id="commentModalLabel">Comment on Post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="row g-0">
+          <!-- Left side - Image -->
+          <div class="col-9 bg-black d-flex align-items-center justify-content-center">
+            <img 
+              :src="image" 
+              :alt="`Post image did not load`" 
+              class="w-100 h-100"
+              style="object-fit: contain; max-height: calc(96vh - 56px);"
+            />
+          </div>
+          
+          <!-- Right side - Content -->
+          <div class="col-3 d-flex flex-column" style="height: calc(96vh - 56px);">
+            <!-- User info and date -->
+            <div class="p-3 border-bottom">
+              <h3 class="h6 mb-2 fw-bold text-break">{{ username }}</h3>
+              <div class="d-flex align-items-center text-muted small mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-calendar me-1" viewBox="0 0 16 16">
+                  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                </svg>
+                {{ formattedDate }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-clock ms-2 me-1" viewBox="0 0 16 16">
+                  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                </svg>
+                {{ formattedTime }}
+              </div>
+              <p class="text-muted small mb-0 text-break">{{ truncatedDescription }}</p>
+            </div>
+
+            <!-- Comments section with enhanced scrolling -->
+            <div class="flex-grow-1 overflow-y-auto" style="scrollbar-width: thin;">
+              <div class="comments-section h-100">
+                <h6 class="text-muted small px-3 pt-3 mb-2 sticky-top bg-white">Comments:</h6>
+                <ul class="list-unstyled mb-0">
+                  <li v-for="(comment, index) in comments" :key="index" 
+                      class="border-bottom px-3 py-2 hover-bg-light">
+                    <div class="d-flex" style="gap: 8px;">
+                      <span class="text-muted text-break" style="word-wrap: break-word; min-width: 0;">
+                        {{ comment.comment }}
+                      </span>
+                      <span class="text-muted small flex-shrink-0">@{{ comment.author }}</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Comment input (always visible at bottom) -->
+            <div class="border-top p-3 mt-auto bg-white">
+              <div class="input-group">
+                <input 
+                  type="text" 
+                  class="form-control bg-light border-0 text-break"
+                  placeholder="Add a comment..." 
+                  aria-label="Add a comment"
+                />
+                <button class="btn btn-link text-decoration-none flex-shrink-0">Post</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
@@ -97,6 +176,9 @@ export default {
         },
         usersThatLike: {
             type: Array,
+        },
+        comments: {
+            type: Array
         }
     },
     data() {
@@ -142,7 +224,11 @@ export default {
             } catch (error) {
                 console.error('Error liking post:', error);
             }
-        }
+        },
+        showModal() {
+            const modal = new bootstrap.Modal(document.getElementById(`commentModal-${this.id}`));
+            modal.show();
+        },
     }
 }
 </script>
@@ -161,9 +247,28 @@ border: none; /* Remove border */
 cursor: pointer; /* Change cursor to pointer */
 transition: transform 0.2s, color 0.2s; /* Animation for scale and color */
 }
-
 .icon-button:hover {
     transform: scale(1.1); /* Scale up slightly */
     color: #007bff; /* Change color on hover (you can customize this) */
+}
+.overflow-y-auto::-webkit-scrollbar {
+    width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+.hover-bg-light:hover {
+    background-color: rgba(0,0,0,0.02);
 }
 </style>
