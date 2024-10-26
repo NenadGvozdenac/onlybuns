@@ -24,7 +24,6 @@ class CardService {
                 Authorization: `Bearer ${token}`,
             };
     
-
             // Make the request with headers
             const response = await axios.post(`${API_URL}/${id}/like`, {}, { headers });
     
@@ -36,6 +35,44 @@ class CardService {
         }
     }
     
+    async deletePost(id){
+        try {
+            const token = localStorage.getItem('token');
+        
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+    
+            const response = await axios.delete(`${API_URL}/${id}`, { headers });
+    
+            return response.data; 
+        } catch (error) {
+            console.error(`Error deleting post with ID ${id}:`, error);
+            throw error;
+        }
+    }
+
+    async updatePost(id, description) {
+        try {
+            const token = localStorage.getItem('token');
+        
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+
+            let post = {
+                id: id,
+                description: description
+            }
+            
+            const response = await axios.put(`${API_URL}`, post, { headers });
+    
+            return response.data; 
+        } catch (error) {
+            console.error(`Error updating post with ID ${id}:`, error);
+            throw error;
+        }
+    }
 
 }
 

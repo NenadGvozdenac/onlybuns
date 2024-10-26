@@ -1,5 +1,6 @@
 package com.onlybuns.onlybuns.core.config;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,6 +20,8 @@ public class IpLoggingFilter extends OncePerRequestFilter {
     @Autowired
     private final IpLoggingService ipLogService;
 
+    private List<String> loggingUris = List.of("/auth/login");
+
     public IpLoggingFilter(IpLoggingService ipLogService) {
         this.ipLogService = ipLogService;
     }
@@ -27,9 +30,16 @@ public class IpLoggingFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
                 
-        if ("/auth/login".equals(request.getRequestURI())) {
-            String ipAddress = request.getRemoteAddr();
-            ipLogService.logIpAddress(ipAddress);
+        String uri = request.getRequestURI();
+
+        if (loggingUris.contains(uri)) {
+            ipLogService.logIpAddress(request.getRemoteAddr());
+        }
+
+        // If user has tried to access 5 endpoints in the last minute, block them
+        if (ipLogService.isBlocked(request.getRemoteAddr())) {
+            response.setStatus(429);
+            return;
         }
 
         filterChain.doFilter(request, response);

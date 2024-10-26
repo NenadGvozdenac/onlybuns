@@ -1,0 +1,29 @@
+import axios from 'axios';
+
+const API_URL = 'http://localhost:8080';
+
+class ProfileService {
+    async getProfile() {
+        try {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                throw new Error('No token saved!');
+            }
+
+            const authorization = {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            const response = await axios.get(`${API_URL}/profile`, authorization);
+
+            return response.data;
+        } catch (error) {
+            throw error.response.data;
+        }
+    }
+}
+
+export default new ProfileService();
