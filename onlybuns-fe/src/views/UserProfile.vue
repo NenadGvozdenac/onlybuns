@@ -1,16 +1,11 @@
 <template>
-    <Navbar />
+    <NavbarAuthorized v-if="isLoggedIn()" />
+    <NavbarUnauthorized v-else />
 
     <div class="container mt-4">
         <div class="row">
-            <!-- Left Column: User Details -->
             <div class="col-12">
                 <div class="user-card shadow-lg mt-3">
-                    <div class="d-flex justify-content-end">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                            Update Profile
-                        </button>
-                    </div>
                     <div class="user-card-logo">
                         <img src="https://flowbite.com/docs/images/logo.svg" alt="Twitter Logo" class="h-8 me-2">
                     </div>
@@ -46,14 +41,12 @@
                 </div>
             </div>
 
-
-            <!-- Right Column: User Posts -->
             <div>
                 <div v-if="user.activePosts.length" class="d-flex col-12 gap-3">
                     <div class="row">
                         <div class="col-md-4">
                             <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 0)" :key="index">
-                                <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
+                                <CardComponent :key="card.id" :id="card.id" :image="card.image"
                                     :likesCount="card.numberOfLikes" :description="card.description"
                                     :commentsCount="card.comments.length" :username="user.username"
                                     :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
@@ -63,7 +56,7 @@
 
                         <div class="col-md-4">
                             <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 1)" :key="index">
-                                <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
+                                <CardComponent :key="card.id" :id="card.id" :image="card.image"
                                     :likesCount="card.numberOfLikes" :description="card.description"
                                     :commentsCount="card.comments.length" :username="user.username"
                                     :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
@@ -72,7 +65,7 @@
                         </div>
                         <div class="col-md-4">
                             <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 2)" :key="index">
-                                <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
+                                <CardComponent :key="card.id" :id="card.id" :image="card.image"
                                     :likesCount="card.numberOfLikes" :description="card.description"
                                     :commentsCount="card.comments.length" :username="user.username"
                                     :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
@@ -87,29 +80,24 @@
             </div>
         </div>
     </div>
-
-    <!-- Add the Edit Profile Modal -->
-    <EditProfileModal :userData="user" @update-profile="updateProfile" ref="editProfileModal" />
-
     <Footer />
 </template>
 
 <script>
-
-import Navbar from './Navbar.vue';
-import Footer from '../Unauthorized/Footer.vue';
-import ProfileCardsComponent from '../Cards/ProfileCardsComponent.vue';
-import EditProfileModal from '../Layout/EditProfileModal.vue';
+import NavbarUnauthorized from '@/components/Unauthorized/Navbar.vue';
+import NavbarAuthorized from '@/components/Authorized/Navbar.vue';
+import Footer from '@/components/Unauthorized/Footer.vue';
+import CardComponent from '@/components/Cards/CardComponent.vue';
 
 import ProfileService from '@/services/ProfileService';
 
 export default {
-    name: 'MyProfile',
+    name: 'UserProfile',
     components: {
-        Navbar,
+        NavbarUnauthorized,
+        NavbarAuthorized,
         Footer,
-        ProfileCardsComponent,
-        EditProfileModal
+        CardComponent
     },
     data() {
         return {
@@ -204,32 +192,31 @@ export default {
                         }
                     }
                 ]
-            }
+            },
+
+            username: ""
         }
     },
     mounted() {
+        this.username = this.$route.query.username;
         this.getUser();
     },
     methods: {
         getUser() {
-            ProfileService.getMyProfile()
+            ProfileService.getProfile(this.username)
                 .then(response => {
                     this.user = response;
                 })
-                .catch(error => {
-                    console.log(error);
+                .catch(e => {
+                    let code = e.response.status;
+
+                    if(code === 404) {
+                        this.$router.push('/not-found');
+                    }
                 });
         },
-
-        updateProfile(userData) {
-            ProfileService.updateProfile(userData)
-                .then(response => {
-                    this.getUser();
-                    this.$refs.editProfileModal.closeModal();
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+        isLoggedIn() {
+            return localStorage.getItem('token') !== null;
         }
     }
 }

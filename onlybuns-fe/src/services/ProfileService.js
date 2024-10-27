@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8080';
 
 class ProfileService {
-    async getProfile() {
+    async getMyProfile() {
         try {
             const token = localStorage.getItem('token');
 
@@ -23,6 +23,11 @@ class ProfileService {
         } catch (error) {
             throw error.response.data;
         }
+    }
+
+    async getProfile(username) {
+        const response = await axios.get(`${API_URL}/profile?username=${username}`);
+        return response.data;
     }
 
     async updateProfile(profile) {

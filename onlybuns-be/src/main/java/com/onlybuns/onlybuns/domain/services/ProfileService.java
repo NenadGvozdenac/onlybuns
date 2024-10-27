@@ -62,6 +62,7 @@ public class ProfileService implements ProfileServiceInterface {
                 post.getDateOfCreation(),
                 post.getDescription(),
                 post.getNumberOfLikes(),
+                post.getUser().getUsername(),
                 post.getComments().stream().map(comment -> {
                     CommentDto commentDto = new CommentDto();
                     commentDto.setId(comment.getId());

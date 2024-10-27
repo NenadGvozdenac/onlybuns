@@ -18,6 +18,7 @@ public class PostDto {
     private LocalDateTime dateOfCreation;
     private String description;
     private int numberOfLikes;
+    private String username;
     private List<CommentDto> comments;
     private List<UserDto> users;
 }

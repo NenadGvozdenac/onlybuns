@@ -3,7 +3,7 @@
   <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom">
     <div class="container-fluid">
       <!-- Brand -->
-      <a class="navbar-brand d-flex align-items-center" href="#">
+      <a class="navbar-brand d-flex align-items-center" href="/">
         <img src="https://flowbite.com/docs/images/logo.svg" alt="OnlyBuns Logo" class="h-8 me-2">
         <span class="h5 mb-0">OnlyBuns</span>
       </a>
