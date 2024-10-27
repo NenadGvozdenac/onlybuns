@@ -27,7 +27,7 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <!-- Author Info -->
                 <div class="d-flex align-items-center">
-                    <h2 class="h6 mb-0"># {{ username }}</h2>
+                    <h2 class="h6 mb-0"><a :href="'user-profile?username=' + username"># {{ username }}</a></h2>
                 </div>
 
                 <!-- Interaction Icons -->
@@ -303,6 +303,7 @@ export default {
                 this.likes += 1;
                 this.hasLiked = true;
                 console.log(`Likes count updated to: ${this.likes}`);
+                this.$emit('refresh-page');
             } catch (error) {
                 console.error('Error liking post:', error);
             }
@@ -367,5 +368,14 @@ export default {
 
 .hover-bg-light:hover {
     background-color: rgba(0, 0, 0, 0.02);
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    color: blue;
 }
 </style>

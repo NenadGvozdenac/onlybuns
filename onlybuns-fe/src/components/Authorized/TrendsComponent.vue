@@ -68,10 +68,11 @@
                         :likesCount="post.numberOfLikes"
                         :description="post.description"
                         :commentsCount="post.comments.length"
-                        :username="post.users.length > 0 ? post.users[0].username : 'Anonymous'"
+                        :username="post.username"
                         :dateOfCreation="post.dateOfCreation"
                         :usersThatLike="post.users"
                         :comments="post.comments"
+                                                @refresh-page="refreshPage"
                     />
                 </div>
             </div>
@@ -87,10 +88,11 @@
                         :likesCount="post.numberOfLikes"
                         :description="post.description"
                         :commentsCount="post.comments.length"
-                        :username="post.users.length > 0 ? post.users[0].username : 'Anonymous'"
+                        :username="post.username"
                         :dateOfCreation="post.dateOfCreation"
                         :usersThatLike="post.users"
                         :comments="post.comments"
+                        @refresh-page="refreshPage"
                     />
                 </div>
             </div>
@@ -99,8 +101,8 @@
         <div class="top-users">
             <h5 class="mb-3">Most Active Users</h5>
             <div class="row g-3">
-                <div v-for="(user, index) in trends.usersThatMostLiked" :key="user.username" class="col-md-4">
-                    <div class="card user-card h-100">
+                <div v-for="(user, index) in trends.usersThatMostLiked" :key="user.username" class="col-md-2">
+                    <div class="card user-card">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div class="user-rank me-3">
@@ -131,6 +133,11 @@ export default {
         trends: {
             type: Object,
             required: true
+        }
+    },
+    methods: {
+        refreshPage() {
+            window.location.reload();
         }
     }
 }

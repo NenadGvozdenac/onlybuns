@@ -51,6 +51,7 @@ public class TrendsService implements TrendsServiceInterface {
                     post.getDateOfCreation(),
                     post.getDescription(),
                     post.getNumberOfLikes(),
+                    post.getUser().getUsername(),
                     post.getComments().stream().map(comment -> new CommentDto(comment.getId(), comment.getComment(), comment.getCommentedAt())).collect(Collectors.toList()),
                     post.getUsersThatLiked().stream().map(user -> new UserDto(user.getUsername(), user.getName(), user.getSurname(), user.getEmail(), null)).collect(Collectors.toList())
             )).collect(Collectors.toList()));
@@ -60,6 +61,7 @@ public class TrendsService implements TrendsServiceInterface {
                     post.getDateOfCreation(),
                     post.getDescription(),
                     post.getNumberOfLikes(),
+                    post.getUser().getUsername(),
                     post.getComments().stream().map(comment -> new CommentDto(comment.getId(), comment.getComment(), comment.getCommentedAt())).collect(Collectors.toList()),
                     post.getUsersThatLiked().stream().map(user -> new UserDto(user.getUsername(), user.getName(), user.getSurname(), user.getEmail(), null)).collect(Collectors.toList())
             )).collect(Collectors.toList()));
