@@ -152,7 +152,7 @@ public class UserService extends BaseService implements UserDetailsService, User
         }
 
         // Generate JWT access token
-        String jwtToken = jwtService.generateToken(user.getUsername());
+        String jwtToken = jwtService.generateToken(user.getUsername(), user.getRole().toString());
 
         // Create a UserLoginDto object to return
         UserLoginDto userLoginDto = new UserLoginDto();
