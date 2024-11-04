@@ -1,6 +1,4 @@
-import express, { Request, Response } from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+import express from 'express';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -23,7 +21,7 @@ mongoose
   });
 
 // Basic route for testing
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (req, res) => {
   res.send('Hello, Vets and Pets API is running!');
 });
 

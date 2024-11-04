@@ -4,20 +4,17 @@ FROM node:20
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json files
+# Copy package.json and package-lock.json files to install dependencies
 COPY package*.json ./
 
-# Install dependencies
+# Install all dependencies, including devDependencies, for building the app
 RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Install TypeScript globally and build the application
-RUN npm install -g typescript && npm run build
-
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Set the command to start the server
-CMD ["npm", "run", "dev"]
+# Set the command to start the server using the built JavaScript files
+CMD ["npm", "start"]
