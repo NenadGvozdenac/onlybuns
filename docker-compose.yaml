@@ -68,8 +68,6 @@ services:
     environment:
       MONGO_URI: ${MONGO_URI}
       PORT: ${VETS_AND_PETS_BE_PORT}
-    volumes:
-      - './vets-and-pets-be:/app'
     depends_on:
       - mongodb
     networks:

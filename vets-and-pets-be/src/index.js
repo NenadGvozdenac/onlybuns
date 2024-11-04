@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
@@ -12,7 +12,7 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/test';
 // Middleware for parsing JSON
 app.use(express.json());
 
-// Connect to MongoDB
+// Connect to MongoDB with updated options
 mongoose
   .connect(MONGO_URI)
   .then(() => {
@@ -23,7 +23,7 @@ mongoose
   });
 
 // Basic route for testing
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (req, res) => {
   res.send('Hello, Vets and Pets API is running!');
 });
 

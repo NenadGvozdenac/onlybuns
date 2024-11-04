@@ -1,23 +1,20 @@
 # Use the official Node.js image as a base
-FROM node:20
+FROM node:18
 
-# Set the working directory inside the container
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json files
+# Copy the package.json and package-lock.json to install dependencies
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Copy the rest of the application code to the container
 COPY . .
 
-# Install TypeScript globally and build the application
-RUN npm install -g typescript && npm run build
-
-# Expose the port the app runs on
+# Expose the port your app will run on
 EXPOSE 3000
 
-# Set the command to start the server
-CMD ["npm", "run", "dev"]
+# Start the application
+CMD ["npm", "start"]
