@@ -18,6 +18,23 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto mb-2 mb-md-0">
 
+
+          <!-- Dropdown menu admin -->
+          <li v-if="userRole() == 'ADMIN'" class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Admin
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="#">Create Post</a></li>
+              <li><a class="dropdown-item" href="/trends">Trends</a></li>
+            </ul>
+          </li>
+
           <!-- Dropdown menu -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
@@ -56,6 +73,9 @@ export default {
   methods: {
     userNotLoggedIn() {
       return !AuthService.isLoggedIn()
+    },
+    userRole() {
+      return AuthService.getLoggedInUserRole()
     },
     logout() {
       AuthService.logout();
