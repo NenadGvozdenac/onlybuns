@@ -1,4 +1,3 @@
-// Code for starting the server and connecting to MongoDB
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -13,7 +12,7 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/test';
 // Middleware for parsing JSON
 app.use(express.json());
 
-// Connect to MongoDB
+// Connect to MongoDB with updated options
 mongoose
   .connect(MONGO_URI)
   .then(() => {
