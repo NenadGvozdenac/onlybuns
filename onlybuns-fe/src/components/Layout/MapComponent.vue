@@ -1,6 +1,6 @@
 <template>
     <div style="height: 100%;">
-        <div class="map" ref="mapContainer" style="width: 35rem; height: 80%;"></div>
+        <div class="map" ref="mapContainer" style="width: 100%; height: 100%;"></div>
         <div v-if="locationInfo" class="location-info">
             {{ locationInfo.street }}, {{ locationInfo.number }}, {{ locationInfo.city }}, {{ locationInfo.country }}
         </div>

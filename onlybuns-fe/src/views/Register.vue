@@ -1,47 +1,123 @@
 <template>
-    <div class="wrapper">
-        <div class="logo">
-            <img src="https://flowbite.com/docs/images/logo.svg" alt="Twitter Logo" class="h-8 me-2">
-        </div>
-        <div class="text-center mt-4 name">
-            Register
-        </div>
-        <form class="mt-3 d-flex justify-content-center gap-5" @submit.prevent="handleRegister">
-            <!-- General Information Section -->
-            <fieldset class="form-section">
-                <legend>General Information</legend>
-                <div class="form-field d-flex align-items-center">
-                    <input type="text" v-model="name" placeholder="Name" required>
-                </div>
-                <div class="form-field d-flex align-items-center">
-                    <input type="text" v-model="surname" placeholder="Surname" required>
-                </div>
-                <div class="form-field d-flex align-items-center">
-                    <input type="text" v-model="username" placeholder="Username" required>
-                </div>
-                <div class="form-field d-flex align-items-center">
-                    <input type="email" v-model="email" placeholder="Email" required>
-                </div>
-                <div class="form-field d-flex align-items-center">
-                    <input type="password" v-model="password" placeholder="Password" required>
-                </div>
-                <div class="form-field d-flex align-items-center">
-                    <input type="password" v-model="confirmPassword" placeholder="Confirm Password" required>
-                </div>
-            </fieldset>
+    <div class="register-container min-vh-100 d-flex align-items-center py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-4 p-lg-5">
+                            <!-- Header -->
+                            <div class="text-center mb-4">
+                                <div class="logo-wrapper mb-4">
+                                    <img src="https://flowbite.com/docs/images/logo.svg" alt="Logo" class="logo-img">
+                                </div>
+                                <h2 class="fw-bold text-primary mb-2">Create your account</h2>
+                                <p class="text-muted">Fill in your details to get started</p>
+                            </div>
 
-            <!-- Address Information Section -->
-            <div class="form-section">
-                <legend>Location</legend>
-                <MapComponent @location-updated="updateLocationInfo" />
+                            <form @submit.prevent="handleRegister" class="needs-validation" novalidate>
+                                <div class="row g-4">
+                                    <!-- Left Column -->
+                                    <div class="col-12 col-md-6 border-end">
+                                        <h5 class="card-title mb-4">Personal Information</h5>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Name</label>
+                                            <input type="text" class="form-control form-control-lg" v-model="name"
+                                                placeholder="Enter your name" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Surname</label>
+                                            <input type="text" class="form-control form-control-lg" v-model="surname"
+                                                placeholder="Enter your surname" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Username</label>
+                                            <input type="text" class="form-control form-control-lg" v-model="username"
+                                                placeholder="Choose a username" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" 
+                                                class="form-control form-control-lg" 
+                                                :class="{ 'is-invalid': isEmailTouched && !isValidEmail }"
+                                                v-model="email"
+                                                @blur="emailTouched"
+                                                placeholder="Enter your email" 
+                                                required>
+                                            <div class="invalid-feedback">
+                                                Please enter a valid email address
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Password</label>
+                                            <input type="password" 
+                                                class="form-control form-control-lg"
+                                                :class="{ 'is-invalid': isPasswordTouched && !doPasswordsMatch }"
+                                                v-model="password" 
+                                                @blur="passwordTouched"
+                                                placeholder="Create a password" 
+                                                required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Confirm Password</label>
+                                            <input type="password" 
+                                                class="form-control form-control-lg"
+                                                :class="{ 'is-invalid': isPasswordTouched && !doPasswordsMatch }"
+                                                v-model="confirmPassword" 
+                                                @blur="passwordTouched"
+                                                placeholder="Confirm your password" 
+                                                required>
+                                            <div class="invalid-feedback">
+                                                Passwords do not match
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Column -->
+                                    <div class="col-12 col-md-6">
+                                        <h5 class="card-title mb-4">Location</h5>
+                                        <div class="map-container rounded overflow-hidden mb-3">
+                                            <MapComponent @location-updated="updateLocationInfo" />
+                                        </div>
+
+                                        <!-- Location Details -->
+                                        <div class="location-details p-3 bg-light rounded">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                                                <span class="text-muted">Selected Location:</span>
+                                            </div>
+                                            <p class="mb-1"><small>{{ address.street }} {{ address.number }}</small></p>
+                                            <p class="mb-1"><small>{{ address.city }}, {{ address.country }}</small></p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Submit Button -->
+                                    <div class="col-12 text-center mt-4">
+                                        <button type="submit" class="btn btn-primary btn-lg px-5"
+                                            :disabled="isButtonDisabled()">
+                                            Create Account
+                                        </button>
+                                        <p class="mt-4 mb-0">
+                                            Already have an account?
+                                            <router-link to="/login" class="text-primary text-decoration-none">Sign
+                                                in</router-link>
+                                        </p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
-        <button class="btn mt-3" type="submit" @click="handleRegister()">Register</button>
-        <div class="text-center fs-6">
-            <a href="/login">Already have an account? Login</a>
         </div>
     </div>
 
+    <!-- Modal Component -->
     <Modal :show="showModal" :title="modalTitle" :message="modalMessage" @close="handleModalClose" />
 </template>
 
@@ -75,12 +151,30 @@ export default {
             showModal: false,
             modalTitle: '',
             modalMessage: '',
-            successfulRegistration: false
+            successfulRegistration: false,
+            registrationSent: false,
+            isEmailTouched: false,
+            isPasswordTouched: false
         };
     },
+    computed: {
+        isValidEmail() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(this.email);
+        },
+        doPasswordsMatch() {
+            return this.password === this.confirmPassword && this.password !== '';
+        }
+    },
     methods: {
+        emailTouched() {
+            this.isEmailTouched = true;
+        },
+        passwordTouched() {
+            this.isPasswordTouched = true;
+        },
         async handleRegister() {
-            if (this.password !== this.confirmPassword) {
+            if (!this.doPasswordsMatch) {
                 this.showModal = true;
                 this.modalTitle = "Error";
                 this.modalMessage = "Passwords do not match!";
@@ -97,6 +191,8 @@ export default {
                 address: this.address
             };
 
+            this.registrationSent = true;
+
             try {
                 const response = await axios.post('http://localhost:8080/auth/register', data);
 
@@ -112,7 +208,6 @@ export default {
                 this.modalTitle = "Error";
                 this.modalMessage = "Something went wrong! Please check your credentials.";
 
-                // If code is 409, email or username already exists
                 if (error.response.status === 409) {
                     this.modalMessage = "Email or username already exists!";
                 }
@@ -124,6 +219,13 @@ export default {
             if (this.successfulRegistration) {
                 this.$router.push('/login');
             }
+        },
+        isButtonDisabled() {
+            return !this.name || !this.surname || !this.username || !this.isValidEmail 
+                || !this.password || !this.confirmPassword || !this.address.street 
+                || !this.address.city || !this.address.number || !this.address.country 
+                || !this.doPasswordsMatch
+                || this.registrationSent;
         },
         updateLocationInfo(locationInfo) {
             this.address.street = locationInfo.street;
@@ -140,118 +242,82 @@ export default {
 </script>
 
 <style scoped>
-/* Importing fonts from Google */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
-/* Reseting */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+.register-container {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
-body {
-    background: #ecf0f3;
+.card {
+    border-radius: 1rem;
 }
 
-.wrapper {
-    max-width: 1000px;
-    min-height: 600px;
-    /* Increased height for more fields */
-    margin: 80px auto;
-    padding: 40px 30px 30px 30px;
-    background-color: #ecf0f3;
-    border-radius: 15px;
-    box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #fff;
-}
-
-.logo {
+.logo-wrapper {
     width: 80px;
-    margin: auto;
-}
-
-.logo img {
-    width: 100%;
     height: 80px;
-    object-fit: cover;
+    margin: 0 auto;
+    padding: 15px;
+    background: white;
     border-radius: 50%;
-    box-shadow: 0px 0px 3px #5f5f5f,
-        0px 0px 0px 5px #ecf0f3,
-        8px 8px 15px #a7aaa7,
-        -8px -8px 15px #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.wrapper .name {
-    font-weight: 600;
-    font-size: 1.4rem;
-    letter-spacing: 1.3px;
-    padding-left: 10px;
-    color: #555;
-}
-
-.form-section {
-    margin-bottom: 20px;
-    /* Spacing between sections */
-    padding: 10px;
-    /* Padding inside the section */
-    border-radius: 10px;
-    /* Rounded corners */
-}
-
-.wrapper .form-field input {
+.logo-img {
     width: 100%;
-    display: block;
-    border: none;
-    outline: none;
-    background: none;
-    font-size: 1.2rem;
-    color: #666;
-    padding: 10px 15px 10px 10px;
+    height: 100%;
+    object-fit: contain;
 }
 
-.wrapper .form-field {
-    padding-left: 10px;
-    margin-bottom: 20px;
-    border-radius: 20px;
-    box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #fff;
+.map-container {
+    height: 470px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
 }
 
-.wrapper .form-field .fas,
-.wrapper .form-field .far {
-    color: #555;
+.form-control {
+    border-radius: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease-in-out;
 }
 
-.wrapper .btn {
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
     box-shadow: none;
-    width: 100%;
-    height: 40px;
-    background-color: #03A9F4;
-    color: #fff;
-    border-radius: 25px;
-    box-shadow: 3px 3px 3px #b1b1b1,
-        -3px -3px 3px #fff;
-    letter-spacing: 1.3px;
 }
 
-.wrapper .btn:hover {
-    background-color: #039BE5;
+.form-control.is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
 }
 
-.wrapper a {
-    text-decoration: none;
-    font-size: 0.8rem;
-    color: #03A9F4;
+.btn-primary {
+    border-radius: 0.75rem;
+    padding: 0.75rem 2rem;
+    transition: all 0.2s ease-in-out;
 }
 
-.wrapper a:hover {
-    color: #039BE5;
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-@media(max-width: 380px) {
-    .wrapper {
-        margin: 30px 20px;
-        padding: 40px 15px 15px 15px;
+.location-details {
+    border: 1px solid #dee2e6;
+    height: 7.5rem;
+}
+
+@media (max-width: 767.98px) {
+    .card-body {
+        padding: 2rem !important;
+    }
+
+    .border-end {
+        border-right: none !important;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 2rem;
+        margin-bottom: 2rem;
     }
 }
 </style>
