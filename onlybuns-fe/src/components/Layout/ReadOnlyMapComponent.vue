@@ -1,8 +1,14 @@
 <template>
     <div style="height: 92vh; position: relative;">
         <div class="map" ref="mapContainer" style="width: 100%; height: 100%; padding: 1rem;"></div>
-        <!-- Button to recenter the map -->
         <button @click="recenterMap" class="recenter-button">Recenter Map</button>
+
+        <Transition name="fade">
+            <div v-if="popupVisible" class="popup" :style="{ left: popupPosition[0] + 'px', top: popupPosition[1] + 'px' }">
+                <h4>{{ popupData.username }}</h4>
+                <p>{{ popupData.description }}</p>
+            </div>
+        </Transition>
     </div>
 </template>
 
@@ -21,7 +27,7 @@ import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
 
 import ProfileService from '@/services/ProfileService';
-import CardService from '@/services/CardService';
+import PostService from '@/services/PostService';
 
 export default {
     name: 'ReadOnlyMapComponent',
@@ -33,6 +39,9 @@ export default {
                 longitude: 0,
                 latitude: 0,
             },
+            popupVisible: false,               // Track popup visibility
+            popupData: {},                     // Data to display in the popup
+            popupPosition: { x: 0, y: 0 },     // Position of the popup
             vectorSource: new VectorSource() // Source to hold all markers
         };
     },
@@ -50,12 +59,10 @@ export default {
     methods: {
         async findMyLocation() {
             await ProfileService.getMyProfile().then((response) => {
-                console.log('My location:', response.address);
                 this.myLocation = response.address;
             });
 
-            await CardService.fetchPosts().then((response) => {
-                console.log('Posts locations: ', response);
+            await PostService.getPostsNearby(this.myLocation.latitude, this.myLocation.longitude).then((response) => {
                 this.posts = response;
             });
         },
@@ -82,6 +89,11 @@ export default {
             // Add marker at myLocation
             const myLocationMarker = new Feature({
                 geometry: new Point(centerCoordinates),
+                data: {  // Store relevant data in the feature
+                    username: 'My Location',
+                    description: 'This is where you are',
+                    isHouse: true
+                }
             });
 
             myLocationMarker.setStyle(
@@ -95,6 +107,18 @@ export default {
             );
 
             this.vectorSource.addFeature(myLocationMarker); // Add my location marker to vector source
+
+            // Add pointermove event to handle hover effects
+            this.map.on('pointermove', (event) => {
+                const feature = this.map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+                // Show popup if its not house
+
+                if (feature && !feature.get('data').isHouse) {
+                    this.showPopup(feature.get('data'), event.pixel);
+                } else {
+                    this.hidePopup();
+                }
+            });
         },
         addPostPins() {
             // Loop through posts and add a marker for each post address
@@ -104,6 +128,11 @@ export default {
 
                     const postMarker = new Feature({
                         geometry: new Point(postCoordinates),
+                        data: {  // Store relevant data in the feature
+                            username: post.username,
+                            description: post.description,
+                            isHouse: false
+                        }
                     });
 
                     // Set pin style to use pin.png
@@ -128,6 +157,18 @@ export default {
                 duration: 500,
             });
         },
+        showPopup(post, coordinates) {
+            // Set popup data and position
+            this.popupData = {
+                username: post.username,
+                description: post.description,
+            };
+            this.popupPosition = this.map.getCoordinateFromPixel(this.map.getPixelFromCoordinate(coordinates));
+            this.popupVisible = true;
+        },
+        hidePopup() {
+            this.popupVisible = false;
+        },
     },
 };
 </script>
@@ -149,5 +190,39 @@ export default {
 
 .recenter-button:hover {
     background-color: #0056b3;
+}
+
+.popup h4 {
+    font: 18px/1.4 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.popup {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    max-width: 20rem;
+    cursor: default;
+    font: 14px/1.4 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    user-select: none;
+}
+
+.fade-enter-active {
+    transition: opacity 0.5s;
+}
+
+.fade-leave-active {
+    transition: opacity 1.5s;
+}
+
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-to, .fade-leave-from {
+    opacity: 1;
 }
 </style>
