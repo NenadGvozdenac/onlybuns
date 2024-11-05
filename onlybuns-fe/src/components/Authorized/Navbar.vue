@@ -26,12 +26,7 @@
               Admin
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="/profile">My Profile</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" href="#">Create Post</a></li>
-              <li><a class="dropdown-item" href="/trends">Trends</a></li>
+              <li><a class="dropdown-item" href="/registeredProfiles">Registered profiles</a></li>
             </ul>
           </li>
 

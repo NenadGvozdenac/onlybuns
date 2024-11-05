@@ -1,5 +1,7 @@
 package com.onlybuns.onlybuns.presentation.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +51,16 @@ public class ProfileController extends BaseController {
     @PutMapping
     public ResponseEntity<ProfileDto> updateProfile(@RequestBody UpdateProfileDto updateProfileDto) {
         var result = profileService.updateProfile(getLoggedInUsername(), updateProfileDto);
+        return createResponse(result);
+    }
+
+    @Operation(summary = "Get verified profiles", 
+               description = "This endpoint allows for the retrieval of all verified profiles.")
+    @ApiResponse(responseCode = "200", description = "Verified profiles retrieved successfully")
+    @ApiResponse(responseCode = "401", description = "Unathorized")
+    @GetMapping("/verifiedProfiles")
+    public ResponseEntity<List<ProfileDto>> getVerifiedProfiles() {
+        var result = profileService.getVerifiedProfiles(getLoggedInUsername());
         return createResponse(result);
     }
 }

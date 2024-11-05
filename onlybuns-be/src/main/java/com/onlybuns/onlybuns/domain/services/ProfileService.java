@@ -1,5 +1,7 @@
 package com.onlybuns.onlybuns.domain.services;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.onlybuns.onlybuns.core.misc.Result;
+import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.ProfileServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
@@ -18,6 +21,7 @@ import com.onlybuns.onlybuns.presentation.dtos.responses.ProfileDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
 
 import jakarta.transaction.Transactional;
+import lombok.experimental.var;
 
 @Service
 public class ProfileService implements ProfileServiceInterface {
@@ -153,4 +157,90 @@ public class ProfileService implements ProfileServiceInterface {
 
         return getProfile(username);
     }
+
+    @Override
+    public Result<List<ProfileDto>> getVerifiedProfiles(String username) {
+        
+        if (userRepository.findByUsername(username).get().getRole().toString() != "ADMIN") {
+            return Result.failure("Unauthorized access.", 401);           
+        }
+
+        // Retrieve all verified users
+        List<User> verifiedUsers = userRepository.findByVerifiedTrue();
+    
+        // Check if there are any verified users; if not, return failure result
+        if (verifiedUsers.isEmpty()) {
+            return Result.failure("No verified users found.", 404);
+        }
+    
+        // Map each verified user to a ProfileDto
+        List<ProfileDto> profiles = verifiedUsers.stream().map(user -> {
+            // Create a new ProfileDto for each user
+            ProfileDto profile = new ProfileDto();
+            profile.setUsername(user.getUsername());
+            profile.setName(user.getName());
+            profile.setSurname(user.getSurname());
+            profile.setEmail(user.getEmail());
+    
+            // Set the address
+            profile.setAddress(new AddressDto(
+                    user.getAddress().getStreet(),
+                    user.getAddress().getNumber(),
+                    user.getAddress().getCity(),
+                    user.getAddress().getCountry(),
+                    user.getAddress().getLatitude(),
+                    user.getAddress().getLongitude()
+            ));
+    
+            // Set active posts
+            profile.setActivePosts(user.getPosts().stream().map(post -> 
+            new PostDto(
+                post.getId(),
+                null, // Skip setting ImageDto by using null
+                post.getDateOfCreation(),
+                post.getDescription(),
+                post.getNumberOfLikes(),
+                post.getUser().getUsername(),
+                Collections.emptyList(), // Set comments as an empty list
+                Collections.emptyList()  // Set usersThatLiked as an empty list (if needed)
+            )
+        ).collect(Collectors.toList()));
+    
+            // Set following users
+            profile.setFollowing(user.getFollowing().stream().map(followingUser -> 
+                new UserDto(
+                    followingUser.getUsername(),
+                    followingUser.getName(),
+                    followingUser.getSurname(),
+                    followingUser.getEmail(),
+                    new AddressDto(
+                        followingUser.getAddress().getStreet(),
+                        followingUser.getAddress().getNumber(),
+                        followingUser.getAddress().getCity(),
+                        followingUser.getAddress().getCountry(),
+                        followingUser.getAddress().getLatitude(),
+                        followingUser.getAddress().getLongitude()
+                    )
+                )
+            ).collect(Collectors.toList()));
+    
+            // Set followers
+            profile.setFollowers(user.getFollowers().stream().map(follower -> 
+                new UserDto(
+                    follower.getUsername(),
+                    follower.getName(),
+                    follower.getSurname(),
+                    follower.getEmail(),
+                    null
+                )
+            ).collect(Collectors.toList()));
+    
+            return profile;
+        }).collect(Collectors.toList());
+    
+        // Return the list of profiles as a success result
+        return Result.success(profiles);
+    }
+    
+
 }
