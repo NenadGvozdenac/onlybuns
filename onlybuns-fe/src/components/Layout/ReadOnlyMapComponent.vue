@@ -3,10 +3,12 @@
         <div class="map" ref="mapContainer" style="width: 100%; height: 100%; padding: 1rem;"></div>
         <button @click="recenterMap" class="recenter-button">Recenter Map</button>
 
-        <div v-if="popupVisible" class="popup" :style="{ left: popupPosition[0] + 'px', top: popupPosition[1] + 'px' }">
-            <h4>{{ popupData.username }}</h4>
-            <p>{{ popupData.description }}</p>
-        </div>
+        <Transition name="fade">
+            <div v-if="popupVisible" class="popup" :style="{ left: popupPosition[0] + 'px', top: popupPosition[1] + 'px' }">
+                <h4>{{ popupData.username }}</h4>
+                <p>{{ popupData.description }}</p>
+            </div>
+        </Transition>
     </div>
 </template>
 
@@ -161,7 +163,6 @@ export default {
                 username: post.username,
                 description: post.description,
             };
-            console.log('Popup data:', this.popupData);
             this.popupPosition = this.map.getCoordinateFromPixel(this.map.getPixelFromCoordinate(coordinates));
             this.popupVisible = true;
         },
@@ -207,5 +208,21 @@ export default {
     cursor: default;
     font: 14px/1.4 'Helvetica Neue', Arial, Helvetica, sans-serif;
     user-select: none;
+}
+
+.fade-enter-active {
+    transition: opacity 0.5s;
+}
+
+.fade-leave-active {
+    transition: opacity 1.5s;
+}
+
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-to, .fade-leave-from {
+    opacity: 1;
 }
 </style>
