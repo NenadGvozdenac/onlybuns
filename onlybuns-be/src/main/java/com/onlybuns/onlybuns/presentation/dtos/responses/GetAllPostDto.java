@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,4 +25,5 @@ public class GetAllPostDto {
     private int numberOfLikes;
     private String username;
     private List<UserDto> users;
+    private AddressDto address;
 }

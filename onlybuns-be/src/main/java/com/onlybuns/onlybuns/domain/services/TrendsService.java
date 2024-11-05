@@ -9,6 +9,7 @@ import com.onlybuns.onlybuns.domain.serviceinterfaces.TrendsServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.infrastructure.repositories.PostRepository;
+import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.CommentDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.ImageDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
@@ -52,6 +53,12 @@ public class TrendsService implements TrendsServiceInterface {
                     post.getDescription(),
                     post.getNumberOfLikes(),
                     post.getUser().getUsername(),
+                    new AddressDto(post.getUser().getAddress().getStreet(),
+                        post.getUser().getAddress().getNumber(),
+                        post.getUser().getAddress().getCity(),
+                        post.getUser().getAddress().getCountry(),
+                        post.getUser().getAddress().getLatitude(),
+                        post.getUser().getAddress().getLongitude()),
                     post.getComments().stream().map(comment -> new CommentDto(comment.getId(), comment.getComment(), comment.getCommentedAt())).collect(Collectors.toList()),
                     post.getUsersThatLiked().stream().map(user -> new UserDto(user.getUsername(), user.getName(), user.getSurname(), user.getEmail(), null)).collect(Collectors.toList())
             )).collect(Collectors.toList()));
@@ -62,6 +69,12 @@ public class TrendsService implements TrendsServiceInterface {
                     post.getDescription(),
                     post.getNumberOfLikes(),
                     post.getUser().getUsername(),
+                        new AddressDto(post.getUser().getAddress().getStreet(),
+                        post.getUser().getAddress().getNumber(),
+                        post.getUser().getAddress().getCity(),
+                        post.getUser().getAddress().getCountry(),
+                        post.getUser().getAddress().getLatitude(),
+                        post.getUser().getAddress().getLongitude()),
                     post.getComments().stream().map(comment -> new CommentDto(comment.getId(), comment.getComment(), comment.getCommentedAt())).collect(Collectors.toList()),
                     post.getUsersThatLiked().stream().map(user -> new UserDto(user.getUsername(), user.getName(), user.getSurname(), user.getEmail(), null)).collect(Collectors.toList())
             )).collect(Collectors.toList()));
