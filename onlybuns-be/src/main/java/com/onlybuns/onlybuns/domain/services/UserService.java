@@ -89,6 +89,8 @@ public class UserService extends BaseService implements UserDetailsService, User
             address.setCountry(addressDto.getCountry());
             address.setStreet(addressDto.getStreet());
             address.setNumber(addressDto.getNumber());
+            address.setLatitude(addressDto.getLatitude());
+            address.setLongitude(addressDto.getLongitude());
 
             address = addressRepository.save(address);
 

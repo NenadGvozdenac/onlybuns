@@ -31,39 +31,30 @@
             </fieldset>
 
             <!-- Address Information Section -->
-            <fieldset class="form-section">
-                <legend>Address Information</legend>
-                <div class="form-field d-flex align-items-center">
-                    <input type="text" v-model="address.street" placeholder="Street" required>
-                </div>
-                <div class="form-field d-flex align-items-center">
-                    <input type="number" v-model="address.number" placeholder="Number" required>
-                </div>
-                <div class="form-field d-flex align-items-center">
-                    <input type="text" v-model="address.city" placeholder="City" required>
-                </div>
-                <div class="form-field d-flex align-items-center">
-                    <input type="text" v-model="address.country" placeholder="Country" required>
-                </div>
-            </fieldset>
+            <div class="form-section">
+                <legend>Location</legend>
+                <MapComponent @location-updated="updateLocationInfo" />
+            </div>
         </form>
         <button class="btn mt-3" type="submit" @click="handleRegister()">Register</button>
         <div class="text-center fs-6">
             <a href="/login">Already have an account? Login</a>
         </div>
     </div>
-    
+
     <Modal :show="showModal" :title="modalTitle" :message="modalMessage" @close="handleModalClose" />
 </template>
 
 <script>
+import MapComponent from '@/components/Layout/MapComponent.vue';
 import Modal from '@/components/Layout/Modal.vue';
 import axios from 'axios';
 
 export default {
     name: 'Register',
     components: {
-        Modal
+        Modal,
+        MapComponent
     },
     data() {
         return {
@@ -77,7 +68,9 @@ export default {
                 street: '',
                 city: '',
                 number: '',
-                country: ''
+                country: '',
+                longitude: 0,
+                latitude: 0
             },
             showModal: false,
             modalTitle: '',
@@ -131,7 +124,17 @@ export default {
             if (this.successfulRegistration) {
                 this.$router.push('/login');
             }
-        }
+        },
+        updateLocationInfo(locationInfo) {
+            this.address.street = locationInfo.street;
+            this.address.number = locationInfo.number;
+            this.address.city = locationInfo.city;
+            this.address.country = locationInfo.country;
+            this.address.longitude = locationInfo.longitude;
+            this.address.latitude = locationInfo.latitude;
+
+            console.log("Location info updated:", this.address);
+        },
     }
 }
 </script>
@@ -153,7 +156,7 @@ body {
 }
 
 .wrapper {
-    max-width: 700px;
+    max-width: 1000px;
     min-height: 600px;
     /* Increased height for more fields */
     margin: 80px auto;

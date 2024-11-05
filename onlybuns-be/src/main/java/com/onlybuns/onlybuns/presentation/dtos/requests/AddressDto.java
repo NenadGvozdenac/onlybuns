@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddressDto {
     private String street;
-    private Integer number;
+    private String number;
     private String city;
     private String country;
+    private Double longitude;
+    private Double latitude;
 }
