@@ -18,6 +18,7 @@ import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.CommentDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.GetAllPostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.ImageDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.PostAndLocationDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
 
@@ -247,4 +248,44 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     }
 
+    @Override
+    public Result<List<PostAndLocationDto>> getNearbyPosts(double latitude, double longitude, Double radius_km) {
+        var allPosts = postRepositoryjpa.findAll();
+    
+        List<PostAndLocationDto> nearbyPosts = allPosts.stream()
+            .filter(post -> {
+                var postLatitude = post.getLocation().getLatitude();
+                var postLongitude = post.getLocation().getLongitude();
+                
+                // Haversine formula to calculate distance between two points on the Earth
+                final int R = 6371; // Radius of the Earth in kilometers
+                double latDistance = Math.toRadians(postLatitude - latitude);
+                double lonDistance = Math.toRadians(postLongitude - longitude);
+                double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
+                           Math.cos(Math.toRadians(latitude)) * Math.cos(Math.toRadians(postLatitude)) *
+                           Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                double distance = R * c; // Distance in kilometers
+    
+                return distance <= radius_km;
+            })
+            .map(post -> {
+                PostAndLocationDto postAndLocationDto = new PostAndLocationDto();
+                postAndLocationDto.setId(post.getId());
+                postAndLocationDto.setDescription(post.getDescription());
+                postAndLocationDto.setUsername(post.getUser().getUsername());
+                var imageDto = new ImageDto(post.getImage().getData(), post.getImage().getMimetype(), post.getImage().getUploadedAt());
+                postAndLocationDto.setImage(imageDto);
+                postAndLocationDto.setAddress(new AddressDto(post.getLocation().getStreet(), 
+                    post.getLocation().getNumber(), 
+                    post.getLocation().getCity(),
+                    post.getLocation().getCountry(),
+                    post.getLocation().getLongitude(),
+                    post.getLocation().getLatitude()));
+                return postAndLocationDto;
+            })
+            .collect(Collectors.toList());
+    
+        return Result.success(nearbyPosts);
+    }    
 }
