@@ -68,6 +68,10 @@ services:
     environment:
       MONGO_URI: ${MONGO_URI}
       PORT: ${VETS_AND_PETS_BE_PORT}
+    volumes:
+      - './vets-and-pets-be:/app'    # Mounts the code to the container for hot-reload
+      - '/app/node_modules'          # Avoids conflicts with host node_modules
+    command: npm run dev             # Uses the dev script to start nodemon
     depends_on:
       - mongodb
     networks:

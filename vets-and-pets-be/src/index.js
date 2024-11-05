@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
+import vet_controller from './controllers/vet_controller.js';
+
 // Load environment variables from .env file
 dotenv.config();
 
@@ -23,8 +25,24 @@ mongoose
   });
 
 // Basic route for testing
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send('Hello, Vets and Pets API is running!');
+});
+
+app.post('/api/vets', (req, res) => {
+  vet_controller.addVet(req, res);
+});
+
+app.get('/api/vets', (req, res) => {
+  vet_controller.getVets(req, res);
+});
+
+app.get('/api/vets/:id', (req, res) => {
+  vet_controller.getVetById(req, res);
+});
+
+app.delete('/api/vets', (req, res) => {
+  vet_controller.deleteAllVets(req, res);
 });
 
 // Start the server
