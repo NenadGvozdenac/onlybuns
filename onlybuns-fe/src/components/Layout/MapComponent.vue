@@ -28,15 +28,23 @@ export default {
             markerCoordinates: null, // Store the coordinates of the marker
             vectorSource: new VectorSource(), // Source for vector layer
             marker: null, // Reference to the marker feature
+            map: null, // Store the map instance
         };
     },
     mounted() {
         // Initialize the map when the component is mounted
         this.initMap();
     },
+    beforeDestroy() {
+        // Clean up resources when the component is destroyed
+        if (this.map) {
+            // Remove any click event listener
+            this.map.un('click', this.handleMapClick);
+        }
+    },
     methods: {
         initMap() {
-            const map = new Map({
+            this.map = new Map({
                 target: this.$refs.mapContainer,
                 layers: [
                     new TileLayer({
@@ -55,11 +63,14 @@ export default {
             // Set cursor to point when hovering over the map
             this.$refs.mapContainer.style.cursor = 'pointer';
 
-            // Add a click event listener to the map
-            map.on('click', (event) => {
+            // Store the click event handler for cleanup
+            this.handleMapClick = (event) => {
                 this.addMarker(event.coordinate);
                 this.getLocationInfo(event.coordinate); // Get location info on click
-            });
+            };
+
+            // Add a click event listener to the map
+            this.map.on('click', this.handleMapClick);
         },
         addMarker(coordinate) {
             // Convert the coordinate to lon/lat
@@ -75,11 +86,11 @@ export default {
                     geometry: new Point(coordinate),
                 });
 
-                // Set the marker style with a Home icon
+                // Set the marker style with a Pin icon
                 this.marker.setStyle(new Style({
                     image: new Icon({
-                        src: 'https://cdn-icons-png.flaticon.com/512/25/25338.png',
-                        scale: 0.04, // Adjust the scale as needed
+                        src: '/pin.png',
+                        scale: 0.20,
                     }),
                 }));
 
