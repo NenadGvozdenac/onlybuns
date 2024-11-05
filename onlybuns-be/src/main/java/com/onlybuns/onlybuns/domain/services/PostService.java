@@ -13,6 +13,7 @@ import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
+import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.CommentDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.GetAllPostDto;
@@ -91,6 +92,13 @@ public class PostService extends BaseService implements PostServiceInterface {
                     postDto.setUsername(post.getUser().getUsername());
                     var imageDto = new ImageDto(post.getImage().getData(), post.getImage().getMimetype(),post.getImage().getUploadedAt());
                     postDto.setImage(imageDto);
+
+                    postDto.setAddress(new AddressDto(post.getLocation().getStreet(), 
+                        post.getLocation().getNumber(), 
+                        post.getLocation().getCity(),
+                        post.getLocation().getCountry(),
+                        post.getLocation().getLongitude(),
+                        post.getLocation().getLatitude()));
                     
                     List<UserDto> userDtos = post.getUsersThatLiked().stream()
                     .map(user -> {
@@ -147,6 +155,13 @@ public class PostService extends BaseService implements PostServiceInterface {
                         return userDto;
                     }).collect(Collectors.toList());
                     postDto.setUsers(userDtos);
+
+                    postDto.setAddress(new AddressDto(post.getLocation().getStreet(), 
+                        post.getLocation().getNumber(), 
+                        post.getLocation().getCity(),
+                        post.getLocation().getCountry(),
+                        post.getLocation().getLongitude(),
+                        post.getLocation().getLatitude()));
 
                     List<CommentDto> commentDtos = post.getComments().stream()
                     .map(comment -> {
