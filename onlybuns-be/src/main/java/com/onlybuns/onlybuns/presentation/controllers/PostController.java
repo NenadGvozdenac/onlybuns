@@ -92,8 +92,8 @@ public class PostController extends BaseController {
                description = "This endpoint allows users to get posts nearby their location. Radius is default to 5 kms.")
     @GetMapping("/nearby")
     public ResponseEntity<List<PostAndLocationDto>> getNearbyPosts(
-        @Parameter(description = "Latitude of the user's current location") @RequestParam double latitude, 
-        @Parameter(description = "Longitude of the user's current location") @RequestParam double longitude,
+        @Parameter(description = "Latitude of the user's current location") @RequestParam(required = true) Double latitude, 
+        @Parameter(description = "Longitude of the user's current location") @RequestParam(required = true) Double longitude,
         @Parameter(description = "Search radius in kilometers, default is 5 km") @RequestParam(required = false, defaultValue = "5") Double radius) {
     
         var result = postService.getNearbyPosts(latitude, longitude, radius);
