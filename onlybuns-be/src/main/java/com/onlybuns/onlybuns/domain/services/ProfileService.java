@@ -55,7 +55,9 @@ public class ProfileService implements ProfileServiceInterface {
         profile.setAddress(new AddressDto(user.getAddress().getStreet(),
                 user.getAddress().getNumber(),
                 user.getAddress().getCity(),
-                user.getAddress().getCountry()));
+                user.getAddress().getCountry(),
+                user.getAddress().getLatitude(),
+                user.getAddress().getLongitude()));
 
         profile.setActivePosts(user.getPosts().stream().map(post -> new PostDto(post.getId(),
                 new ImageDto(post.getImage().getData(), post.getImage().getMimetype(), post.getImage().getUploadedAt()),
@@ -85,7 +87,9 @@ public class ProfileService implements ProfileServiceInterface {
                 new AddressDto(follower.getAddress().getStreet(),
                         follower.getAddress().getNumber(),
                         follower.getAddress().getCity(),
-                        follower.getAddress().getCountry())))
+                        follower.getAddress().getCountry(),
+                        follower.getAddress().getLatitude(),
+                        follower.getAddress().getLongitude())))
                 .collect(Collectors.toList()));
 
         profile.setFollowers(user.getFollowers().stream().map(follower -> new UserDto(follower.getUsername(),
@@ -95,7 +99,9 @@ public class ProfileService implements ProfileServiceInterface {
                 new AddressDto(follower.getAddress().getStreet(),
                         follower.getAddress().getNumber(),
                         follower.getAddress().getCity(),
-                        follower.getAddress().getCountry())))
+                        follower.getAddress().getCountry(),
+                        follower.getAddress().getLatitude(),
+                        follower.getAddress().getLongitude())))
                 .collect(Collectors.toList()));
 
         return Result.success(profile);
@@ -127,6 +133,8 @@ public class ProfileService implements ProfileServiceInterface {
         address.setCountry(updateProfileDto.getAddress().getCountry());
         address.setStreet(updateProfileDto.getAddress().getStreet());
         address.setNumber(updateProfileDto.getAddress().getNumber());
+        address.setLatitude(updateProfileDto.getAddress().getLatitude());
+        address.setLongitude(updateProfileDto.getAddress().getLongitude());
 
         user.setName(updateProfileDto.getName());
         user.setSurname(updateProfileDto.getSurname());
@@ -138,6 +146,8 @@ public class ProfileService implements ProfileServiceInterface {
         user.getAddress().setCountry(addressDto.getCountry());
         user.getAddress().setStreet(addressDto.getStreet());
         user.getAddress().setNumber(addressDto.getNumber());
+        user.getAddress().setLatitude(addressDto.getLatitude());
+        user.getAddress().setLongitude(addressDto.getLongitude());
 
         userRepository.save(user);
 
