@@ -51,6 +51,29 @@ class ProfileService {
             throw error.response.data;
         }
     }
+
+    async getVerifiedProfiles() {
+        try {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                throw new Error('No token saved!');
+            }
+
+            const authorization = {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            const response = await axios.get(`${API_URL}/profile/verifiedProfiles`, authorization);
+
+            return response.data;
+        } catch (error) {
+            throw error.response.data
+
+        }
+    }
 }
 
 export default new ProfileService();

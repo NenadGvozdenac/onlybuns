@@ -21,7 +21,6 @@ import com.onlybuns.onlybuns.presentation.dtos.responses.ProfileDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
 
 import jakarta.transaction.Transactional;
-import lombok.experimental.var;
 
 @Service
 public class ProfileService implements ProfileServiceInterface {
