@@ -67,7 +67,6 @@ class ProfileService {
             );
     
             const queryParams = new URLSearchParams(validFilters).toString();
-            console.log('Query Parameters:', queryParams);  // Log the query parameters for debugging
     
             const response = await axios.get(`${API_URL}/profile/verifiedProfiles?${queryParams}`, authorization);
             return response.data;
