@@ -59,8 +59,13 @@ public class ProfileController extends BaseController {
     @ApiResponse(responseCode = "200", description = "Verified profiles retrieved successfully")
     @ApiResponse(responseCode = "401", description = "Unathorized")
     @GetMapping("/verifiedProfiles")
-    public ResponseEntity<List<ProfileDto>> getVerifiedProfiles() {
-        var result = profileService.getVerifiedProfiles(getLoggedInUsername());
+    public ResponseEntity<List<ProfileDto>> getVerifiedProfiles(@RequestParam(required = false) String name,
+    @RequestParam(required = false) String surname,
+    @RequestParam(required = false) String email,
+    @RequestParam(required = false) Integer minActivePosts,
+    @RequestParam(required = false) Integer maxActivePosts,
+    @RequestParam(required = false) String sortBy) {
+        var result = profileService.getVerifiedProfiles(getLoggedInUsername(),name, surname, email, minActivePosts, maxActivePosts, sortBy);
         return createResponse(result);
     }
 }

@@ -1,6 +1,7 @@
 package com.onlybuns.onlybuns.domain.services;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -164,20 +165,62 @@ public class ProfileService implements ProfileServiceInterface {
     }
 
     @Override
-    public Result<List<ProfileDto>> getVerifiedProfiles(String username) {
-        
+    public Result<List<ProfileDto>> getVerifiedProfiles(String username,
+            String name,
+            String surname,
+            String email,
+            Integer minActivePosts,
+            Integer maxActivePosts,
+            String sortBy) {
+
+        // Ensure the user is an admin
         if (userRepository.findByUsername(username).get().getRole().toString() != "ADMIN") {
-            return Result.failure("Unauthorized access.", 401);           
+            return Result.failure("Unauthorized access.", 401);
         }
 
         // Retrieve all verified users
         List<User> verifiedUsers = userRepository.findByVerifiedTrue();
-    
+
         // Check if there are any verified users; if not, return failure result
         if (verifiedUsers.isEmpty()) {
             return Result.failure("No verified users found.", 404);
         }
-    
+
+        // Filter users based on search criteria
+        if (name != null) {
+            verifiedUsers = verifiedUsers.stream()
+                    .filter(user -> user.getName().toLowerCase().contains(name.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+        if (surname != null) {
+            verifiedUsers = verifiedUsers.stream()
+                    .filter(user -> user.getSurname().toLowerCase().contains(surname.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+        if (email != null) {
+            verifiedUsers = verifiedUsers.stream()
+                    .filter(user -> user.getEmail().toLowerCase().contains(email.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+        if (minActivePosts != null) {
+            verifiedUsers = verifiedUsers.stream()
+                    .filter(user -> user.getPosts().size() >= minActivePosts)
+                    .collect(Collectors.toList());
+        }
+        if (maxActivePosts != null) {
+            verifiedUsers = verifiedUsers.stream()
+                    .filter(user -> user.getPosts().size() <= maxActivePosts)
+                    .collect(Collectors.toList());
+        }
+
+        // Sort users by the specified parameter
+        if ("following".equals(sortBy)) {
+            verifiedUsers.sort(Comparator.comparingInt(user -> user.getFollowing().size()));
+        } else if ("email".equals(sortBy)) {
+            // Sort emails case-insensitively and handle null emails (if needed)
+            verifiedUsers.sort(Comparator.comparing(User::getEmail, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+        }
+
         // Map each verified user to a ProfileDto
         List<ProfileDto> profiles = verifiedUsers.stream().map(user -> {
             // Create a new ProfileDto for each user
@@ -186,7 +229,7 @@ public class ProfileService implements ProfileServiceInterface {
             profile.setName(user.getName());
             profile.setSurname(user.getSurname());
             profile.setEmail(user.getEmail());
-    
+
             // Set the address
             profile.setAddress(new AddressDto(
                     user.getAddress().getStreet(),
@@ -194,59 +237,49 @@ public class ProfileService implements ProfileServiceInterface {
                     user.getAddress().getCity(),
                     user.getAddress().getCountry(),
                     user.getAddress().getLatitude(),
-                    user.getAddress().getLongitude()
-            ));
-    
+                    user.getAddress().getLongitude()));
+
             // Set active posts
-            profile.setActivePosts(user.getPosts().stream().map(post -> 
-            new PostDto(
-                post.getId(),
-                null, // Skip setting ImageDto by using null
-                post.getDateOfCreation(),
-                post.getDescription(),
-                post.getNumberOfLikes(),
-                post.getUser().getUsername(),
-                null,
-                Collections.emptyList(), // Set comments as an empty list
-                Collections.emptyList()  // Set usersThatLiked as an empty list (if needed)             
-            )
-        ).collect(Collectors.toList()));
-    
+            profile.setActivePosts(user.getPosts().stream().map(post -> new PostDto(
+                    post.getId(),
+                    null, // Skip setting ImageDto by using null
+                    post.getDateOfCreation(),
+                    post.getDescription(),
+                    post.getNumberOfLikes(),
+                    post.getUser().getUsername(),
+                    null,
+                    Collections.emptyList(), // Set comments as an empty list
+                    Collections.emptyList() // Set usersThatLiked as an empty list (if needed)
+            )).collect(Collectors.toList()));
+
             // Set following users
-            profile.setFollowing(user.getFollowing().stream().map(followingUser -> 
-                new UserDto(
+            profile.setFollowing(user.getFollowing().stream().map(followingUser -> new UserDto(
                     followingUser.getUsername(),
                     followingUser.getName(),
                     followingUser.getSurname(),
                     followingUser.getEmail(),
                     new AddressDto(
-                        followingUser.getAddress().getStreet(),
-                        followingUser.getAddress().getNumber(),
-                        followingUser.getAddress().getCity(),
-                        followingUser.getAddress().getCountry(),
-                        followingUser.getAddress().getLatitude(),
-                        followingUser.getAddress().getLongitude()
-                    )
-                )
-            ).collect(Collectors.toList()));
-    
+                            followingUser.getAddress().getStreet(),
+                            followingUser.getAddress().getNumber(),
+                            followingUser.getAddress().getCity(),
+                            followingUser.getAddress().getCountry(),
+                            followingUser.getAddress().getLatitude(),
+                            followingUser.getAddress().getLongitude())))
+                    .collect(Collectors.toList()));
+
             // Set followers
-            profile.setFollowers(user.getFollowers().stream().map(follower -> 
-                new UserDto(
+            profile.setFollowers(user.getFollowers().stream().map(follower -> new UserDto(
                     follower.getUsername(),
                     follower.getName(),
                     follower.getSurname(),
                     follower.getEmail(),
-                    null
-                )
-            ).collect(Collectors.toList()));
-    
+                    null)).collect(Collectors.toList()));
+
             return profile;
         }).collect(Collectors.toList());
-    
+
         // Return the list of profiles as a success result
         return Result.success(profiles);
     }
-    
 
 }
