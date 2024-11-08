@@ -43,6 +43,7 @@
               </li>
               <li><a class="dropdown-item" href="#">Create Post</a></li>
               <li><a class="dropdown-item" href="/trends">Trends</a></li>
+              <li><a class="dropdown-item" href="/nearyou">Near You</a></li>
             </ul>
           </li>
 

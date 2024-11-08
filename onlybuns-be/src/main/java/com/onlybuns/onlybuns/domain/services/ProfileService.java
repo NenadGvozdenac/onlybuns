@@ -59,8 +59,8 @@ public class ProfileService implements ProfileServiceInterface {
                 user.getAddress().getNumber(),
                 user.getAddress().getCity(),
                 user.getAddress().getCountry(),
-                user.getAddress().getLatitude(),
-                user.getAddress().getLongitude()));
+                user.getAddress().getLongitude(),
+                user.getAddress().getLatitude()));
 
         profile.setActivePosts(user.getPosts().stream().map(post -> new PostDto(post.getId(),
                 new ImageDto(post.getImage().getData(), post.getImage().getMimetype(), post.getImage().getUploadedAt()),
@@ -68,6 +68,12 @@ public class ProfileService implements ProfileServiceInterface {
                 post.getDescription(),
                 post.getNumberOfLikes(),
                 post.getUser().getUsername(),
+                new AddressDto(post.getUser().getAddress().getStreet(),
+                        post.getUser().getAddress().getNumber(),
+                        post.getUser().getAddress().getCity(),
+                        post.getUser().getAddress().getCountry(),
+                        post.getUser().getAddress().getLatitude(),
+                        post.getUser().getAddress().getLongitude()),
                 post.getComments().stream().map(comment -> {
                     CommentDto commentDto = new CommentDto();
                     commentDto.setId(comment.getId());

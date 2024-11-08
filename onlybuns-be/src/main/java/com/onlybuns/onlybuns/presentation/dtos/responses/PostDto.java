@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.util.List;
 
+import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -19,6 +21,7 @@ public class PostDto {
     private String description;
     private int numberOfLikes;
     private String username;
+    private AddressDto address;
     private List<CommentDto> comments;
     private List<UserDto> users;
 }

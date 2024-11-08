@@ -1,10 +1,5 @@
 package com.onlybuns.onlybuns.presentation.dtos.responses;
 
-import java.time.LocalDateTime;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 
 import lombok.AllArgsConstructor;
@@ -16,14 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class GetAllPostDto {
+public class PostAndLocationDto {
     private Long id;
-    private ImageDto image;
-    private List<CommentDto> comments = new ArrayList<>();
-    private LocalDateTime dateOfCreation;
     private String description;
-    private int numberOfLikes;
+    private ImageDto image;
     private String username;
-    private List<UserDto> users;
     private AddressDto address;
 }
