@@ -15,5 +15,6 @@ public interface ProfileServiceInterface {
             String email,
             Integer minActivePosts,
             Integer maxActivePosts,
-            String sortBy);
+            String sortBy,
+            int page);
 }

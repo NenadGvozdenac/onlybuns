@@ -64,8 +64,9 @@ public class ProfileController extends BaseController {
     @RequestParam(required = false) String email,
     @RequestParam(required = false) Integer minActivePosts,
     @RequestParam(required = false) Integer maxActivePosts,
-    @RequestParam(required = false) String sortBy) {
-        var result = profileService.getVerifiedProfiles(getLoggedInUsername(),name, surname, email, minActivePosts, maxActivePosts, sortBy);
+    @RequestParam(required = false) String sortBy,
+    @RequestParam(required = true) Integer page) {
+        var result = profileService.getVerifiedProfiles(getLoggedInUsername(),name, surname, email, minActivePosts, maxActivePosts, sortBy, page);
         return createResponse(result);
     }
 }

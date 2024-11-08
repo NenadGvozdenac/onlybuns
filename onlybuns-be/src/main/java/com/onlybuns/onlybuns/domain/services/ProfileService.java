@@ -171,7 +171,8 @@ public class ProfileService implements ProfileServiceInterface {
             String email,
             Integer minActivePosts,
             Integer maxActivePosts,
-            String sortBy) {
+            String sortBy,
+            int page) {
 
         // Ensure the user is an admin
         if (userRepository.findByUsername(username).get().getRole().toString() != "ADMIN") {
@@ -218,11 +219,22 @@ public class ProfileService implements ProfileServiceInterface {
             verifiedUsers.sort(Comparator.comparingInt(user -> user.getFollowing().size()));
         } else if ("email".equals(sortBy)) {
             // Sort emails case-insensitively and handle null emails (if needed)
-            verifiedUsers.sort(Comparator.comparing(User::getEmail, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+            verifiedUsers
+                    .sort(Comparator.comparing(User::getEmail, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
         }
 
+        int totalUsers = verifiedUsers.size();
+        int fromIndex = (page-1) * 5;
+        int toIndex = Math.min(fromIndex + 5, totalUsers);
+
+        if (fromIndex >= totalUsers) {
+            return Result.success(Collections.emptyList());
+        }
+
+        List<User> paginatedUsers = verifiedUsers.subList(fromIndex, toIndex);
+
         // Map each verified user to a ProfileDto
-        List<ProfileDto> profiles = verifiedUsers.stream().map(user -> {
+        List<ProfileDto> profiles = paginatedUsers.stream().map(user -> {
             // Create a new ProfileDto for each user
             ProfileDto profile = new ProfileDto();
             profile.setUsername(user.getUsername());

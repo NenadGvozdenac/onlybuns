@@ -74,10 +74,22 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Pagination Controls -->
+                <div class="mt-3 text-center">
+                    <button class="btn btn-secondary" @click="changePage(filters.page - 1)" :disabled="filters.page <= 1">
+                        Previous
+                    </button>
+                    <span class="mx-2">Page {{ filters.page }}</span>
+                    <button class="btn btn-secondary" @click="changePage(filters.page + 1)" :disabled="noMoreProfiles">
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </template>
+
 
 <script>
 import ProfileService from '@/services/ProfileService';
@@ -97,9 +109,10 @@ export default {
                 email: '',
                 minActivePosts: null,
                 maxActivePosts: null,
-                sortBy: ''
+                sortBy: '',
+                page: 1,
             }
-        }
+        };
     },
     mounted() {
         this.getVerifiedProfiles();
@@ -108,8 +121,27 @@ export default {
         // Fetch profiles with applied filters
         async getVerifiedProfiles() {
             try {
-                const filters = this.filters;  // Use the filters object
+                const filters = this.filters;
+                let response = await ProfileService.getVerifiedProfiles(filters);
+
+                if(response.length === 0) {
+                    this.filters.page -= 1; 
+                }
+                else {
+                    this.profiles = response;
+                }
+
+
+            } catch (error) {
+                console.error("Failed to load profiles: ", error);
+            }
+        },
+
+        async getVerifiedProfilesFilter() {
+            try {
+                const filters = this.filters;
                 this.profiles = await ProfileService.getVerifiedProfiles(filters);
+
             } catch (error) {
                 console.error("Failed to load profiles: ", error);
             }
@@ -117,11 +149,21 @@ export default {
 
         // Apply the filters and fetch updated profiles
         applyFilters() {
-            this.getVerifiedProfiles(); // Trigger fetch with current filters
+            this.filters.page = 1; // Reset to the first page when filters change
+            this.noMoreProfiles = false; // Reset noMoreProfiles flag when filters are applied
+            this.getVerifiedProfilesFilter(); // Trigger fetch with current filters
+        },
+
+        // Change the page and fetch the corresponding profiles
+        changePage(page) {
+            if (page < 1 || this.noMoreProfiles) return; // Stop if no more profiles to display
+            this.filters.page = page;
+            this.getVerifiedProfiles();
         }
     }
-}
+};
 </script>
+
 
 <style>
 /* No additional styles needed as Bootstrap handles the majority of the styling */
