@@ -5,17 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +22,7 @@ public class Address {
     private String street;
 
     @Column(nullable = false)
-    private Integer number;
+    private String number;
 
     @Column(nullable = false)
     private String city;
@@ -33,13 +30,18 @@ public class Address {
     @Column(nullable = false)
     private String country;
 
-    @OneToMany(mappedBy = "address")
-    private List<User> users;
+    @Column(nullable = false)
+    private Double latitude;
 
-    public Address(String street, Integer number, String city, String country) {
+    @Column(nullable = false)
+    private Double longitude;
+
+    public Address(String street, String number, String city, String country, Double latitude, Double longitude) {
         this.street = street;
         this.number = number;
         this.city = city;
         this.country = country;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 }

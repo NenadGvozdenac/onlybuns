@@ -11,15 +11,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
 import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.GetAllPostDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.PostAndLocationDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 
 import io.swagger.v3.oas.annotations.Operation;
-
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -83,6 +85,18 @@ public class PostController extends BaseController {
     @PutMapping
     public ResponseEntity<PostDto> updatePost(@RequestBody UpdatePostDto updatePostDto){
         var result = postService.updatePost(updatePostDto, getLoggedInUsername());
+        return createResponse(result);
+    }
+
+    @Operation(summary = "Get nearby posts", 
+               description = "This endpoint allows users to get posts nearby their location. Radius is default to 5 kms.")
+    @GetMapping("/nearby")
+    public ResponseEntity<List<PostAndLocationDto>> getNearbyPosts(
+        @Parameter(description = "Latitude of the user's current location") @RequestParam(required = true) Double latitude, 
+        @Parameter(description = "Longitude of the user's current location") @RequestParam(required = true) Double longitude,
+        @Parameter(description = "Search radius in kilometers, default is 5 km") @RequestParam(required = false, defaultValue = "5") Double radius) {
+    
+        var result = postService.getNearbyPosts(latitude, longitude, radius);
         return createResponse(result);
     }
 }

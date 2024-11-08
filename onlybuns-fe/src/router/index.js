@@ -7,6 +7,8 @@ import MyProfile from '@/components/Authorized/MyProfile.vue'
 import UserProfile from '@/views/UserProfile.vue'
 import Trends from '@/views/Trends.vue'
 import NotFound from '@/views/NotFound.vue'
+import RegisteredProfiles from '@/components/Authorized/RegisteredProfiles.vue'
+import NearYou from '@/components/Authorized/NearYou.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +39,11 @@ const router = createRouter({
       component: MyProfile
     },
     {
+      path: '/nearyou',
+      name: 'nearyou',
+      component: NearYou
+    },
+    {
       path: '/user-profile',
       name: 'user-profile',
       component: UserProfile
@@ -50,6 +57,11 @@ const router = createRouter({
       path: '/not-found',
       name: 'not-found',
       component: NotFound
+    },
+    {
+      path: '/registeredProfiles',
+      name: 'registeredProfiles',
+      component: RegisteredProfiles
     }
   ]
 })

@@ -48,6 +48,9 @@ public class Post {
     private boolean isDeleted;
 
     @OneToOne(cascade = CascadeType.ALL)
+    private Address location;
+
+    @OneToOne(cascade = CascadeType.ALL)
     private Image image;
 
     @ManyToMany
