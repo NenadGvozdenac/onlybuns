@@ -206,8 +206,9 @@ public class ProfileService implements ProfileServiceInterface {
                 post.getDescription(),
                 post.getNumberOfLikes(),
                 post.getUser().getUsername(),
+                null,
                 Collections.emptyList(), // Set comments as an empty list
-                Collections.emptyList()  // Set usersThatLiked as an empty list (if needed)
+                Collections.emptyList()  // Set usersThatLiked as an empty list (if needed)             
             )
         ).collect(Collectors.toList()));
     
