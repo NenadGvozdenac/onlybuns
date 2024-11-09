@@ -17,4 +17,6 @@ public interface ProfileServiceInterface {
             Integer maxActivePosts,
             String sortBy,
             int page);
+    public Result<String> followProfile(String loggedInUsername, String usernameToFollow);
+    public Result<String> unfollowProfile(String loggedInUsername, String usernameToUnfollow);
 }

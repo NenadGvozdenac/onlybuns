@@ -3,82 +3,118 @@
     <NavbarUnauthorized v-else />
 
     <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="user-card shadow-lg mt-3">
-                    <div class="user-card-logo">
-                        <img src="https://flowbite.com/docs/images/logo.svg" alt="Twitter Logo" class="h-8 me-2">
-                    </div>
-                    <div class="text-center mt-3 user-name">
-                        Onlybuns User
-                    </div>
-                    <h4 class="user-card-title">{{ user.name }} {{ user.surname }}</h4>
-                    <div class="user-info-table">
-                        <div class="user-info-row">
-                            <span class="user-info-label">Username:</span>
-                            <span class="user-info-value">{{ user.username }}</span>
-                        </div>
-                        <div class="user-info-row">
-                            <span class="user-info-label">Email:</span>
-                            <span class="user-info-value">{{ user.email }}</span>
-                        </div>
-                        <div class="user-info-row">
-                            <span class="user-info-label">Address:</span>
-                            <span class="user-info-value">
-                                {{ user.address.street }} {{ user.address.number }}, {{ user.address.city }}, {{
-                                    user.address.country }}
-                            </span>
-                        </div>
-                        <div class="user-info-row">
-                            <span class="user-info-label">Following:</span>
-                            <span class="user-info-value">{{ user.following.length }}</span>
-                        </div>
-                        <div class="user-info-row">
-                            <span class="user-info-label">Followers:</span>
-                            <span class="user-info-value">{{ user.followers.length }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-7">
+                <div class="card shadow-lg mt-3 border-0 rounded-4">
+                    <!-- Background Banner -->
+                    <div class="bg-primary bg-gradient text-white rounded-top-4" style="height: 100px;"></div>
 
-            <div>
-                <div v-if="user.activePosts.length" class="d-flex col-12 gap-3">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 0)" :key="index">
-                                <CardComponent :key="card.id" :id="card.id" :image="card.image"
-                                    :likesCount="card.numberOfLikes" :description="card.description"
-                                    :commentsCount="card.comments.length" :username="user.username"
-                                    :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
-                                    :comments="card.comments" />
+                    <div class="card-body p-4 position-relative">
+                        <!-- Profile Header -->
+                        <div class="text-center">
+                            <!-- Profile Image - positioned to overlap the banner -->
+                            <img src="https://flowbite.com/docs/images/logo.svg" alt="Profile Logo"
+                                class="rounded-circle border border-4 border-white shadow-sm position-relative mt-n5 mb-3"
+                                style="width: 120px; height: 120px; margin-top: -60px;">
+
+                            <h3 class="fw-bold mb-1">{{ user.name }} {{ user.surname }}</h3>
+                            <p class="text-muted fs-6 mb-3">@{{ user.username }}</p>
+
+                            <div v-if="!isMyProfile()">
+                                <button v-if="!followedAlready()"  class="btn btn-primary px-4 py-2 rounded-pill shadow-sm" @click="followUser">
+                                    <i class="bi bi-person-plus-fill"></i>Follow
+                                </button>
+                                <button v-else class="btn btn-danger px-4 py-2 rounded-pill shadow-sm" @click="unfollowUser">
+                                    <i class="bi bi-person-dash-fill"></i>Unfollow
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <!-- Stats Row -->
+                        <div class="row justify-content-center text-center my-4">
+                            <div class="col-4">
+                                <div class="p-3 border-end">
+                                    <h4 class="fw-bold mb-1">{{ user.followers.length }}</h4>
+                                    <p class="text-muted mb-0 small">Followers</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-3">
+                                    <h4 class="fw-bold mb-1">{{ user.following.length }}</h4>
+                                    <p class="text-muted mb-0 small">Following</p>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 1)" :key="index">
-                                <CardComponent :key="card.id" :id="card.id" :image="card.image"
-                                    :likesCount="card.numberOfLikes" :description="card.description"
-                                    :commentsCount="card.comments.length" :username="user.username"
-                                    :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
-                                    :comments="card.comments" />
+                        <!-- User Info -->
+                        <div class="bg-light rounded-3 p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="me-3">
+                                    <i class="bi bi-envelope text-primary fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">Email</div>
+                                    <div class="fw-medium">{{ user.email }}</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 2)" :key="index">
-                                <CardComponent :key="card.id" :id="card.id" :image="card.image"
-                                    :likesCount="card.numberOfLikes" :description="card.description"
-                                    :commentsCount="card.comments.length" :username="user.username"
-                                    :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
-                                    :comments="card.comments" />
+
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="bi bi-geo-alt text-primary fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">Address</div>
+                                    <div class="fw-medium">
+                                        {{ user.address.street }} {{ user.address.number }}, {{ user.address.city }}, {{
+                                        user.address.country }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div v-else>
-                    <p>No posts available</p>
                 </div>
             </div>
         </div>
+
+        <div>
+            <div v-if="user.activePosts.length" class="d-flex col-12 gap-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 0)" :key="index">
+                            <CardComponent :key="card.id" :id="card.id" :image="card.image"
+                                :likesCount="card.numberOfLikes" :description="card.description"
+                                :commentsCount="card.comments.length" :username="user.username"
+                                :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
+                                :comments="card.comments" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 1)" :key="index">
+                            <CardComponent :key="card.id" :id="card.id" :image="card.image"
+                                :likesCount="card.numberOfLikes" :description="card.description"
+                                :commentsCount="card.comments.length" :username="user.username"
+                                :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
+                                :comments="card.comments" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === 2)" :key="index">
+                            <CardComponent :key="card.id" :id="card.id" :image="card.image"
+                                :likesCount="card.numberOfLikes" :description="card.description"
+                                :commentsCount="card.comments.length" :username="user.username"
+                                :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
+                                :comments="card.comments" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-else>
+                <p>No posts available</p>
+            </div>
+        </div>
+
     </div>
     <Footer />
 </template>
@@ -90,7 +126,7 @@ import Footer from '@/components/Unauthorized/Footer.vue';
 import CardComponent from '@/components/Cards/CardComponent.vue';
 
 import ProfileService from '@/services/ProfileService';
-
+import AuthService from '@/services/AuthService';
 export default {
     name: 'UserProfile',
     components: {
@@ -210,14 +246,42 @@ export default {
                 .catch(e => {
                     let code = e.response.status;
 
-                    if(code === 404) {
+                    if (code === 404) {
                         this.$router.push('/not-found');
                     }
                 });
         },
         isLoggedIn() {
             return localStorage.getItem('token') !== null;
+        },
+
+        followedAlready() {
+            return this.user.followers.some(follower => follower.username === AuthService.getLoggedInUsername());
+        },
+
+        isMyProfile() {
+            return this.user.username === AuthService.getLoggedInUsername();
+        },
+        followUser() {
+            ProfileService.followProfile(this.username)
+                .then(response => {
+                    window.location.reload();
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        },
+        unfollowUser() {
+            ProfileService.unfollowProfile(this.username)
+                .then(response => {
+                    window.location.reload();
+                })
+                .catch(e => {
+                    console.log(e);
+                });
         }
+
+
     }
 }
 

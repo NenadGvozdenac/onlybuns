@@ -3,6 +3,7 @@ package com.onlybuns.onlybuns.domain.services;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,15 +217,16 @@ public class ProfileService implements ProfileServiceInterface {
 
         // Sort users by the specified parameter
         if ("following".equals(sortBy)) {
-            verifiedUsers.sort(Comparator.comparingInt(user -> user.getFollowing().size()));
-        } else if ("email".equals(sortBy)) {
+            verifiedUsers.sort((user1, user2) -> Integer.compare(user2.getFollowing().size(), user1.getFollowing().size()));
+        }
+         else if ("email".equals(sortBy)) {
             // Sort emails case-insensitively and handle null emails (if needed)
             verifiedUsers
                     .sort(Comparator.comparing(User::getEmail, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
         }
 
         int totalUsers = verifiedUsers.size();
-        int fromIndex = (page-1) * 5;
+        int fromIndex = (page - 1) * 5;
         int toIndex = Math.min(fromIndex + 5, totalUsers);
 
         if (fromIndex >= totalUsers) {
@@ -292,6 +294,63 @@ public class ProfileService implements ProfileServiceInterface {
 
         // Return the list of profiles as a success result
         return Result.success(profiles);
+    }
+
+    @Override
+    public Result<String> followProfile(String loggedInUsername, String usernameToFollow) {
+
+        var loggedInUserOptional = userRepository.findByUsername(loggedInUsername);
+        var userToFollowOptional = userRepository.findByUsername(usernameToFollow);
+
+        if (loggedInUserOptional.isEmpty() || userToFollowOptional.isEmpty()) {
+            return Result.failure("User(s) not found", 404);
+        }
+
+        if (loggedInUsername.equals(usernameToFollow)) {
+            return Result.failure("You cannot follow yourself", 409);
+        }
+
+        User loggedInUser = loggedInUserOptional.get();
+        User userToFollow = userToFollowOptional.get();
+
+        if (loggedInUser.getFollowing().contains(userToFollow)) {
+            return Result.failure("You are already following this user", 409);
+        }
+
+        loggedInUser.getFollowing().add(userToFollow);
+        userToFollow.getFollowers().add(loggedInUser);
+
+        userRepository.save(loggedInUser);
+        userRepository.save(userToFollow);
+
+        return Result.success("Successfully followed the user");
+    }
+
+    @Override
+    public Result<String> unfollowProfile(String loggedInUsername, String usernameToUnfollow) {
+
+        var loggedInUserOptional = userRepository.findByUsername(loggedInUsername);
+        var userToUnfollowOptional = userRepository.findByUsername(usernameToUnfollow);
+
+        if (loggedInUserOptional.isEmpty() || userToUnfollowOptional.isEmpty()) {
+            return Result.failure("User(s) not found", 404);
+        }
+
+        User loggedInUser = loggedInUserOptional.get();
+        User userToUnfollow = userToUnfollowOptional.get();
+
+        if (!loggedInUser.getFollowing().contains(userToUnfollow)) {
+            return Result.failure("You are not following this user", 409);
+        }
+
+        loggedInUser.getFollowing().remove(userToUnfollow);
+        userToUnfollow.getFollowers().remove(loggedInUser);
+
+
+        userRepository.save(loggedInUser);
+        userRepository.save(userToUnfollow);
+
+        return Result.success("Successfully unfollowed the user");
     }
 
 }
