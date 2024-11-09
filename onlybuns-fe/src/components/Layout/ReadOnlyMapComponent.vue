@@ -11,7 +11,7 @@
         </Transition>
 
         <Transition name="fade">
-            <div v-if="!hospitals.length" class="loading-hospitals">
+            <div v-if="!hospitals.length && hospitalLoading" class="loading-hospitals">
                 <div class="loading-spinner"></div>
                 <span>Loading hospitals...</span>
             </div>
@@ -48,6 +48,7 @@ export default {
                 longitude: 0,
                 latitude: 0,
             },
+            hospitalLoading: true,            // Track hospital loading state
             popupVisible: false,               // Track popup visibility
             popupData: {},                     // Data to display in the popup
             popupPosition: { x: 0, y: 0 },     // Position of the popup
@@ -154,7 +155,8 @@ export default {
             const response = await HospitalService.getHospitals();
             this.hospitals = response;
 
-            console.log("Hospitals:", this.hospitals);
+            this.hospitalLoading = false;
+
             this.addHospitalPins();
         },
 
