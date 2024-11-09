@@ -1,89 +1,189 @@
 <template>
     <Navbar />
-    <div class="container my-5">
-        <div class="card border-0 shadow-lg rounded-lg">
-            <div class="card-header bg-primary text-white border-bottom-0 p-4">
-                <h2 class="card-title mb-0 fw-bold">Verified Profiles</h2>
+    <div class="container-xl py-5">
+        <div class="row g-4">
+            <!-- Filters Panel -->
+            <div class="col-12 col-lg-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-warning bg-opacity-10 p-2 rounded-circle me-3">
+                                <i class="bi bi-funnel text-warning"></i>
+                            </div>
+                            <h5 class="mb-0">Search & Filter</h5>
+                        </div>
+
+                        <div class="vstack gap-3">
+                            <div>
+                                <label class="form-label small text-muted fw-medium">First Name</label>
+                                <div class="input-group input-group-custom">
+                                    <span class="input-group-text border-end-0 bg-transparent">
+                                        <i class="bi bi-person-badge text-muted"></i>
+                                    </span>
+                                    <input v-model="filters.name" type="text" 
+                                           class="form-control border-start-0 ps-0 shadow-none" 
+                                           placeholder="Enter first name">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label small text-muted fw-medium">Last Name</label>
+                                <div class="input-group input-group-custom">
+                                    <span class="input-group-text border-end-0 bg-transparent">
+                                        <i class="bi bi-person text-muted"></i>
+                                    </span>
+                                    <input v-model="filters.surname" type="text" 
+                                           class="form-control border-start-0 ps-0 shadow-none" 
+                                           placeholder="Enter last name">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label small text-muted fw-medium">Email</label>
+                                <div class="input-group input-group-custom">
+                                    <span class="input-group-text border-end-0 bg-transparent">
+                                        <i class="bi bi-envelope text-muted"></i>
+                                    </span>
+                                    <input v-model="filters.email" type="email" 
+                                           class="form-control border-start-0 ps-0 shadow-none" 
+                                           placeholder="user@example.com">
+                                </div>
+                            </div>
+
+                            <hr class="text-muted opacity-25">
+
+                            <div>
+                                <label class="form-label small text-muted fw-medium">Posts Range</label>
+                                <div class="row g-2">
+                                    <div class="col">
+                                        <input v-model="filters.minActivePosts" type="number" 
+                                               class="form-control shadow-none" placeholder="Min">
+                                    </div>
+                                    <div class="col-auto d-flex align-items-center">
+                                        <span class="text-muted">—</span>
+                                    </div>
+                                    <div class="col">
+                                        <input v-model="filters.maxActivePosts" type="number" 
+                                               class="form-control shadow-none" placeholder="Max">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label small text-muted fw-medium">Sort By</label>
+                                <select v-model="filters.sortBy" class="form-select shadow-none">
+                                    <option value="">Default order</option>
+                                    <option value="following">Following count</option>
+                                    <option value="email">Email address</option>
+                                </select>
+                            </div>
+
+                            <button @click="applyFilters" 
+                                    class="btn btn-primary w-100 mt-2 d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-search"></i>
+                                Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body p-4">
-                <!-- Filters Section -->
-                <div class="mb-4">
-                    <h5>Filters</h5>
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <label for="name" class="form-label">Name</label>
-                            <input v-model="filters.name" id="name" class="form-control" type="text"
-                                placeholder="Enter name" />
-                        </div>
-                        <div class="col-md-4">
-                            <label for="surname" class="form-label">Surname</label>
-                            <input v-model="filters.surname" id="surname" class="form-control" type="text"
-                                placeholder="Enter surname" />
-                        </div>
-                        <div class="col-md-4">
-                            <label for="email" class="form-label">Email</label>
-                            <input v-model="filters.email" id="email" class="form-control" type="email"
-                                placeholder="Enter email" />
-                        </div>
-                    </div>
-                    <div class="form-group row mt-2">
-                        <div class="col-md-4">
-                            <label for="minActivePosts" class="form-label">Min Active Posts</label>
-                            <input v-model="filters.minActivePosts" id="minActivePosts" class="form-control"
-                                type="number" placeholder="Min posts" />
-                        </div>
-                        <div class="col-md-4">
-                            <label for="maxActivePosts" class="form-label">Max Active Posts</label>
-                            <input v-model="filters.maxActivePosts" id="maxActivePosts" class="form-control"
-                                type="number" placeholder="Max posts" />
-                        </div>
-                        <div class="col-md-4">
-                            <label for="sortBy" class="form-label">Sort By</label>
-                            <select v-model="filters.sortBy" id="sortBy" class="form-control">
-                                <option value="">Select Sorting</option>
-                                <option value="following">Following</option>
-                                <option value="email">Email</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mt-3 text-end">
-                        <button @click="applyFilters" class="btn btn-primary">Apply Filters</button>
-                    </div>
-                </div>
 
-                <!-- Profiles Table -->
-                <div class="table-responsive">
-                    <table class="table table-hover table-striped table-bordered mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Name</th>
-                                <th>Surname</th>
-                                <th>Email</th>
-                                <th>Active Posts</th>
-                                <th>Following</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="profile in profiles" :key="profile.email">
-                                <td>{{ profile.name }}</td>
-                                <td>{{ profile.surname }}</td>
-                                <td>{{ profile.email }}</td>
-                                <td>{{ profile.activePosts.length }}</td>
-                                <td>{{ profile.following.length }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Main Content -->
+            <div class="col-12 col-lg-9">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header border-0 bg-white pt-4 pb-3 px-4">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div>
+                                <h4 class="mb-1">Verified Profiles Directory</h4>
+                                <p class="text-muted mb-0 small">Browse and filter verified user profiles</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+                                    <i class="bi bi-shield-check me-1"></i>
+                                    All Verified
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Pagination Controls -->
-                <div class="mt-3 text-center">
-                    <button class="btn btn-secondary" @click="changePage(filters.page - 1)" :disabled="filters.page <= 1">
-                        Previous
-                    </button>
-                    <span class="mx-2">Page {{ filters.page }}</span>
-                    <button class="btn btn-secondary" @click="changePage(filters.page + 1)" :disabled="noMoreProfiles">
-                        Next
-                    </button>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr class="bg-light">
+                                    <th class="border-0 ps-4">
+                                        <div class="text-muted small fw-medium">First Name</div>
+                                    </th>
+                                    <th class="border-0">
+                                        <div class="text-muted small fw-medium">Last Name</div>
+                                    </th>
+                                    <th class="border-0">
+                                        <div class="text-muted small fw-medium">Email</div>
+                                    </th>
+                                    <th class="border-0 text-center">
+                                        <div class="text-muted small fw-medium">Active Posts</div>
+                                    </th>
+                                    <th class="border-0 text-center pe-4">
+                                        <div class="text-muted small fw-medium">Following</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="border-top-0">
+                                <tr v-for="profile in profiles" :key="profile.email" 
+                                    class="border-bottom hover-bg-light">
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                                <i class="bi bi-person-circle text-primary"></i>
+                                            </div>
+                                            {{ profile.name }}
+                                        </div>
+                                    </td>
+                                    <td>{{ profile.surname }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center text-muted">
+                                            <i class="bi bi-envelope-fill me-2 text-muted opacity-50"></i>
+                                            {{ profile.email }}
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">
+                                            <i class="bi bi-file-text me-1"></i>
+                                            {{ profile.activePosts.length }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        <span class="badge bg-info-subtle text-info rounded-pill px-2 py-1">
+                                            <i class="bi bi-people me-1"></i>
+                                            {{ profile.following.length }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card-footer border-0 bg-white px-4 py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Page {{ filters.page }}
+                            </span>
+                            <div class="btn-group shadow-sm">
+                                <button @click="changePage(filters.page - 1)" 
+                                        :disabled="filters.page <= 1"
+                                        class="btn btn-light btn-sm px-3">
+                                    <i class="bi bi-chevron-left me-1"></i>
+                                    Previous
+                                </button>
+                                <button @click="changePage(filters.page + 1)" 
+                                        :disabled="noMoreProfiles"
+                                        class="btn btn-light btn-sm px-3">
+                                    Next
+                                    <i class="bi bi-chevron-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
