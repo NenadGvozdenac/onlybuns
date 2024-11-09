@@ -12,14 +12,7 @@ export default {
     components: {
         ReadOnlyMapComponent,
         Navbar
-    },
-    data() {
-        return {
-            myLocation: [],
-            posts: [],
-            veterenaries: [],
-        }
-    },
+    }
 }
 </script>
 

@@ -9,6 +9,13 @@
                 <p>{{ popupData.description }}</p>
             </div>
         </Transition>
+
+        <Transition name="fade">
+            <div v-if="!hospitals.length" class="loading-hospitals">
+                <div class="loading-spinner"></div>
+                <span>Loading hospitals...</span>
+            </div>
+        </Transition>
     </div>
 </template>
 
@@ -28,6 +35,7 @@ import Icon from 'ol/style/Icon';
 
 import ProfileService from '@/services/ProfileService';
 import PostService from '@/services/PostService';
+import HospitalService from '@/services/HospitalService';
 
 export default {
     name: 'ReadOnlyMapComponent',
@@ -35,6 +43,7 @@ export default {
         return {
             map: null,
             posts: [],
+            hospitals: [],
             myLocation: {
                 longitude: 0,
                 latitude: 0,
@@ -46,10 +55,11 @@ export default {
         };
     },
     mounted() {
-        this.findMyLocation().then(() => {
-            this.initMap();
-            this.addPostPins();
-        });
+        // Initialize the map first
+        this.initMap();
+
+        // Fetch all the data in sequence
+        this.fetchData();
     },
     beforeDestroy() {
         if (this.map) {
@@ -57,34 +67,34 @@ export default {
         }
     },
     methods: {
-        async findMyLocation() {
-            await ProfileService.getMyProfile().then((response) => {
-                this.myLocation = response.address;
-            });
-
-            await PostService.getPostsNearby(this.myLocation.latitude, this.myLocation.longitude).then((response) => {
-                this.posts = response;
-            });
+        async fetchData() {
+            try {
+                await this.findMyLocation();
+                await this.addPostPins();
+                await this.fetchHospitals();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
         },
-        initMap() {
-            const centerCoordinates = fromLonLat([this.myLocation.longitude, this.myLocation.latitude]);
+        
+        // Get user's location and set marker
+        async findMyLocation() {
+            const profileResponse = await ProfileService.getMyProfile();
+            this.myLocation = profileResponse.address;
 
-            // Initialize the map with OSM layer
-            this.map = new Map({
-                target: this.$refs.mapContainer,
-                layers: [
-                    new TileLayer({
-                        source: new OSM(),
-                    }),
-                    new VectorLayer({
-                        source: this.vectorSource, // Layer to hold all markers
-                    }),
-                ],
-                view: new View({
-                    center: centerCoordinates,
-                    zoom: 15,
-                }),
-            });
+            this.addMyLocationMarker();
+
+            // Recenter the map to user's location
+            const centerCoordinates = fromLonLat([this.myLocation.longitude, this.myLocation.latitude]);
+            this.map.getView().setCenter(centerCoordinates);
+            
+            const postsResponse = await PostService.getPostsNearby(this.myLocation.latitude, this.myLocation.longitude);
+            this.posts = postsResponse;
+        },
+
+        // Add a marker for the user's location
+        addMyLocationMarker() {
+            const centerCoordinates = fromLonLat([this.myLocation.longitude, this.myLocation.latitude]);
 
             // Add marker at myLocation
             const myLocationMarker = new Feature({
@@ -107,22 +117,11 @@ export default {
             );
 
             this.vectorSource.addFeature(myLocationMarker); // Add my location marker to vector source
-
-            // Add pointermove event to handle hover effects
-            this.map.on('pointermove', (event) => {
-                const feature = this.map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-                // Show popup if its not house
-
-                if (feature && !feature.get('data').isHouse) {
-                    this.showPopup(feature.get('data'), event.pixel);
-                } else {
-                    this.hidePopup();
-                }
-            });
         },
-        addPostPins() {
-            // Loop through posts and add a marker for each post address
-            this.posts.forEach(post => {
+
+        // Add post markers to the map
+        async addPostPins() {
+            for (let post of this.posts) {
                 if (post.address) {
                     const postCoordinates = fromLonLat([post.address.longitude, post.address.latitude]);
 
@@ -135,7 +134,6 @@ export default {
                         }
                     });
 
-                    // Set pin style to use pin.png
                     postMarker.setStyle(
                         new Style({
                             image: new Icon({
@@ -148,8 +146,82 @@ export default {
 
                     this.vectorSource.addFeature(postMarker); // Add post marker to vector source
                 }
+            }
+        },
+
+        // Fetch hospitals and add markers
+        async fetchHospitals() {
+            const response = await HospitalService.getHospitals();
+            this.hospitals = response;
+
+            console.log("Hospitals:", this.hospitals);
+            this.addHospitalPins();
+        },
+
+        // Add hospital markers to the map
+        addHospitalPins() {
+            for (let hospital of this.hospitals) {
+                if (hospital.location) {
+                    const hospitalCoordinates = fromLonLat([hospital.location.longitude, hospital.location.latitude]);
+
+                    const hospitalMarker = new Feature({
+                        geometry: new Point(hospitalCoordinates),
+                        data: {  // Store relevant data in the feature
+                            username: hospital.name,
+                            description: hospital.description,
+                            isHouse: false
+                        }
+                    });
+
+                    hospitalMarker.setStyle(
+                        new Style({
+                            image: new Icon({
+                                src: 'veterinarian.png',
+                                anchor: [0.5, 1],
+                                scale: 0.07
+                            }),
+                        })
+                    );
+
+                    this.vectorSource.addFeature(hospitalMarker); // Add hospital marker to vector source
+                }
+            }
+        },
+
+        // Initialize the map
+        initMap() {
+            const centerCoordinates = fromLonLat([this.myLocation.longitude, this.myLocation.latitude]);
+
+            // Initialize the map with OSM layer
+            this.map = new Map({
+                target: this.$refs.mapContainer,
+                layers: [
+                    new TileLayer({
+                        source: new OSM(),
+                    }),
+                    new VectorLayer({
+                        source: this.vectorSource, // Layer to hold all markers
+                    }),
+                ],
+                view: new View({
+                    center: centerCoordinates,
+                    zoom: 15,
+                }),
+            });
+
+            // Add pointermove event to handle hover effects
+            this.map.on('pointermove', (event) => {
+                const feature = this.map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+                // Show popup if it's not house
+                if (feature && !feature.get('data').isHouse) {
+                    this.showPopup(feature.get('data'), event.pixel);
+                } else {
+                    this.hidePopup();
+                }
             });
         },
+
+        // Recenter the map to user's location
         recenterMap() {
             const centerCoordinates = fromLonLat([this.myLocation.longitude, this.myLocation.latitude]);
             this.map.getView().animate({
@@ -157,6 +229,8 @@ export default {
                 duration: 500,
             });
         },
+
+        // Show the popup with post details
         showPopup(post, coordinates) {
             // Set popup data and position
             this.popupData = {
@@ -166,6 +240,8 @@ export default {
             this.popupPosition = this.map.getCoordinateFromPixel(this.map.getPixelFromCoordinate(coordinates));
             this.popupVisible = true;
         },
+
+        // Hide the popup
         hidePopup() {
             this.popupVisible = false;
         },
@@ -208,6 +284,37 @@ export default {
     cursor: default;
     font: 14px/1.4 'Helvetica Neue', Arial, Helvetica, sans-serif;
     user-select: none;
+}
+
+/* Loading indicator styles */
+.loading-hospitals {
+    position: absolute;
+    bottom: 3rem;
+    right: 2rem;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.75rem 1.25rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.loading-spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .fade-enter-active {

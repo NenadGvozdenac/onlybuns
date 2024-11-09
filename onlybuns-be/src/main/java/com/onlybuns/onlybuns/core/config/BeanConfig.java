@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlybuns.onlybuns.core.misc.AppLogger;
 import com.onlybuns.onlybuns.core.misc.EmailParser;
 
@@ -28,5 +29,10 @@ public class BeanConfig {
     @Bean
     public AppLogger appLogger() {
         return new AppLogger();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }

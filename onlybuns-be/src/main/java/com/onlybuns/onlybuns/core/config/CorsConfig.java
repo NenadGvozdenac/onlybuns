@@ -12,7 +12,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Allow all endpoints
-                .allowedOrigins("http://localhost:5173") // Allow your Vue.js frontend
+                .allowedOrigins("http://localhost:5173", "http://localhost:3000") // Allow your Vue.js frontend
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allowed HTTP methods
                 .allowCredentials(true); // Allow credentials (like cookies)
     }
