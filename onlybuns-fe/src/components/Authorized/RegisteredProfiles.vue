@@ -241,7 +241,7 @@ export default {
             try {
                 const filters = this.filters;
                 this.profiles = await ProfileService.getVerifiedProfiles(filters);
-
+                
             } catch (error) {
                 console.error("Failed to load profiles: ", error);
             }
