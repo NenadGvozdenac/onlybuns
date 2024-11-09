@@ -46,6 +46,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth                
                 .requestMatchers("/public", "/").permitAll() // Allow public endpoints
                 .requestMatchers("/auth/login", "/auth/register", "/profile").permitAll() // Allow login and register
+                .requestMatchers("/api/fetch-vets/**").permitAll()
                 .requestMatchers("/profile/verifiedProfiles").permitAll() // Allow getting verified profiles
                 .requestMatchers("/post/all").permitAll() // Allow getting posts to all users
                 .requestMatchers("/email/verify/**").permitAll() // Allow email verification
