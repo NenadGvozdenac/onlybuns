@@ -13,7 +13,18 @@ VALUES
 
 INSERT INTO public.users(id, active, email, name, password, role, surname, username, verified, address_id)
 	VALUES  (1, TRUE, 'test1@gmail.com', 'test1', '$2a$10$Qtn2vCzJYM9QdiGIVnq59.LfB1YXZ0TVgNnOFNSQZCRQkc5QJoSoO', 1, 'test1', 'test1', TRUE, 1),
-			(2, TRUE, 'test2@gmail.com', 'test2', '$2a$10$Qtn2vCzJYM9QdiGIVnq59.LfB1YXZ0TVgNnOFNSQZCRQkc5QJoSoO', 1, 'test2', 'test2', TRUE, 1);
+			(2, TRUE, 'test2@gmail.com', 'test2', '$2a$10$Qtn2vCzJYM9QdiGIVnq59.LfB1YXZ0TVgNnOFNSQZCRQkc5QJoSoO', 0, 'test2', 'test2', TRUE, 1),
+            (3, TRUE, 'user3@example.com', 'John', 'password123', 0, 'Doe', 'johndoe', TRUE, 1),
+            (4, FALSE, 'user4@example.com', 'Jane', 'password456', 1, 'Smith', 'janesmith', TRUE, 1),
+            (5, TRUE, 'user5@example.com', 'Alice', 'password789', 0, 'Johnson', 'alicejohnson', FALSE, 1),
+            (6, TRUE, 'user6@example.com', 'Bob', 'passwordabc', 0, 'Williams', 'bobwilliams', TRUE, 1),
+            (7, FALSE, 'user7@example.com', 'Charlie', 'passworddef', 1, 'Brown', 'charlieb', FALSE, 1),
+            (8, TRUE, 'user8@example.com', 'David', 'passwordghi', 0, 'Davis', 'daviddavis', TRUE, 1),
+            (9, TRUE, 'user9@example.com', 'Eve', 'passwordjkl', 0, 'Miller', 'evemiller', FALSE, 1),
+            (10, TRUE, 'user10@example.com', 'Frank', 'passwordmno', 1, 'Garcia', 'frankgarcia', TRUE, 1),
+            (11, FALSE, 'user11@example.com', 'Grace', 'passwordpqr', 0, 'Martinez', 'gracemartinez', TRUE, 1),
+            (12, TRUE, 'user12@example.com', 'Hannah', 'passwordstu', 1, 'Rodriguez', 'hannahrod', FALSE, 1);
+
 
 INSERT INTO public.images(
 	id, data, mimetype, uploaded_at)
