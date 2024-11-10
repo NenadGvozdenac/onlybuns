@@ -17,14 +17,14 @@
             </div>	
             <div class="footer_profile">
               <ul>
-                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                <li><a href="https://www.facebook.com/hasbullafans/"  target="_blank"><i class="fa fa-facebook"></i></a></li>
+                <li><a href="https://x.com/realdonaldtrump" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                <li><a href="https://www.instagram.com/sydney_sweeney/" target="_blank"><i class="fa fa-instagram"></i></a></li>
                 <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
               </ul>
-            </div>						
-          </div><!--- END COL -->							
-        </div><!--- END ROW -->					
+            </div>
+          </div><!--- END COL -->
+        </div><!--- END ROW -->
       </div><!--- END CONTAINER -->
     </div>
   </template>

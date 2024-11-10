@@ -13,17 +13,20 @@ RUN mvn dependency:go-offline
 # Copy the rest of the project source code
 COPY src ./src
 
-# Package the application, skipping the tests for faster builds
+# Package the application, skipping tests for faster builds
 RUN mvn clean package -DskipTests
 
-# Stage 2: Run the application using Maven and enable hot-reload
+# Stage 2: Run the application with hot-reload enabled
 FROM maven:3.8.5-openjdk-17
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the application source code from the build stage for hot-reloading
+# Copy the built application from the build stage
 COPY --from=build /app /app
+
+# Create a directory for images (both original and compressed)
+RUN mkdir -p /app/images
 
 # Mount a volume for Maven to cache dependencies during development
 VOLUME /root/.m2

@@ -30,6 +30,9 @@ public class TrendsService implements TrendsServiceInterface {
     @Autowired
     private PostRepositoryInterface postRepositoryInterface;
 
+    @Autowired
+    private ImageService imageService;
+
     @Transactional
     @Override
     public Result<TrendsDto> getTrends() {
@@ -46,40 +49,57 @@ public class TrendsService implements TrendsServiceInterface {
             trends.setNumberOfUsers(numberOfUsers);
             trends.setNumberOfPosts(numberOfPosts);
             trends.setNumberOfPostsInTheLastMonth(numberOfPostsInTheLastMonth);
-            
-            trends.setMostPopularPostsLastSevenDays(mostPopularPostsLastSevenDays.stream().map(post -> new PostDto(post.getId(),
-                    new ImageDto(post.getImage().getData(), post.getImage().getMimetype(), post.getImage().getUploadedAt()),
+
+            trends.setMostPopularPostsLastSevenDays(mostPopularPostsLastSevenDays
+                    .stream().map(post -> new PostDto(post.getId(),
+                            new ImageDto(imageService.getImageBase64(post.getImage().getId()), post.getImage().getMimetype(),
+                                    post.getImage().getUploadedAt()),
+                            post.getDateOfCreation(),
+                            post.getDescription(),
+                            post.getNumberOfLikes(),
+                            post.getUser().getUsername(),
+                            new AddressDto(post.getUser().getAddress().getStreet(),
+                                    post.getUser().getAddress().getNumber(),
+                                    post.getUser().getAddress().getCity(),
+                                    post.getUser().getAddress().getCountry(),
+                                    post.getUser().getAddress().getLatitude(),
+                                    post.getUser().getAddress().getLongitude()),
+                            post.getComments().stream()
+                                    .map(comment -> new CommentDto(comment.getId(), comment.getComment(),
+                                            comment.getCommentedAt()))
+                                    .collect(Collectors.toList()),
+                            post.getUsersThatLiked().stream()
+                                    .map(user -> new UserDto(user.getUsername(), user.getName(), user.getSurname(),
+                                            user.getEmail(), null))
+                                    .collect(Collectors.toList())))
+                    .collect(Collectors.toList()));
+
+            trends.setMostPopularPosts(mostPopularPosts.stream().map(post -> new PostDto(post.getId(),
+                    new ImageDto(post.getImage().getPath(), post.getImage().getMimetype(),
+                            post.getImage().getUploadedAt()),
                     post.getDateOfCreation(),
                     post.getDescription(),
                     post.getNumberOfLikes(),
                     post.getUser().getUsername(),
                     new AddressDto(post.getUser().getAddress().getStreet(),
-                        post.getUser().getAddress().getNumber(),
-                        post.getUser().getAddress().getCity(),
-                        post.getUser().getAddress().getCountry(),
-                        post.getUser().getAddress().getLatitude(),
-                        post.getUser().getAddress().getLongitude()),
-                    post.getComments().stream().map(comment -> new CommentDto(comment.getId(), comment.getComment(), comment.getCommentedAt())).collect(Collectors.toList()),
-                    post.getUsersThatLiked().stream().map(user -> new UserDto(user.getUsername(), user.getName(), user.getSurname(), user.getEmail(), null)).collect(Collectors.toList())
-            )).collect(Collectors.toList()));
+                            post.getUser().getAddress().getNumber(),
+                            post.getUser().getAddress().getCity(),
+                            post.getUser().getAddress().getCountry(),
+                            post.getUser().getAddress().getLatitude(),
+                            post.getUser().getAddress().getLongitude()),
+                    post.getComments().stream()
+                            .map(comment -> new CommentDto(comment.getId(), comment.getComment(),
+                                    comment.getCommentedAt()))
+                            .collect(Collectors.toList()),
+                    post.getUsersThatLiked().stream()
+                            .map(user -> new UserDto(user.getUsername(), user.getName(), user.getSurname(),
+                                    user.getEmail(), null))
+                            .collect(Collectors.toList())))
+                    .collect(Collectors.toList()));
 
-            trends.setMostPopularPosts(mostPopularPosts.stream().map(post -> new PostDto(post.getId(),
-                    new ImageDto(post.getImage().getData(), post.getImage().getMimetype(), post.getImage().getUploadedAt()),
-                    post.getDateOfCreation(),
-                    post.getDescription(),
-                    post.getNumberOfLikes(),
-                    post.getUser().getUsername(),
-                        new AddressDto(post.getUser().getAddress().getStreet(),
-                        post.getUser().getAddress().getNumber(),
-                        post.getUser().getAddress().getCity(),
-                        post.getUser().getAddress().getCountry(),
-                        post.getUser().getAddress().getLatitude(),
-                        post.getUser().getAddress().getLongitude()),
-                    post.getComments().stream().map(comment -> new CommentDto(comment.getId(), comment.getComment(), comment.getCommentedAt())).collect(Collectors.toList()),
-                    post.getUsersThatLiked().stream().map(user -> new UserDto(user.getUsername(), user.getName(), user.getSurname(), user.getEmail(), null)).collect(Collectors.toList())
-            )).collect(Collectors.toList()));
-
-            trends.setUsersThatMostLiked(usersThatMostLiked.stream().map(user -> new UserDto(user.getUsername(), user.getName(), user.getSurname(), user.getEmail(), null)).collect(Collectors.toList()));
+            trends.setUsersThatMostLiked(usersThatMostLiked.stream().map(
+                    user -> new UserDto(user.getUsername(), user.getName(), user.getSurname(), user.getEmail(), null))
+                    .collect(Collectors.toList()));
 
             return Result.success(trends);
         } catch (Exception e) {

@@ -30,6 +30,29 @@ class PostService {
             throw error;
         }
     }
+    // Add createPost method to PostService
+    async createPost(postData) {
+        try {
+            let token = localStorage.getItem('token');
+
+            if (!token) {
+                throw new Error("No token saved!");
+            }
+
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data', // Ensure content type is multipart
+            };
+
+            // Send the POST request with form data
+            console.log("Post data:", postData);
+            const response = await axios.post(`${API_URL}/create`, postData, { headers });
+            return response.data;
+        } catch (error) {
+            console.error("Error creating post:", error);
+            throw error;
+        }
+    }
 }
 
 export default new PostService();
