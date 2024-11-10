@@ -1,19 +1,16 @@
 <template>
     <div style="height: 100%;">
         <div class="map" ref="mapContainer" style="width: 100%; height: 100%;"></div>
-        <div v-if="locationInfo" class="location-info">
-            {{ locationInfo.street }}, {{ locationInfo.number }}, {{ locationInfo.city }}, {{ locationInfo.country }}
-        </div>
     </div>
 </template>
 
 <script>
-import 'ol/ol.css'; // Import OpenLayers CSS
+import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
-import { fromLonLat, toLonLat } from 'ol/proj'; // Import projection functions
+import { fromLonLat, toLonLat } from 'ol/proj';
 import { Feature } from 'ol';
 import { Point } from 'ol/geom';
 import { Icon, Style } from 'ol/style';
@@ -22,28 +19,71 @@ import VectorSource from 'ol/source/Vector';
 
 export default {
     name: 'MapComponent',
+    props: {
+        address: {
+            type: Object,
+            default: null,
+            validator: function (value) {
+                if (!value) return true;
+                return [
+                    'street',
+                    'city',
+                    'number',
+                    'country',
+                    'longitude',
+                    'latitude'
+                ].every(key => key in value);
+            }
+        },
+        initialZoom: {
+            type: Number,
+            default: 12
+        }
+    },
     data() {
         return {
-            locationInfo: null, // Store location info for display
-            markerCoordinates: null, // Store the coordinates of the marker
-            vectorSource: new VectorSource(), // Source for vector layer
-            marker: null, // Reference to the marker feature
-            map: null, // Store the map instance
+            locationInfo: null,
+            markerCoordinates: null,
+            vectorSource: new VectorSource(),
+            marker: null,
+            map: null,
+            isInitialLoad: true
         };
     },
     mounted() {
-        // Initialize the map when the component is mounted
         this.initMap();
     },
     beforeDestroy() {
-        // Clean up resources when the component is destroyed
-        if (this.map) {
-            // Remove any click event listener
-            this.map.un('click', this.handleMapClick);
-        }
+        this.destroyMap();
     },
     methods: {
+        destroyMap() {
+            if (this.map) {
+                // Remove any event listeners
+                this.map.off();
+
+                // Remove any markers
+                if (this.marker) {
+                    this.marker.remove();
+                }
+
+                // Remove the map
+                this.map.remove();
+
+                // Clear the references
+                this.map = null;
+                this.marker = null;
+            }
+        },
         initMap() {
+            // Use default coordinates if no address is provided
+            const defaultCoords = [19.8227, 45.2396];
+            const initialCoords = this.address
+                ? [this.address.longitude, this.address.latitude]
+                : defaultCoords;
+
+            const initialCenter = fromLonLat(initialCoords);
+
             this.map = new Map({
                 target: this.$refs.mapContainer,
                 layers: [
@@ -55,38 +95,38 @@ export default {
                     }),
                 ],
                 view: new View({
-                    center: fromLonLat([19.8227, 45.2396]),
-                    zoom: 12,
+                    center: initialCenter,
+                    zoom: this.initialZoom,
                 }),
             });
 
-            // Set cursor to point when hovering over the map
             this.$refs.mapContainer.style.cursor = 'pointer';
 
-            // Store the click event handler for cleanup
             this.handleMapClick = (event) => {
                 this.addMarker(event.coordinate);
-                this.getLocationInfo(event.coordinate); // Get location info on click
+                this.getLocationInfo(event.coordinate);
             };
 
-            // Add a click event listener to the map
             this.map.on('click', this.handleMapClick);
+
+            // Add initial marker if address is provided
+            if (this.address) {
+                this.locationInfo = { ...this.address };
+                this.addMarker(initialCenter);
+                this.isInitialLoad = false;
+            }
         },
         addMarker(coordinate) {
-            // Convert the coordinate to lon/lat
             const lonLat = toLonLat(coordinate);
-            this.markerCoordinates = lonLat; // Store the coordinates
+            this.markerCoordinates = lonLat;
 
             if (this.marker) {
-                // If the marker already exists, update its position
                 this.marker.setGeometry(new Point(coordinate));
             } else {
-                // Create a feature for the marker
                 this.marker = new Feature({
                     geometry: new Point(coordinate),
                 });
 
-                // Set the marker style with a Pin icon
                 this.marker.setStyle(new Style({
                     image: new Icon({
                         src: '/pin.png',
@@ -94,7 +134,6 @@ export default {
                     }),
                 }));
 
-                // Add the marker to the vector source
                 this.vectorSource.addFeature(this.marker);
             }
         },
@@ -102,10 +141,10 @@ export default {
             this.$emit('location-updated', {
                 longitude: lonLat[0],
                 latitude: lonLat[1],
-                street: this.locationInfo.street,
-                number: this.locationInfo.number,
-                city: this.locationInfo.city,
-                country: this.locationInfo.country,
+                street: this.locationInfo?.street,
+                number: this.locationInfo?.number,
+                city: this.locationInfo?.city,
+                country: this.locationInfo?.country,
             });
         },
         async getLocationInfo(coordinate) {
@@ -130,18 +169,32 @@ export default {
             } catch (error) {
                 console.error('Error fetching location info:', error);
             }
-        },
+        }
     },
+    watch: {
+        address: {
+            handler(newAddress) {
+                if (newAddress && this.map) {
+                    const coordinate = fromLonLat([newAddress.longitude, newAddress.latitude]);
+
+                    // Only center the map on the first load
+                    if (this.isInitialLoad) {
+                        this.map.getView().setCenter(coordinate);
+                        this.isInitialLoad = false;
+                    }
+
+                    this.addMarker(coordinate);
+                    this.locationInfo = { ...newAddress };
+                }
+            },
+            immediate: true
+        }
+    }
 };
 </script>
 
 <style scoped>
 .map {
     border: 1px dashed #000000;
-}
-
-.location-info {
-    margin-top: 10px;
-    font-size: 1rem;
 }
 </style>

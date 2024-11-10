@@ -27,7 +27,7 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <!-- Author Info -->
                 <div class="d-flex align-items-center">
-                    <h2 class="h6 mb-0"><a :href="'user-profile?username=' + username"># {{ username }}</a></h2>
+                    <h2 class="h6 mb-0"><a :href="findRedirectRoute()"># {{ username }}</a></h2>
                 </div>
 
                 <!-- Interaction Icons -->
@@ -204,6 +204,7 @@
 </template>
 
 <script>
+import AuthService from '@/services/AuthService';
 import CardService from '@/services/CardService';
 
 export default {
@@ -285,6 +286,15 @@ export default {
         },
     },
     methods: {
+        findRedirectRoute() {
+            let loggedInUsername = AuthService.getLoggedInUsername();
+
+            if (loggedInUsername === this.username) {
+                return '/profile';
+            } else {
+                return 'user-profile?username=' + this.username;
+            }
+        },
         checkIfLoggedLike() {
             if (this.myUsername === '') {
                 this.showLoginPrompt();
