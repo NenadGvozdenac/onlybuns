@@ -52,6 +52,17 @@ public class PostController extends BaseController {
         return createResponse(result);
     }
 
+    @Operation(summary = "Unlike a post", description = "This endpoint allows a user to unlike a post")
+    @ApiResponse(responseCode = "403", description = "Post not found.")
+    @ApiResponse(responseCode = "400", description = "User didn't like this post.")
+    @ApiResponse(responseCode = "404", description = "User that is supposed to do the unliking is not found.")
+    @DeleteMapping("/{id}/unlike")
+    public ResponseEntity<PostDto> unlikePost(@PathVariable Long id) {
+        var result = postService.unlikePost(id, getLoggedInUsername());
+        return createResponse(result);
+    }
+
+
     @Operation(summary = "Get all posts in date order descending", description = "This endpoint allows all users to get posts on their homepage")
     @ApiResponse(responseCode = "404", description = "Posts not found.")
     @GetMapping("/all")

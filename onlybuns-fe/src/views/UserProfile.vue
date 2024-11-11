@@ -21,10 +21,12 @@
                             <p class="text-muted fs-6 mb-3">@{{ user.username }}</p>
 
                             <div v-if="!isMyProfile()">
-                                <button v-if="!followedAlready()"  class="btn btn-primary px-4 py-2 rounded-pill shadow-sm" @click="followUser">
+                                <button v-if="!followedAlready()"
+                                    class="btn btn-primary px-4 py-2 rounded-pill shadow-sm" @click="followUser">
                                     <i class="bi bi-person-plus-fill"></i>Follow
                                 </button>
-                                <button v-else class="btn btn-danger px-4 py-2 rounded-pill shadow-sm" @click="unfollowUser">
+                                <button v-else class="btn btn-danger px-4 py-2 rounded-pill shadow-sm"
+                                    @click="unfollowUser">
                                     <i class="bi bi-person-dash-fill"></i>Unfollow
                                 </button>
                             </div>
@@ -67,7 +69,7 @@
                                     <div class="text-muted small">Address</div>
                                     <div class="fw-medium">
                                         {{ user.address.street }} {{ user.address.number }}, {{ user.address.city }}, {{
-                                        user.address.country }}
+                                            user.address.country }}
                                     </div>
                                 </div>
                             </div>
@@ -114,7 +116,14 @@
                 <p>No posts available</p>
             </div>
         </div>
+    </div>
 
+    <div v-if="showModal" class="modal-overlay">
+        <div class="modal-content">
+            <h5 class="modal-title">Rate Limit Exceeded</h5>
+            <p>You are following too many profiles in a short period of time. Please try again later.</p>
+            <button class="btn btn-primary" @click="closeModal">Close</button>
+        </div>
     </div>
     <Footer />
 </template>
@@ -137,6 +146,7 @@ export default {
     },
     data() {
         return {
+            showModal: false,
             user: {
                 username: "",
                 name: "",
@@ -268,7 +278,11 @@ export default {
                     window.location.reload();
                 })
                 .catch(e => {
-                    console.log(e);
+                    if (e.status === 429) {
+                        this.showRateLimitModal();
+                    } else {
+                        console.log('Other error:', e.response);
+                    }
                 });
         },
         unfollowUser() {
@@ -279,8 +293,13 @@ export default {
                 .catch(e => {
                     console.log(e);
                 });
-        }
-
+        },
+        showRateLimitModal() {
+            this.showModal = true;
+        },
+        closeModal() {
+            this.showModal = false;
+        },
 
     }
 }
@@ -359,5 +378,32 @@ export default {
     color: #666;
     text-align: right;
     flex: 1;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 </style>

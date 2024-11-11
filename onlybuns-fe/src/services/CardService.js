@@ -16,18 +16,15 @@ class CardService {
 
     async likePost(id) {
         try {
-            // Retrieve the token from local storage
-            const token = localStorage.getItem('token'); // Ensure the token is stored correctly during login
+
+            const token = localStorage.getItem('token'); 
         
-            // Set up the headers with the Bearer token
             const headers = {
                 Authorization: `Bearer ${token}`,
             };
     
-            // Make the request with headers
             const response = await axios.post(`${API_URL}/${id}/like`, {}, { headers });
     
-            // Return the response data
             return response.data; 
         } catch (error) {
             console.error(`Error liking post with ID ${id}:`, error);
@@ -35,6 +32,23 @@ class CardService {
         }
     }
     
+    async unlikePost(id) {
+        try {
+            const token = localStorage.getItem('token');
+        
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+    
+            const response = await axios.delete(`${API_URL}/${id}/unlike`, { headers });
+    
+            return response.data; 
+        } catch (error) {
+            console.error(`Error unliking post with ID ${id}:`, error);
+            throw error;
+        }
+    }
+
     async deletePost(id){
         try {
             const token = localStorage.getItem('token');
