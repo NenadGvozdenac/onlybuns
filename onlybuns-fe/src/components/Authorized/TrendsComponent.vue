@@ -67,26 +67,86 @@
 
         <div class="popular-posts mb-4">
             <h5 class="mb-3">Popular This Week</h5>
-            <div class="row">
-                <div v-for="post in trends.mostPopularPostsLastSevenDays" :key="post.id" class="col-3">
-                    <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
-                        :description="post.description" :commentsCount="post.comments.length" :username="post.username"
-                        :dateOfCreation="post.dateOfCreation" :usersThatLike="post.users" :comments="post.comments"
-                        @refresh-page="refreshPage" />
+                <div class="row">
+                    <div class="col-md-3">
+                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 === 0)"
+                            :key="index">
+                            <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
+                                :description="post.description" :commentsCount="post.comments.length"
+                                :username="post.username" :dateOfCreation="post.dateOfCreation"
+                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 === 1)"
+                            :key="index" >
+                            <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
+                                :description="post.description" :commentsCount="post.comments.length"
+                                :username="post.username" :dateOfCreation="post.dateOfCreation"
+                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 === 2)"
+                            :key="index">
+                            <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
+                                :description="post.description" :commentsCount="post.comments.length"
+                                :username="post.username" :dateOfCreation="post.dateOfCreation"
+                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 === 3)"
+                            :key="index">
+                            <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
+                                :description="post.description" :commentsCount="post.comments.length"
+                                :username="post.username" :dateOfCreation="post.dateOfCreation"
+                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                        </div>
+                    </div>
                 </div>
-            </div>
         </div>
 
         <div class="popular-posts mb-4">
             <h5 class="mb-3">All-Time Popular</h5>
             <div class="row">
-                <div v-for="post in trends.mostPopularPosts" :key="post.id" class="col-3">
-                    <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
-                        :description="post.description" :commentsCount="post.comments.length" :username="post.username"
-                        :dateOfCreation="post.dateOfCreation" :usersThatLike="post.users" :comments="post.comments"
-                        @refresh-page="refreshPage" />
+                    <div class="col-md-3">
+                        <div v-for="(post, index) in trends.mostPopularPosts.filter((_, i) => i % 4 === 0)"
+                            :key="index">
+                            <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
+                                :description="post.description" :commentsCount="post.comments.length"
+                                :username="post.username" :dateOfCreation="post.dateOfCreation"
+                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div v-for="(post, index) in trends.mostPopularPosts.filter((_, i) => i % 4 === 1)"
+                            :key="index" >
+                            <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
+                                :description="post.description" :commentsCount="post.comments.length"
+                                :username="post.username" :dateOfCreation="post.dateOfCreation"
+                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div v-for="(post, index) in trends.mostPopularPosts.filter((_, i) => i % 4 === 2)"
+                            :key="index">
+                            <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
+                                :description="post.description" :commentsCount="post.comments.length"
+                                :username="post.username" :dateOfCreation="post.dateOfCreation"
+                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div v-for="(post, index) in trends.mostPopularPosts.filter((_, i) => i % 4 === 3)"
+                            :key="index">
+                            <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
+                                :description="post.description" :commentsCount="post.comments.length"
+                                :username="post.username" :dateOfCreation="post.dateOfCreation"
+                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                        </div>
+                    </div>
                 </div>
-            </div>
         </div>
 
         <div class="top-users">
