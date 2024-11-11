@@ -95,7 +95,11 @@ class ProfileService {
             return response.data;
         } catch (error) {
             console.error('Error following profile:', error);
-            throw error.response ? error.response.data : error;
+            if (error.response) {
+                throw error.response;
+            } else {
+                throw error;
+            }
         }
     }
 

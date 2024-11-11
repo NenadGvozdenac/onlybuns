@@ -89,6 +89,45 @@ public class PostService extends BaseService implements PostServiceInterface {
     }
 
     @Override
+    public Result<PostDto> unlikePost(Long postId, String userUsername) {
+            
+            var postOptional = postRepositoryjpa.findById(postId);
+    
+            if (postOptional.isPresent()) {
+    
+                Post post = postOptional.get();
+                var userOptional = userRepository.findByUsername(userUsername);
+    
+                if (userOptional.isPresent()) {
+                    User user = userOptional.get();
+                    boolean userAlreadyLiked = post.getUsersThatLiked().stream()
+                            .anyMatch(us -> us.getId().equals(user.getId()));
+    
+                    if (!userAlreadyLiked) {
+                        return Result.failure("User didn't like this post.", 400);
+                    }
+    
+                    post.getUsersThatLiked().remove(user);
+                    post.setNumberOfLikes(post.getNumberOfLikes() - 1);
+                    postRepositoryjpa.save(post);
+    
+                    PostDto postDto = new PostDto();
+                    postDto.setNumberOfLikes(post.getNumberOfLikes());
+                    postDto.setDescription(post.getDescription());
+                    postDto.setDateOfCreation(post.getDateOfCreation());
+                    var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(),
+                            post.getImage().getMimetype(), post.getImage().getUploadedAt());
+                    postDto.setImage(imageDto);
+                    return Result.success(postDto);
+                } else {
+                    return Result.failure("User that is supposed to do the unliking is not found.", 404);
+                }
+            } else {
+                return Result.failure("Post not found.", 403);
+            }
+    }
+
+    @Override
     @Transactional
     public Result<List<GetAllPostDto>> getAllPosts() {
 
@@ -315,25 +354,25 @@ public class PostService extends BaseService implements PostServiceInterface {
             return Result.failure("User doesn't exist", 409);
         }
         // Handle image file (e.g., save the image to file storage or cloud)
-        try{
+        try {
             System.out.println("Image saved ");
             Image savedimage = imageService.saveImage(image).getData();
             Address newaddress = new Address(address.getStreet(),
-            address.getNumber(),
-            address.getCity(),
-            address.getCountry(),
-            address.getLatitude(),
-            address.getLongitude()
-            );
+                    address.getNumber(),
+                    address.getCity(),
+                    address.getCountry(),
+                    address.getLatitude(),
+                    address.getLongitude());
             addressRepository.save(newaddress);
-            
+
             System.out.println("Adress made ");
             // Create a new Post entity
             List<User> usersThatLiked = new ArrayList<User>();
             List<Comment> comments = new ArrayList<Comment>();
-            Post post = new Post(0l, userOptional.get(),LocalDateTime.now().plusHours(1),description,0,false,newaddress,savedimage,usersThatLiked,comments);
+            Post post = new Post(0l, userOptional.get(), LocalDateTime.now().plusHours(1), description, 0, false,
+                    newaddress, savedimage, usersThatLiked, comments);
             System.out.println("Post made ");
-            
+
             // Save the post to the database
             var newpost = postRepositoryjpa.save(post);
             PostDto postDto = new PostDto();
@@ -342,18 +381,19 @@ public class PostService extends BaseService implements PostServiceInterface {
             postDto.setDateOfCreation(newpost.getDateOfCreation());
             postDto.setNumberOfLikes(newpost.getNumberOfLikes());
             var imageDto = new ImageDto(imageService.getImageBase64(newpost.getImage().getId()).getData(),
-            newpost.getImage().getMimetype(), newpost.getImage().getUploadedAt());
+                    newpost.getImage().getMimetype(), newpost.getImage().getUploadedAt());
             postDto.setImage(imageDto);
             postDto.setAddress(new AddressDto(newpost.getLocation().getStreet(),
-            newpost.getLocation().getNumber(),
-            newpost.getLocation().getCity(),
-            newpost.getLocation().getCountry(),
-            newpost.getLocation().getLongitude(),
-            newpost.getLocation().getLatitude()));
+                    newpost.getLocation().getNumber(),
+                    newpost.getLocation().getCity(),
+                    newpost.getLocation().getCountry(),
+                    newpost.getLocation().getLongitude(),
+                    newpost.getLocation().getLatitude()));
             return Result.success(postDto);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failure("Invalid request data (e.g., missing description, image, or location)", 400);
         }
     }
+
 }
