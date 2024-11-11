@@ -1,8 +1,8 @@
 package com.onlybuns.onlybuns.presentation.controllers;
 
+import com.onlybuns.onlybuns.domain.services.ImageCompressionService;
 import com.onlybuns.onlybuns.domain.services.ImageService;
-
-
+import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.models.Image;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,10 +18,12 @@ public class ImageController extends BaseController {
     private String imageStorageDirectory;
 
     private final ImageService imageService;
+    private final ImageCompressionService imageCompressionService;
 
     @Autowired
-    public ImageController(ImageService imageService) {
+    public ImageController(ImageService imageService,ImageCompressionService imageCompressionService) {
         this.imageService = imageService;
+        this.imageCompressionService = imageCompressionService;
     }
 
     @GetMapping("/{id}")
