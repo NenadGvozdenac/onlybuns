@@ -9,6 +9,7 @@ import Trends from '@/views/Trends.vue'
 import NotFound from '@/views/NotFound.vue'
 import RegisteredProfiles from '@/components/Authorized/RegisteredProfiles.vue'
 import NearYou from '@/components/Authorized/NearYou.vue'
+import CreatePost from '@/components/Authorized/CreatePost.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/email-authentications/:token',
       name: 'email-verify',
       component: EmailVerifyView
+    },
+    {
+      path: '/createpost',
+      name: 'createpost',
+      component: CreatePost
     },
     {
       path: '/profile',

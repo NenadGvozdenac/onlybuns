@@ -35,6 +35,8 @@ public class ProfileService implements ProfileServiceInterface {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ImageService imageService;
     @Override
     public Result<ProfileDto> getProfile(String username) {
         // Check if username exists
@@ -64,7 +66,7 @@ public class ProfileService implements ProfileServiceInterface {
                 user.getAddress().getLatitude()));
 
         profile.setActivePosts(user.getPosts().stream().map(post -> new PostDto(post.getId(),
-                new ImageDto(post.getImage().getData(), post.getImage().getMimetype(), post.getImage().getUploadedAt()),
+                new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(), post.getImage().getMimetype(), post.getImage().getUploadedAt()),
                 post.getDateOfCreation(),
                 post.getDescription(),
                 post.getNumberOfLikes(),

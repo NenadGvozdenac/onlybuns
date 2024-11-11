@@ -41,9 +41,10 @@
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item" href="#">Create Post</a></li>
+              <li><a class="dropdown-item" href="/createpost">Create Post</a></li>
               <li><a class="dropdown-item" href="/trends">Trends</a></li>
               <li><a class="dropdown-item" href="/nearyou">Near You</a></li>
+              <li><a class="dropdown-item" href="/">Chats</a></li>
             </ul>
           </li>
 

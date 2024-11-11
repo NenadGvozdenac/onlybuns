@@ -23,12 +23,14 @@ public class Image {
     private Long id;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String Data;
+    private String Path;
 
     @Column(nullable = false)
     private LocalDateTime uploadedAt;
 
     @Column(nullable = false)
     private String mimetype;
-
+    
+    @Column(nullable = false)
+    private boolean isCompressed; 
 }
