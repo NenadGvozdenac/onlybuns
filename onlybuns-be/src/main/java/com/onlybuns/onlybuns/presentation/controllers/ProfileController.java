@@ -74,6 +74,7 @@ public class ProfileController extends BaseController {
     @ApiResponse(responseCode = "200", description = "User followed successfully")
     @ApiResponse(responseCode = "404", description = "Users not found")
     @ApiResponse(responseCode = "409", description = "User already followed")
+    @ApiResponse(responseCode = "429", description = "Too many follows in the last minute")
     @PutMapping("/follow")
     public ResponseEntity<String> followProfile(@RequestParam(required = true) String username) {
         var result = profileService.followProfile(getLoggedInUsername(), username);

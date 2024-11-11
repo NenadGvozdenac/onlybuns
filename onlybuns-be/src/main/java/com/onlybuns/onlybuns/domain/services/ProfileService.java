@@ -36,6 +36,9 @@ public class ProfileService implements ProfileServiceInterface {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
+    private FollowLimitService followLimitService;
+
+    @Autowired
     private ImageService imageService;
     @Override
     public Result<ProfileDto> getProfile(String username) {
@@ -313,6 +316,10 @@ public class ProfileService implements ProfileServiceInterface {
 
         User loggedInUser = loggedInUserOptional.get();
         User userToFollow = userToFollowOptional.get();
+
+        if (!followLimitService.canFollow(loggedInUser.getId())) {
+            return Result.failure("Follow limit exceeded. You can only follow up to 50 profiles per minute.", 429);
+        }
 
         if (loggedInUser.getFollowing().contains(userToFollow)) {
             return Result.failure("You are already following this user", 409);
