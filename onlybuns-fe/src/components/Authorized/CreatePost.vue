@@ -163,7 +163,10 @@ export default {
                 this.error = 'Please select a location on the map';
                 return;
             }
-
+            if (!this.street || !this.number || !this.city || !this.country) {
+                this.error = 'Wait a sec fetching data for the location';
+                return;
+            }
             try {
                 this.isLoading = true;
 

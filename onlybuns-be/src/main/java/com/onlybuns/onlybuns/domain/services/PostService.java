@@ -76,7 +76,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                 postDto.setNumberOfLikes(post.getNumberOfLikes());
                 postDto.setDescription(post.getDescription());
                 postDto.setDateOfCreation(post.getDateOfCreation());
-                var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()),
+                var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(),
                         post.getImage().getMimetype(), post.getImage().getUploadedAt());
                 postDto.setImage(imageDto);
                 return Result.success(postDto);
@@ -103,7 +103,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                         postDto.setDateOfCreation(post.getDateOfCreation());
                         postDto.setNumberOfLikes(post.getNumberOfLikes());
                         postDto.setUsername(post.getUser().getUsername());
-                        var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()),
+                        var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(),
                                 post.getImage().getMimetype(), post.getImage().getUploadedAt());
                         postDto.setImage(imageDto);
 
@@ -159,7 +159,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                         postDto.setDateOfCreation(post.getDateOfCreation());
                         postDto.setNumberOfLikes(post.getNumberOfLikes());
                         postDto.setUsername(post.getUser().getUsername());
-                        var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()),
+                        var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(),
                                 post.getImage().getMimetype(), post.getImage().getUploadedAt());
                         postDto.setImage(imageDto);
 
@@ -253,7 +253,7 @@ public class PostService extends BaseService implements PostServiceInterface {
             postDto.setDescription(post.getDescription());
             postDto.setNumberOfLikes(post.getNumberOfLikes());
             postDto.setId(post.getId());
-            var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()),
+            var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(),
                     post.getImage().getMimetype(), post.getImage().getUploadedAt());
             postDto.setImage(imageDto);
             return Result.success(postDto);
@@ -289,7 +289,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                     postAndLocationDto.setId(post.getId());
                     postAndLocationDto.setDescription(post.getDescription());
                     postAndLocationDto.setUsername(post.getUser().getUsername());
-                    var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()),
+                    var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(),
                             post.getImage().getMimetype(), post.getImage().getUploadedAt());
                     postAndLocationDto.setImage(imageDto);
                     postAndLocationDto.setAddress(new AddressDto(post.getLocation().getStreet(),
@@ -314,11 +314,10 @@ public class PostService extends BaseService implements PostServiceInterface {
             System.out.println("User not found: " + username);
             return Result.failure("User doesn't exist", 409);
         }
-
         // Handle image file (e.g., save the image to file storage or cloud)
         try{
             System.out.println("Image saved ");
-            Image savedimage = imageService.saveImage(image);
+            Image savedimage = imageService.saveImage(image).getData();
             Address newaddress = new Address(address.getStreet(),
             address.getNumber(),
             address.getCity(),
@@ -332,7 +331,7 @@ public class PostService extends BaseService implements PostServiceInterface {
             // Create a new Post entity
             List<User> usersThatLiked = new ArrayList<User>();
             List<Comment> comments = new ArrayList<Comment>();
-            Post post = new Post(0l, userOptional.get(),LocalDateTime.now(),description,0,false,newaddress,savedimage,usersThatLiked,comments);
+            Post post = new Post(0l, userOptional.get(),LocalDateTime.now().plusHours(1),description,0,false,newaddress,savedimage,usersThatLiked,comments);
             System.out.println("Post made ");
             
             // Save the post to the database
@@ -342,7 +341,7 @@ public class PostService extends BaseService implements PostServiceInterface {
             postDto.setDescription(newpost.getDescription());
             postDto.setDateOfCreation(newpost.getDateOfCreation());
             postDto.setNumberOfLikes(newpost.getNumberOfLikes());
-            var imageDto = new ImageDto(imageService.getImageBase64(newpost.getImage().getId()),
+            var imageDto = new ImageDto(imageService.getImageBase64(newpost.getImage().getId()).getData(),
             newpost.getImage().getMimetype(), newpost.getImage().getUploadedAt());
             postDto.setImage(imageDto);
             postDto.setAddress(new AddressDto(newpost.getLocation().getStreet(),

@@ -1,5 +1,6 @@
 package com.onlybuns.onlybuns.domain.services;
 
+import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.models.Image;
 import com.onlybuns.onlybuns.infrastructure.interfaces.ImageRepository;
 
@@ -27,29 +28,32 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
-    public byte[] getImage(long id) {
-        Image image = imageRepository.getById(id);
-        Path imagePath = Paths.get(image.getPath());
+    public Result<byte[]> getImage(long id) {
+        var image = imageRepository.findById(id);
+        if(image.isEmpty()) {
+            return null;
+        }
+        Path imagePath = Paths.get(image.get().getPath());
         try {
             if (!Files.exists(imagePath)) {
                 throw new IOException("Image not found: " + imagePath.getFileName().toString());
             }
-            return Files.readAllBytes(imagePath);
+            return Result.success(Files.readAllBytes(imagePath));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public String getImageBase64(long id) {
-        byte[] imageBytes = getImage(id);
+    public Result<String> getImageBase64(long id) {
+        byte[] imageBytes = getImage(id).getData();
         if (imageBytes != null) {
-            return Base64.getEncoder().encodeToString(imageBytes);
+            return Result.success(Base64.getEncoder().encodeToString(imageBytes));
         }
         return null;
     }
-
-    public Image saveImage(MultipartFile file) {
+    
+    public Result<Image> saveImage(MultipartFile file) {
         if (file.isEmpty()) {
             return null;
         }
@@ -71,6 +75,6 @@ public class ImageService {
         image.setMimetype(imageName.substring(imageName.lastIndexOf(".") + 1));
 
         // Save image record to the database
-        return imageRepository.save(image);
+        return Result.success(imageRepository.save(image));
     }
 }

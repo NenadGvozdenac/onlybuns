@@ -52,7 +52,7 @@ public class TrendsService implements TrendsServiceInterface {
 
             trends.setMostPopularPostsLastSevenDays(mostPopularPostsLastSevenDays
                     .stream().map(post -> new PostDto(post.getId(),
-                            new ImageDto(imageService.getImageBase64(post.getImage().getId()), post.getImage().getMimetype(),
+                            new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(), post.getImage().getMimetype(),
                                     post.getImage().getUploadedAt()),
                             post.getDateOfCreation(),
                             post.getDescription(),
