@@ -118,9 +118,9 @@
         </div>
     </div>
 
-    <div v-if="showModal" class="modal-overlay">
-        <div class="modal-content">
-            <h5 class="modal-title">Rate Limit Exceeded</h5>
+    <div v-if="showModal" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <h5 class="custom-modal-title">Rate Limit Exceeded</h5>
             <p>You are following too many profiles in a short period of time. Please try again later.</p>
             <button class="btn btn-primary" @click="closeModal">Close</button>
         </div>
@@ -380,7 +380,7 @@ export default {
     flex: 1;
 }
 
-.modal-overlay {
+.custom-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -392,7 +392,7 @@ export default {
     align-items: center;
 }
 
-.modal-content {
+.custom-modal-content {
     background: white;
     padding: 20px;
     border-radius: 8px;
@@ -401,7 +401,7 @@ export default {
     max-width: 400px;
 }
 
-.modal-title {
+.custom-modal-title {
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 10px;
