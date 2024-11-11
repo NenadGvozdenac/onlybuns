@@ -12,7 +12,7 @@ public class FollowLimitService {
 
     private final Map<Long, List<Long>> userFollowTimestamps = new HashMap<>();
 
-    private static final int MAX_FOLLOWS_PER_MINUTE = 2;
+    private static final int MAX_FOLLOWS_PER_MINUTE = 50;
 
     public boolean canFollow(Long userId) {
         // Get the current time in milliseconds

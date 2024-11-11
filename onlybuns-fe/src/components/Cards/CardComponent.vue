@@ -311,7 +311,6 @@ export default {
             }
             this.unlikePost()
         },
-
         async likePost() {
             if (this.hasLiked) {
                 console.log("Already liked this post");

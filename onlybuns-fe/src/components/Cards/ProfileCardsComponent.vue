@@ -26,7 +26,7 @@
                                 d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
                         </svg>
                     </button>
-                    <button class="icon-button-danger" @click="deletePost">
+                    <button class="icon-button-danger" @click="showDeleteModal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-trash ms-2" viewBox="0 0 16 16">
                             <path
@@ -227,53 +227,72 @@
 
     <!-- Modal for editing post-->
     <div class="modal fade" :id="'editModal-' + id" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl shadow-lg" style="max-width: 700px; margin-top: 2vh;">
-        <div class="modal-content border-0 bg-white" style="min-height: 85vh;">
-            <!-- Header -->
-            <div class="modal-header bg-light py-2 px-3">
-                <div class="d-flex align-items-center gap-2">
-                    <img src="https://flowbite.com/docs/images/logo.svg" alt="OnlyBuns Logo" class="h-8">
-                    <h5 class="modal-title fw-semibold mb-0">OnlyBuns</h5>
-                </div>
-                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"  @click="closeModal"></button>
-            </div>
-
-            <!-- Body -->
-            <div class="modal-body p-0">
-                <div class="row g-0">
-                    <!-- Image Section -->
-                    <div class="col-12 bg-dark d-flex align-items-center justify-content-center" style="max-height: 60vh;">
-                        <img :src="'data:' + image.mimeType + ';base64,' + image.data"
-                            :alt="'Post image'"
-                            class="h-100 w-100"
-                            style="object-fit: contain;" />
+        <div class="modal-dialog modal-xl shadow-lg" style="max-width: 700px; margin-top: 2vh;">
+            <div class="modal-content border-0 bg-white" style="min-height: 85vh;">
+                <!-- Header -->
+                <div class="modal-header bg-light py-2 px-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="https://flowbite.com/docs/images/logo.svg" alt="OnlyBuns Logo" class="h-8">
+                        <h5 class="modal-title fw-semibold mb-0">OnlyBuns</h5>
                     </div>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"
+                        @click="closeModal"></button>
+                </div>
 
-                    <!-- Edit Section -->
-                    <div class="col-12 bg-white">
-                        <div class="p-3">
-                            <label for="description" class="form-label fw-semibold mb-2">Edit Description</label>
-                            <textarea 
-                                id="descriptionToChange" 
-                                class="form-control border shadow-sm"
-                                rows="4" 
-                                v-model="descriptionToChange"
-                                style="resize: none;"
-                            ></textarea>
+                <!-- Body -->
+                <div class="modal-body p-0">
+                    <div class="row g-0">
+                        <!-- Image Section -->
+                        <div class="col-12 bg-dark d-flex align-items-center justify-content-center"
+                            style="max-height: 60vh;">
+                            <img :src="'data:' + image.mimeType + ';base64,' + image.data" :alt="'Post image'"
+                                class="h-100 w-100" style="object-fit: contain;" />
                         </div>
 
-                        <!-- Action Button -->
-                        <div class="px-3 pb-3 mt-3">
-                            <button class="btn btn-primary w-100 py-2 fw-semibold" @click="updatePost">
-                                Update Post
-                            </button>
+                        <!-- Edit Section -->
+                        <div class="col-12 bg-white">
+                            <div class="p-3">
+                                <label for="description" class="form-label fw-semibold mb-2">Edit Description</label>
+                                <textarea id="descriptionToChange" class="form-control border shadow-sm" rows="4"
+                                    v-model="descriptionToChange" style="resize: none;"></textarea>
+                            </div>
+
+                            <!-- Action Button -->
+                            <div class="px-3 pb-3 mt-3">
+                                <button class="btn btn-primary w-100 py-2 fw-semibold" @click="updatePost">
+                                    Update Post
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" :id="'deleteModal-' + id" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content border-0" style="border-radius: 8px;">
+                    <!-- Modal Header -->
+                    <div class="modal-header bg-danger text-white p-2">
+                        <h5 class="modal-title fw-bold" id="deleteModalLabel">Confirm Deletion</h5>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="modal-body text-center">
+                        <p>Are you sure you want to delete this post? This action cannot be undone.</p>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" @click="deletePost">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </template>
 
 <script>
@@ -412,8 +431,8 @@ export default {
                 console.error('Error deleting post:', error);
             }
         },
-        updatePost(){
-            try{
+        updatePost() {
+            try {
                 CardService.updatePost(this.id, this.descriptionToChange);
                 window.location.reload();
             } catch (error) {
@@ -430,6 +449,10 @@ export default {
         },
         showLoginPrompt() {
             const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
+            modal.show();
+        },
+        showDeleteModal() {
+            const modal = new bootstrap.Modal(document.getElementById(`deleteModal-${this.id}`));
             modal.show();
         },
         goToLogin() {
