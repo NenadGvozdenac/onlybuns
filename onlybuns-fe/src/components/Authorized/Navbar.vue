@@ -38,6 +38,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+              <li><a class="dropdown-item" href="/followingFeed">Following Feed</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
