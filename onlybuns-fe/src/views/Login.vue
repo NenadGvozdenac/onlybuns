@@ -16,8 +16,7 @@
                                 <div class="row">
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
-                                        <input type="text" class="form-control" id="email" v-model="email"
-                                            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required>
+                                        <input type="text" class="form-control" id="email" v-model="email" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="password" class="form-label">Password</label>
