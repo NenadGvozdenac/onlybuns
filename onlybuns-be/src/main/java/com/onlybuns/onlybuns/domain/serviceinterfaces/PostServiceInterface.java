@@ -20,4 +20,5 @@ public interface PostServiceInterface {
     public Result<PostDto> updatePost(UpdatePostDto updatePostDto, String userUsername);
     public Result<List<PostAndLocationDto>> getNearbyPosts(double latitude, double longitude, Double radius);
     public Result<PostDto> createPost(String description, MultipartFile image, AddressDto address, String username);
+    public Result<List<GetAllPostDto>> getAllPostsByFollowing(String username);
 }

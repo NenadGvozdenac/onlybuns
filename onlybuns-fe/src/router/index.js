@@ -10,6 +10,7 @@ import NotFound from '@/views/NotFound.vue'
 import RegisteredProfiles from '@/components/Authorized/RegisteredProfiles.vue'
 import NearYou from '@/components/Authorized/NearYou.vue'
 import CreatePost from '@/components/Authorized/CreatePost.vue'
+import FollowingFeed from '@/views/FollowingFeed.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +69,11 @@ const router = createRouter({
       path: '/registeredProfiles',
       name: 'registeredProfiles',
       component: RegisteredProfiles
+    },
+    {
+      path: '/followingFeed',
+      name: 'followingFeed',
+      component: FollowingFeed
     }
   ]
 })
