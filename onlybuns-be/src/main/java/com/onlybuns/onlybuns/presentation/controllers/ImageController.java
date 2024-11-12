@@ -1,8 +1,6 @@
 package com.onlybuns.onlybuns.presentation.controllers;
 
 import com.onlybuns.onlybuns.domain.services.ImageService;
-
-
 import com.onlybuns.onlybuns.domain.models.Image;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
