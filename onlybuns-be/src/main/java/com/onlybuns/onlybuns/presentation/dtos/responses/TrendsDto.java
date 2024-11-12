@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -13,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
-public class TrendsDto {
+public class TrendsDto implements Serializable {
     private Long numberOfUsers;
     private Long numberOfPosts;
     private Long numberOfPostsInTheLastMonth;

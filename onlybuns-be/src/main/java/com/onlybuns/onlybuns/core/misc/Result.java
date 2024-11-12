@@ -1,5 +1,7 @@
 package com.onlybuns.onlybuns.core.misc;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Result<T> {
+public class Result<T> implements Serializable {
 
     private boolean success; // Indicates if the operation was successful
     private String message; // Message describing the result

@@ -51,7 +51,6 @@ export default {
     },
     methods: {
         async getPosts() {
-
             try {
                 this.cards = await CardService.fetchPosts();
             } catch (error) {

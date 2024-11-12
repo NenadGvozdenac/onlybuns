@@ -53,6 +53,7 @@ public class PostRepository implements PostRepositoryCustom {
         return posts;
     }
 
+    // Count the number of posts in the last month
     public Long countPostsInTheLastMonth() {
         return Integer.toUnsignedLong(postRepository.findAll().stream().filter(p -> p.getDateOfCreation().isAfter(LocalDateTime.now().minusMonths(1))).collect(Collectors.toList()).size());
     }

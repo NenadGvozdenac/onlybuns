@@ -69,7 +69,7 @@
             <h5 class="mb-3">Popular This Week</h5>
                 <div class="row">
                     <div class="col-md-3">
-                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 === 0)"
+                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 == 0)"
                             :key="index">
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
@@ -78,7 +78,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 === 1)"
+                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 == 1)"
                             :key="index" >
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
@@ -87,7 +87,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 === 2)"
+                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 == 2)"
                             :key="index">
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
@@ -96,7 +96,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 === 3)"
+                        <div v-for="(post, index) in trends.mostPopularPostsLastSevenDays.filter((_, i) => i % 4 == 3)"
                             :key="index">
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"

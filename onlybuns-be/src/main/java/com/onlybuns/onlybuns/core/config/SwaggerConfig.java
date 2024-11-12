@@ -30,8 +30,8 @@ public class SwaggerConfig {
         RequestBody multipartFormDataBody = new RequestBody()
             .content(new io.swagger.v3.oas.models.media.Content()
                 .addMediaType("multipart/form-data", new MediaType()
-                    .schema(new Schema().type("object")
-                        .addProperty("file", new Schema().type("string").format("binary")))));  // Define file as binary type
+                    .schema(new Schema<Object>().type("object")
+                        .addProperty("file", new Schema<Object>().type("string").format("binary")))));  // Define file as binary type
 
         // Return OpenAPI configuration with security and multipart setup
         return new OpenAPI()
