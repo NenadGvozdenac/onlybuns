@@ -15,12 +15,14 @@
                             <form @submit.prevent="handleLogin">
                                 <div class="row">
                                     <div class="mb-3">
-                                        <label for="username" class="form-label">Username</label>
-                                        <input type="text" class="form-control" id="username" v-model="username" required>
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="text" class="form-control" id="email" v-model="email"
+                                            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="password" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="password" v-model="password" required>
+                                        <input type="password" class="form-control" id="password" v-model="password"
+                                            required>
                                     </div>
                                     <div class="col-12 text-center mt-4">
                                         <button type="submit" class="btn btn-primary btn-lg px-5">Hop in</button>
@@ -53,7 +55,7 @@ export default {
     },
     data() {
         return {
-            username: '',
+            email: '',
             password: '',
             showModal: false,
             modalTitle: '',
@@ -64,7 +66,7 @@ export default {
         async handleLogin() {
             try {
                 let data = {
-                    username: this.username,
+                    email: this.email,
                     password: this.password
                 };
 
@@ -93,7 +95,7 @@ export default {
             this.clearData();
         },
         clearData() {
-            this.username = '';
+            this.email = '';
             this.password = '';
         }
     }
