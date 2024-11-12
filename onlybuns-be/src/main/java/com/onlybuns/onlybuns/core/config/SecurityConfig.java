@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,11 +14,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.onlybuns.onlybuns.domain.services.UserInfoService;
+import com.onlybuns.onlybuns.domain.services.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -28,32 +28,44 @@ public class SecurityConfig {
     private JwtAuthFilter authFilter;
 
     @Autowired
+    private IpLoggingFilter ipLoggingFilter;
+
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserInfoService(); 
+        return new UserService(); 
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/public").permitAll() // Allow public endpoints
-                .requestMatchers("/auth/login", "/auth/register").permitAll() // Allow login and register
+            .cors(Customizer.withDefaults()) // Enable CORS
+            .authorizeHttpRequests(auth -> auth                
+                .requestMatchers("/public", "/").permitAll() // Allow public endpoints
+                .requestMatchers("/auth/login", "/auth/register", "/profile").permitAll() // Allow login and register
+                .requestMatchers("/api/fetch-vets/**").permitAll()
+                .requestMatchers("/api/images/**").permitAll()
+                .requestMatchers("/profile/verifiedProfiles").permitAll() // Allow getting verified profiles
+                .requestMatchers("/post/all").permitAll() // Allow getting posts to all users
+                .requestMatchers("/email/verify/**").permitAll() // Allow email verification
                 .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")     // TODO: Implement when needed
                 .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")   // TODO: Implement when needed
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated() // Protect all other endpoints
             )
             .sessionManagement(sess -> sess
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No sessions
             )
             .authenticationProvider(authenticationProvider()) // Custom authentication provider
+            .addFilterBefore(ipLoggingFilter, UsernamePasswordAuthenticationFilter.class) // Log IPs before auth
             .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
-
+    
         return http.build();
     }
+    
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

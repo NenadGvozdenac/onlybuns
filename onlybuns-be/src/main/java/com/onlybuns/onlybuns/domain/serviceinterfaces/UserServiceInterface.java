@@ -7,7 +7,6 @@ import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserLoginDto;
 
 public interface UserServiceInterface {
-    public Result<UserLoginDto> registerUser(RegisterUserDto registerUserDto);
+    public Result<UserDto> registerUser(RegisterUserDto registerUserDto);
     public Result<UserLoginDto> loginUser(LoginUserDto registerUserDto);
-    public Result<UserDto> getUser(Long id);
 }

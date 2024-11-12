@@ -1,0 +1,113 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=${POSTGRES_DB}'
+      - 'POSTGRES_USER=${POSTGRES_USER}'
+      - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
+    ports:
+      - '${POSTGRES_DATABASE_PORT}:5432'
+
+  # Backend service (Spring Boot App)
+  onlybuns-backend:
+    build:
+      context: ./onlybuns-be
+      dockerfile: Dockerfile
+    ports:
+      - '${ONLYBUNS_BE_PORT}:8080'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:${POSTGRES_DATABASE_PORT}/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+    volumes:
+      - './onlybuns-be:/app'               # Mount source code
+      - maven_cache:/root/.m2              # Mount Maven cache
+      - images:/app/images                 # Single volume for both original and compressed images
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - default
+
+  # Frontend service (Vue.js App)
+  onlybuns-frontend:
+    build:
+      context: ./onlybuns-fe
+      dockerfile: Dockerfile
+    ports:
+      - '${ONLYBUNS_FE_PORT}:5173'
+    volumes:
+      - './onlybuns-fe:/app'
+      - '/app/node_modules'
+    depends_on:
+      - onlybuns-backend
+    networks:
+      - default
+
+  # MongoDB Database for Vets and Pets
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_URI: ${MONGO_URI}
+    ports:
+      - '${MONGODB_DATABASE_PORT}:27017'
+    volumes:
+      - mongo_data:/data/db
+    command: ["mongod", "--logpath", "/dev/null", "--logappend"]
+    networks:
+      - default
+
+  # Vets and Pets Backend service (Node.js/Express with Mongoose)
+  vets-and-pets-be:
+    build:
+      context: ./vets-and-pets-be
+      dockerfile: Dockerfile
+    ports:
+      - '${VETS_AND_PETS_BE_PORT}:${VETS_AND_PETS_BE_PORT}'
+    environment:
+      MONGO_URI: ${MONGO_URI}
+      PORT: ${VETS_AND_PETS_BE_PORT}
+    volumes:
+      - './vets-and-pets-be:/app'    # Mounts the code to the container for hot-reload
+      - '/app/node_modules'          # Avoids conflicts with host node_modules
+    command: npm run dev             # Uses the dev script to start nodemon
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - default
+
+  # Redis Cache
+  redis:
+    image: 'redis:latest'
+    ports:
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - default
+
+  # pgAdmin service
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - '${PGADMIN_PORT}:80'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - postgres
+    networks:
+      - default
+
+volumes:
+  mongo_data:
+  maven_cache:
+  images:
+  redis_data:

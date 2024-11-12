@@ -18,4 +18,5 @@ public class RegisterUserDto {
     private String email;
     private String name;
     private String surname;
+    private AddressDto address;
 }
