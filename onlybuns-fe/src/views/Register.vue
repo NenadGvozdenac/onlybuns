@@ -92,7 +92,7 @@
                                                 <span class="text-muted">Selected Location:</span>
                                             </div>
                                             <p class="mb-1"><small>{{ address.street }} {{ address.number }}</small></p>
-                                            <p class="mb-1"><small>{{ address.city }}, {{ address.country }}</small></p>
+                                            <p class="mb-1"><small>{{ address.city }} {{ address.country }}</small></p>
                                         </div>
                                     </div>
 
@@ -218,6 +218,8 @@ export default {
 
             if (this.successfulRegistration) {
                 this.$router.push('/login');
+            } else {
+                window.location.reload();
             }
         },
         isButtonDisabled() {

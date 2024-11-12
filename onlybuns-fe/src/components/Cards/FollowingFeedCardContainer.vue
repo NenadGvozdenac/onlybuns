@@ -37,7 +37,7 @@ import CardService from '@/services/CardService';
 import CardComponent from './CardComponent.vue';
 
 export default {
-    name: 'CardContainer',
+    name: 'FollowingFeedCardContainer',
     components: {
         CardComponent
     },
@@ -52,7 +52,7 @@ export default {
     methods: {
         async getPosts() {
             try {
-                this.cards = await CardService.fetchPosts();
+                this.cards = await CardService.fetchFollowingPosts();
             } catch (error) {
                 console.error("Failed to load cards: ", error)
             }

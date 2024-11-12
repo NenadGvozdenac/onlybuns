@@ -20,12 +20,16 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:${POSTGRES_DATABASE_PORT}/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      JWT_SECRET: ${JWT_SECRET}
     volumes:
       - './onlybuns-be:/app'               # Mount source code
       - maven_cache:/root/.m2              # Mount Maven cache
       - images:/app/images                 # Single volume for both original and compressed images
     depends_on:
       - postgres
+      - redis
     networks:
       - default
 
@@ -44,7 +48,7 @@ services:
     networks:
       - default
 
-# MongoDB Database for Vets and Pets
+  # MongoDB Database for Vets and Pets
   mongodb:
     image: mongo:latest
     environment:
@@ -75,6 +79,17 @@ services:
     command: npm run dev             # Uses the dev script to start nodemon
     depends_on:
       - mongodb
+      - redis
+    networks:
+      - default
+
+  # Redis Cache
+  redis:
+    image: 'redis:latest'
+    ports:
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - redis_data:/data
     networks:
       - default
 
@@ -95,3 +110,4 @@ volumes:
   mongo_data:
   maven_cache:
   images:
+  redis_data:

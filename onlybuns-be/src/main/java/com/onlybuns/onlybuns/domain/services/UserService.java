@@ -132,7 +132,7 @@ public class UserService extends BaseService implements UserDetailsService, User
     @Override
     public Result<UserLoginDto> loginUser(LoginUserDto loginUserDto) {
         // Check if a user with the given username exists
-        var userOptional = userRepository.findByUsername(loginUserDto.getUsername());
+        var userOptional = userRepository.findByEmail(loginUserDto.getEmail());
 
         if(userOptional.isEmpty()) {
             return Result.failure("User not found", 404);
