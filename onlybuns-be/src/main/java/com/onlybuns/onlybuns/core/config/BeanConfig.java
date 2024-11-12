@@ -3,6 +3,7 @@ package com.onlybuns.onlybuns.core.config;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,13 +33,19 @@ public class BeanConfig {
         return new AppLogger();
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
+    @Bean(name = "typedObjectMapper")
+    public ObjectMapper typedObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
         mapper.activateDefaultTyping(
                 LaissezFaireSubTypeValidator.instance,
                 ObjectMapper.DefaultTyping.NON_FINAL);
         return mapper;
+    }
+
+    @Primary
+    @Bean(name = "defaultObjectMapper")
+    public ObjectMapper defaultObjectMapper() {
+        return new ObjectMapper();
     }
 }

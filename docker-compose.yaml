@@ -23,8 +23,6 @@ services:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
       JWT_SECRET: ${JWT_SECRET}
-      MAIL_USERNAME: ${MAIL_USERNAME}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
     volumes:
       - './onlybuns-be:/app'               # Mount source code
       - maven_cache:/root/.m2              # Mount Maven cache

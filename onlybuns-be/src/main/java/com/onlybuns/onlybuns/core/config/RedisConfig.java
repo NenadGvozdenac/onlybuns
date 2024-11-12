@@ -1,6 +1,7 @@
 package com.onlybuns.onlybuns.core.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,15 +15,10 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Value("${spring.redis.host}")
     private String redisHost;
 
@@ -31,6 +27,13 @@ public class RedisConfig {
 
     @Value("${spring.cache.redis.time-to-live}")
     private long redisTimeToLive;
+
+    private final ObjectMapper objectMapper;
+
+    @Autowired
+    public RedisConfig(@Qualifier("typedObjectMapper") ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {

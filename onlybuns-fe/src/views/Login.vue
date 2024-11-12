@@ -90,6 +90,11 @@ export default {
         },
         handleModalClose() {
             this.showModal = false;
+            this.clearData();
+        },
+        clearData() {
+            this.username = '';
+            this.password = '';
         }
     }
 };
