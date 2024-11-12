@@ -2,7 +2,6 @@ package com.onlybuns.onlybuns.domain.services;
 
 import com.onlybuns.onlybuns.domain.models.Image;
 import com.onlybuns.onlybuns.infrastructure.interfaces.ImageRepository;
-
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,11 +30,12 @@ public class ImageCompressionService {
         // Find images older than a month and not yet compressed
         Iterable<Image> images = imageRepository
                 .findByUploadedAtBeforeAndIsCompressedFalse(LocalDateTime.now().minusMonths(1));
-
         for (Image image : images) {
             try {
-                // Perform compression
-                Path imagePath = Paths.get(imageStorageDirectory, image.getPath());
+                // Construct the correct image path
+                Path imagePath = Paths.get(imageStorageDirectory).resolve(image.getPath());
+                
+                // Print the image path for debugging
 
                 // Compress image
                 compressImage(imagePath);
@@ -52,26 +52,25 @@ public class ImageCompressionService {
 
     public void compressImage(Path imagePath) throws IOException {
         File imageFile = imagePath.toFile();
-    
-        // Assuming you already have mimeType from image metadata or another source
-        String mimeType = Files.probeContentType(imagePath);  // Get mime type based on the file's content
-    
-        // Determine the format based on mime type
+
+        // Get the mime type of the image
+        String mimeType = Files.probeContentType(imagePath);
         String outputFormat = getFileExtensionFromMimeType(mimeType);
-    
+
         // Create the "compressed" directory if it doesn't exist
         Path compressedDir = imagePath.getParent().resolve("compressed");
         if (!Files.exists(compressedDir)) {
-            Files.createDirectories(compressedDir); // Create the directory if it doesn't exist
+            Files.createDirectories(compressedDir);
         }
-    
-        // Compress the image with the appropriate output format
+
+        // Compress the image
         Thumbnails.of(imageFile)
-                  .outputFormat(outputFormat)  // Use the appropriate format based on mime type
-                  .outputQuality(0.7)  // 70% quality
-                  .toFile(compressedDir.resolve("compressed_" + imageFile.getName()).toFile());
+                .scale(1) // Keep original scale
+                .outputFormat(outputFormat)
+                .outputQuality(0.7) // 70% quality
+                .toFile(imagePath.getParent().resolve("compressed_" + imageFile.getName()).toFile());
     }
-    
+
     // Helper method to map mime types to file extensions
     private String getFileExtensionFromMimeType(String mimeType) {
         switch (mimeType) {
