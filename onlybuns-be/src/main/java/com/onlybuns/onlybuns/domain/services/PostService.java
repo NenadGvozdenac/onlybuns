@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -399,6 +400,70 @@ public class PostService extends BaseService implements PostServiceInterface {
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failure("Invalid request data (e.g., missing description, image, or location)", 400);
+        }
+    }
+
+    @Override
+    public Result<List<GetAllPostDto>> getAllPostsByFollowing(String username) {
+        try {
+            List<Post> posts = postRepositoryjpa.findAll(Sort.by(Sort.Direction.DESC, "dateOfCreation"));
+
+            var userOptional = userRepository.findByUsername(username);
+            if (userOptional.isEmpty()) {
+                return Result.failure("Not logged in", 409);
+            }
+            User user = userOptional.get();
+
+            List<Post> postsByFollowing = posts.stream().filter(post -> {
+                return post.getUser().getFollowers().stream().anyMatch(follower -> follower.getId().equals(user.getId()));
+            }).collect(Collectors.toList());
+
+            List<GetAllPostDto> postDtos = postsByFollowing.stream()
+                    .map(post -> {
+                        GetAllPostDto postDto = new GetAllPostDto();
+                        postDto.setId(post.getId());
+                        postDto.setDescription(post.getDescription());
+                        postDto.setDateOfCreation(post.getDateOfCreation());
+                        postDto.setNumberOfLikes(post.getNumberOfLikes());
+                        postDto.setUsername(post.getUser().getUsername());
+                        var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(),
+                                post.getImage().getMimetype(), post.getImage().getUploadedAt());
+                        postDto.setImage(imageDto);
+
+                        postDto.setAddress(new AddressDto(post.getLocation().getStreet(),
+                                post.getLocation().getNumber(),
+                                post.getLocation().getCity(),
+                                post.getLocation().getCountry(),
+                                post.getLocation().getLongitude(),
+                                post.getLocation().getLatitude()));
+
+                        List<UserDto> userDtos = post.getUsersThatLiked().stream()
+                                .map(userr-> {
+                                    UserDto userDto = new UserDto();
+                                    userDto.setUsername(userr.getUsername());
+                                    return userDto;
+                                }).collect(Collectors.toList());
+                        postDto.setUsers(userDtos);
+
+                        List<CommentDto> commentDtos = post.getComments().stream()
+                                .map(comment -> {
+                                    CommentDto commentDto = new CommentDto();
+                                    commentDto.setId(comment.getId());
+                                    commentDto.setComment(comment.getComment());
+                                    commentDto.setCommentedAt(comment.getCommentedAt());
+                                    return commentDto;
+                                })
+                                .collect(Collectors.toList());
+                        postDto.setComments(commentDtos);
+
+                        return postDto;
+                    })
+                    .collect(Collectors.toList());
+
+            return Result.success(postDtos);
+
+        } catch (Exception e) {
+            return Result.failure("Posts not found.", 404);
         }
     }
 

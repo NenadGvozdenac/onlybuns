@@ -70,6 +70,14 @@ public class PostController extends BaseController {
         var result = postService.getAllPosts();
         return createResponse(result);
     }
+    
+    @Operation(summary = "Get posts of users that the logged in user is following", description = "This endpoint allows users to get posts of users that they are following")
+    @ApiResponse(responseCode = "409", description = "Posts not found.")
+    @GetMapping("/following")
+    public ResponseEntity<List<GetAllPostDto>> getAllPostsByFollowing() {
+        var result = postService.getAllPostsByFollowing(getLoggedInUsername());
+        return createResponse(result);
+    }
 
     @Operation(summary = "Get my posts in date order descending", description = "This endpoint allows users to get posts their on their homepage")
     @ApiResponse(responseCode = "404", description = "Posts not found.")

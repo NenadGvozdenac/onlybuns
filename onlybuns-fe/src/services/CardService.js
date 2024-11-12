@@ -14,6 +14,22 @@ class CardService {
         }
     }
 
+    async fetchFollowingPosts() {
+        try {
+            const token = localStorage.getItem('token');
+        
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+
+            const response = await axios.get(`${API_URL}/following`, { headers });
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching following cards:", error);
+            throw error;
+        }
+    }
+
     async likePost(id) {
         try {
 
