@@ -1,6 +1,8 @@
 package com.onlybuns.onlybuns.presentation.controllers;
 
+import com.onlybuns.onlybuns.domain.services.ImageCompressionService;
 import com.onlybuns.onlybuns.domain.services.ImageService;
+
 import com.onlybuns.onlybuns.domain.models.Image;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,9 +19,12 @@ public class ImageController extends BaseController {
 
     private final ImageService imageService;
 
+    private final ImageCompressionService compressionService;
+
     @Autowired
-    public ImageController(ImageService imageService) {
+    public ImageController(ImageService imageService, ImageCompressionService compressionService) {
         this.imageService = imageService;
+        this.compressionService = compressionService;
     }
 
     @GetMapping("/{id}")
@@ -32,5 +37,11 @@ public class ImageController extends BaseController {
     public ResponseEntity<Image> postImage(@RequestParam("file") MultipartFile file) {
         var result = imageService.saveImage(file);
         return createResponse(result);
+    }
+
+    @PostMapping("/compress")
+    public ResponseEntity<String> compress() {
+        compressionService.compressOldImages();
+        return ResponseEntity.ok("Compression started");
     }
 }
