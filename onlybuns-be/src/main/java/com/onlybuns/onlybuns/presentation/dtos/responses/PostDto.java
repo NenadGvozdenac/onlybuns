@@ -1,5 +1,6 @@
 package com.onlybuns.onlybuns.presentation.dtos.responses;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 @AllArgsConstructor
 @Getter
 @Setter
-public class PostDto {
+public class PostDto implements Serializable {
     private Long id;
     private ImageDto image;
     private LocalDateTime dateOfCreation;

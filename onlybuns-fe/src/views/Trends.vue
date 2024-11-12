@@ -2,7 +2,7 @@
     <NavbarAuthorized v-if="isLoggedIn()" />
     <NavbarUnauthorized v-else />
 
-    <TrendsComponent :trends="trends" />
+    <TrendsComponent v-if="trends" :trends="trends" />
 
     <Footer />
 </template>
@@ -25,129 +25,7 @@ export default {
     },
     data() {
         return {
-            trends: {
-                numberOfUsers: 0,
-                numberOfPosts: 0,
-                numberOfPostsInTheLastMonth: 0,
-                mostPopularPostsLastSevenDays: [
-                    {
-                        id: 0,
-                        image: {
-                            data: "string",
-                            mimeType: "string",
-                            uploadedAt: [
-                                2024,
-                                10,
-                                26,
-                                7,
-                                15
-                            ]
-                        },
-                        dateOfCreation: [
-                            2024,
-                            10,
-                            26,
-                            7,
-                            15
-                        ],
-                        description: "string",
-                        numberOfLikes: 0,
-                        comments: [
-                            {
-                                id: 0,
-                                comment: "string",
-                                commentedAt: [
-                                    2024,
-                                    10,
-                                    26,
-                                    7,
-                                    15
-                                ]
-                            }
-                        ],
-                        users: [
-                            {
-                                username: "string",
-                                name: "string",
-                                surname: "string",
-                                email: "string",
-                                address: {
-                                    street: "string",
-                                    number: 0,
-                                    city: "string",
-                                    country: "string"
-                                }
-                            }
-                        ]
-                    }
-                ],
-                mostPopularPosts: [
-                    {
-                        id: 0,
-                        image: {
-                            data: "string",
-                            mimeType: "string",
-                            uploadedAt: [
-                                2024,
-                                10,
-                                26,
-                                7,
-                                15
-                            ]
-                        },
-                        dateOfCreation: [
-                            2024,
-                            10,
-                            26,
-                            7,
-                            15
-                        ],
-                        description: "string",
-                        numberOfLikes: 0,
-                        comments: [
-                            {
-                                id: 0,
-                                comment: "string",
-                                commentedAt: [
-                                    2024,
-                                    10,
-                                    26,
-                                    7,
-                                    15
-                                ]
-                            }
-                        ],
-                        users: [
-                            {
-                                username: "string",
-                                name: "string",
-                                surname: "string",
-                                email: "string",
-                                address: {
-                                    street: "string",
-                                    number: 0,
-                                    city: "string",
-                                    country: "string"
-                                }
-                            }
-                        ]
-                    }
-                ],
-                usersThatMostLiked: [
-                    {
-                        username: "string",
-                        name: "string",
-                        surname: "string",
-                        email: "string",
-                        address: {
-                            street: "string",
-                            number: 0,
-                            city: "string",
-                            country: "string"
-                        }
-                    }
-                ]
-            }
+            trends: null
         };
     },
     mounted() {
@@ -162,6 +40,7 @@ export default {
             TrendService.getTrends()
                 .then(response => {
                     this.trends = response;
+                    console.log('Trends:', this.trends);
                 })
                 .catch(error => {
                     console.log('Error:', error);

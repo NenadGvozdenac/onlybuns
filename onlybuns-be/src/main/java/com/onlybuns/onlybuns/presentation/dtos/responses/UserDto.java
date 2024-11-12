@@ -1,5 +1,7 @@
 package com.onlybuns.onlybuns.presentation.dtos.responses;
 
+import java.io.Serializable;
+
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 
 import lombok.AllArgsConstructor;
@@ -15,7 +17,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class UserDto {
+public class UserDto implements Serializable {
     private String username;
     private String name;
     private String surname;

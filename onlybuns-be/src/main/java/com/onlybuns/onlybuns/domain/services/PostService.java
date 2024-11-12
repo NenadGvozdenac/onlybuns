@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,6 +49,7 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Override
     @Transactional
+    @CacheEvict(value = "trends", allEntries = true)
     public Result<PostDto> likePost(Long postId, String userUsername) {
 
         var postOptional = postRepositoryjpa.findById(postId);
@@ -89,6 +91,7 @@ public class PostService extends BaseService implements PostServiceInterface {
     }
 
     @Override
+    @CacheEvict(value = "trends", allEntries = true)
     public Result<PostDto> unlikePost(Long postId, String userUsername) {
             
             var postOptional = postRepositoryjpa.findById(postId);
@@ -241,6 +244,7 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Override
     @Transactional
+    @CacheEvict(value = "trends", allEntries = true)
     public Result<String> deletePost(Long postId, String userUsername) {
 
         var postOptional = postRepositoryjpa.findById(postId);
@@ -267,6 +271,7 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Override
     @Transactional
+    @CacheEvict(value = "trends", allEntries = true)
     public Result<PostDto> updatePost(UpdatePostDto updatePostDto, String userUsername) {
 
         var postOptional = postRepositoryjpa.findById(updatePostDto.getId());
@@ -346,6 +351,7 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Override
     @Transactional
+    @CacheEvict(value = "trends", allEntries = true)
     public Result<PostDto> createPost(String description, MultipartFile image, AddressDto address, String username) {
         // Check if user exists
         Optional<User> userOptional = userRepository.findByUsername(username);
