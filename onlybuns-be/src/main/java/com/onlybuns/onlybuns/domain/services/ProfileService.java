@@ -21,7 +21,8 @@ import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.ProfileDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class ProfileService implements ProfileServiceInterface {
@@ -301,44 +302,50 @@ public class ProfileService implements ProfileServiceInterface {
     }
 
     @Override
+    @Transactional
     public Result<String> followProfile(String loggedInUsername, String usernameToFollow) {
-
-        var loggedInUserOptional = userRepository.findByUsername(loggedInUsername);
-        var userToFollowOptional = userRepository.findByUsername(usernameToFollow);
-
+    
+        // Fetch the users with a PESSIMISTIC_WRITE lock to avoid race conditions
+        var loggedInUserOptional = userRepository.findByUsernameForFollowUnfollow(loggedInUsername);
+        var userToFollowOptional = userRepository.findByUsernameForFollowUnfollow(usernameToFollow);
+    
         if (loggedInUserOptional.isEmpty() || userToFollowOptional.isEmpty()) {
             return Result.failure("User(s) not found", 404);
         }
-
+    
         if (loggedInUsername.equals(usernameToFollow)) {
             return Result.failure("You cannot follow yourself", 409);
         }
-
+    
         User loggedInUser = loggedInUserOptional.get();
         User userToFollow = userToFollowOptional.get();
-
+    
         if (!followLimitService.canFollow(loggedInUser.getId())) {
             return Result.failure("Follow limit exceeded. You can only follow up to 50 profiles per minute.", 429);
         }
-
+    
+        // Check if already following
         if (loggedInUser.getFollowing().contains(userToFollow)) {
             return Result.failure("You are already following this user", 409);
         }
-
+    
+        // Modify the relationships
         loggedInUser.getFollowing().add(userToFollow);
         userToFollow.getFollowers().add(loggedInUser);
-
+    
+        // Save the changes
         userRepository.save(loggedInUser);
         userRepository.save(userToFollow);
-
+    
         return Result.success("Successfully followed the user");
     }
-
+    
     @Override
+    @Transactional
     public Result<String> unfollowProfile(String loggedInUsername, String usernameToUnfollow) {
 
-        var loggedInUserOptional = userRepository.findByUsername(loggedInUsername);
-        var userToUnfollowOptional = userRepository.findByUsername(usernameToUnfollow);
+        var loggedInUserOptional = userRepository.findByUsernameForFollowUnfollow(loggedInUsername);
+        var userToUnfollowOptional = userRepository.findByUsernameForFollowUnfollow(usernameToUnfollow);
 
         if (loggedInUserOptional.isEmpty() || userToUnfollowOptional.isEmpty()) {
             return Result.failure("User(s) not found", 404);
