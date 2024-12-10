@@ -61,6 +61,9 @@ public class UserService extends BaseService implements UserDetailsService, User
                 return Result.failure("Passwords do not match", 400);
             }
 
+            // Lock the user table to prevent concurrent registration of the same username
+            userRepository.lockUserTableByUsername(registerUserDto.getUsername());
+
             // Check if username exists in bloom filter
             if (bloomFilterService.contains(registerUserDto.getUsername())) {
                 // Check if a user with the same username exists for real, because bloom filter is not 100% accurate
