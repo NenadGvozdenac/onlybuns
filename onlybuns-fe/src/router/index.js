@@ -11,6 +11,8 @@ import RegisteredProfiles from '@/components/Authorized/RegisteredProfiles.vue'
 import NearYou from '@/components/Authorized/NearYou.vue'
 import CreatePost from '@/components/Authorized/CreatePost.vue'
 import FollowingFeed from '@/views/FollowingFeed.vue'
+import ChatRooms from '@/views/ChatRooms.vue'
+import Chat from '@/views/Chat.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,6 +76,16 @@ const router = createRouter({
       path: '/followingFeed',
       name: 'followingFeed',
       component: FollowingFeed
+    },
+    {
+      path: '/chatsRooms',
+      name: 'chatsRooms',
+      component: ChatRooms
+    },
+    {
+      path: '/chat/:id',
+      name: 'chat',
+      component: Chat
     }
   ]
 })

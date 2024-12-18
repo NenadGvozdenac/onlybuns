@@ -45,7 +45,7 @@
               <li><a class="dropdown-item" href="/createpost">Create Post</a></li>
               <li><a class="dropdown-item" href="/trends">Trends</a></li>
               <li><a class="dropdown-item" href="/nearyou">Near You</a></li>
-              <li><a class="dropdown-item" href="/">Chats</a></li>
+              <li><a class="dropdown-item" href="/chatsRooms">Chats</a></li>
             </ul>
           </li>
 

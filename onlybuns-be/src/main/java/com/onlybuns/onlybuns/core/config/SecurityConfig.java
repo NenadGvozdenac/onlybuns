@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .requestMatchers("/profile/verifiedProfiles").permitAll() // Allow getting verified profiles
                 .requestMatchers("/post/all").permitAll() // Allow getting posts to all users
                 .requestMatchers("/email/verify/**").permitAll() // Allow email verification
+                .requestMatchers("/chat").permitAll()
                 .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")     // TODO: Implement when needed
                 .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")   // TODO: Implement when needed
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
