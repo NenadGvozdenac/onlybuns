@@ -66,7 +66,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
                     joinRoom(session, roomId);
 
                     // Notify about the user joining
-                    String joinMessage = createJsonMessage("info", "User " + username + " has joined room: " + roomId);
+                    String joinMessage = createJsonMessage("info", "User " + username + " has joined the chat!");
                     sendMessageToRoom(session, joinMessage, roomId);
 
                     System.out.println("User " + username + " joined room: " + roomId);

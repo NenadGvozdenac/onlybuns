@@ -5,21 +5,19 @@
             <NavbarUnauthorized v-else />
         </header>
 
+        <div class="home">
+            <h1>OnlyBuns Chat Rooms</h1>
+            <p>Connect and chat with fellow bun enthusiasts!</p>
+        </div>
+
         <main class="content">
             <div class="container mt-5">
                 <!-- Add new room form -->
                 <div class="row mb-4">
                     <div class="col-12 d-flex">
-                        <input 
-                            type="text" 
-                            class="form-control me-2" 
-                            v-model="newRoomName" 
-                            placeholder="Enter room name"
-                        >
-                        <button 
-                            class="btn btn-primary" 
-                            @click="createRoom"
-                        >
+                        <input type="text" class="form-control me-2" v-model="newRoomName"
+                            placeholder="Enter room name">
+                        <button class="btn btn-primary" @click="createRoom">
                             Add New Room
                         </button>
                     </div>
@@ -27,7 +25,7 @@
 
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-4 mb-4" v-for="(card, index) in rooms" :key="index">
-                        <ChatRoomCard :id="card.id" :name="card.name" :admin="card.admin"/>
+                        <ChatRoomCard :id="card.id" :name="card.name" :admin="card.admin" />
                     </div>
                 </div>
             </div>
@@ -79,7 +77,7 @@ export default {
             if (this.newRoomName.trim()) {
                 try {
                     await ChatService.createRoom(this.newRoomName);
-                    this.newRoomName = ''; 
+                    this.newRoomName = '';
                     this.fetchMyRooms();
                 } catch (error) {
                     console.error('Failed to create room:', error);
@@ -105,5 +103,20 @@ export default {
 footer {
     width: 100%;
     background-color: #fff;
+}
+
+.home {
+    text-align: center;
+    margin-top: 50px;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #333;
+}
+
+p {
+    font-size: 1.2em;
+    color: #666;
 }
 </style>

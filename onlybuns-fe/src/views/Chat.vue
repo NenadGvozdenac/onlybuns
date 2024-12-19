@@ -494,10 +494,14 @@ export default {
     transition: all 0.3s ease;
     opacity: 0;
 }
+
 .toast.show {
     opacity: 1;
 }
+
 .toast-container {
     z-index: 1056;
 }
+
+
 </style>
