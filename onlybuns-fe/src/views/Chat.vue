@@ -25,13 +25,12 @@
                            flex-direction: column-reverse;">
                     <div class="d-flex flex-column-reverse">
                         <!-- Example Message (You'll replace with v-for) -->
-                        <div class="mb-3">
+                        <div class="mb-3" v-for="(msg, index) in messages" :key="index">
                             <div class="card">
-                                <!-- Your existing message cards here -->
                                 <div class="card-body py-2 px-3">
-                                    <strong>John Doe</strong>
-                                    <p class="mb-0">Hello, this is a sample message!</p>
-                                    <small class="text-muted">2 minutes ago</small>
+                                    <strong>{{ msg.username }}</strong>
+                                    <p class="mb-0">{{ msg.message }}</p>
+                                    <small class="text-muted">{{ msg.timestamp }}</small>
                                 </div>
                             </div>
                         </div>
@@ -73,11 +72,9 @@
 </template>
 
 <script>
-
 import ChatService from '@/services/ChatService';
-
-import NavbarUnauthorized from '@/components/Unauthorized/Navbar.vue'
-import NavbarAuthorized from '@/components/Authorized/Navbar.vue'
+import NavbarUnauthorized from '@/components/Unauthorized/Navbar.vue';
+import NavbarAuthorized from '@/components/Authorized/Navbar.vue';
 
 export default {
     name: 'Chats',
@@ -87,12 +84,42 @@ export default {
     },
     data() {
         return {
+            socket: null,
             chatRoom: {},
+            messages: [],  // Stores chat messages
+            messageInput: '', // Input for sending messages
         };
     },
     methods: {
         isLoggedIn() {
             return localStorage.getItem('token') !== null;
+        },
+
+        connectSocket() {
+            // Create a WebSocket connection to the backend
+            this.socket = new WebSocket('ws://localhost:8080/ws');
+            console.log(this.socket);
+
+            // Handle when the connection is open
+            this.socket.onopen = () => {
+                console.log('Connected to server');
+                // Join the room after connecting
+                this.socket.send(`join_room:${this.$route.params.id}`);
+            };
+
+            // Handle messages received from the server
+            this.socket.onmessage = (event) => {
+                // const message = JSON.parse(event.data);
+                // if (message.type === 'new_message') {
+                //     this.messages.push(message);
+                // }
+                console.log(event.data);
+            };
+
+            // Handle when the connection is closed
+            this.socket.onclose = () => {
+                console.log('Disconnected from server');
+            };
         },
 
         async fetchChatRoom() {
@@ -102,13 +129,32 @@ export default {
             } catch (error) {
                 console.log(error);
             }
-
         },
+
+        sendMessage() {
+            if (this.messageInput.trim()) {
+                const message = {
+                    type: 'new_message',
+                    roomId: this.chatRoom.id,
+                    username: 'John Doe', // Replace with actual user
+                    message: this.messageInput,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+
+                // Send the message to the server
+                this.socket.send(JSON.stringify(message));
+
+                // Clear the input
+                this.messageInput = '';
+            }
+        },
+
         openAddUserModal() {
             const modalElement = document.getElementById('addUserModal');
             const modal = new bootstrap.Modal(modalElement);
             modal.show();
         },
+
         async addUser() {
             const usernameInput = document.querySelector('#addUserModal input[type="text"]');
             const username = usernameInput.value.trim();
@@ -117,7 +163,6 @@ export default {
             console.log(roomId);
 
             if (username) {
-
                 console.log(`Attempting to add user: ${username} to room ID: ${roomId}`);
 
                 await ChatService.addUserToRoom(roomId, username);
@@ -135,6 +180,7 @@ export default {
     },
     mounted() {
         this.fetchChatRoom();
+        this.connectSocket();
     },
 };
 </script>
