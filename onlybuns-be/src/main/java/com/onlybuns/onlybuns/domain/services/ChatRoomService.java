@@ -82,6 +82,53 @@ public class ChatRoomService {
                 .success(new ChatRoomViewDto(chatRoom.getId(), chatRoom.getName(), chatRoom.getAdmin().getUsername()));
     }
 
+
+    public Result<ChatRoomViewDto> removeUserFromChatRoom(Long chatRoomId, String username, String adminUsername) {
+
+        var userOpt = userRepository.findByUsername(username);
+
+        if (username == adminUsername) {
+            return Result.failure("User cannot remove himself", 420);
+            
+        }
+
+        if (userOpt.isEmpty()) {
+            return Result.failure("User not found", 403);
+        }
+
+        // User user = userOpt.get();
+
+        var chatRoomOpt = chatRoomRepository.findById(chatRoomId);
+
+        if (chatRoomOpt.isEmpty()) {
+            return Result.failure("Chat room not found", 404);
+        }
+
+        ChatRoom chatRoom = chatRoomOpt.get();
+
+        if (!chatRoom.getAdmin().getUsername().equals(adminUsername)) {
+            return Result.failure("User is not admin of the group", 400);
+        }
+
+        List<ChatUser> chatUsers = chatUserRepository.findByUser(userRepository.findByUsername(username).get());
+
+        if (chatUsers.isEmpty()) {
+            return Result.failure("User not found", 404);
+        }
+
+        // pronadji usera iz te sobe
+        ChatUser chatUser = chatUsers.stream()
+                .filter(chatUser1 -> chatUser1.getChatRoom().getId().equals(chatRoomId))
+                .findFirst()
+                .orElse(null);
+
+        chatUserRepository.delete(chatUser);
+
+        return Result
+                .success(new ChatRoomViewDto(chatRoom.getId(), chatRoom.getName(), chatRoom.getAdmin().getUsername()));
+
+    }
+
     public Result<CreateChatRoomDto> createChatRoom(String chatRoomName, String adminUsername) {
 
         var adminOpt = userRepository.findByUsername(adminUsername);
@@ -126,7 +173,7 @@ public class ChatRoomService {
         }).toList());
     }
 
-    public Result<ChatRoomViewDto> getChatRoomById(Long chatRoomId) {
+    public Result<ChatRoomViewDto> getChatRoomById(Long chatRoomId, String username) {
         var chatRoomOpt = chatRoomRepository.findById(chatRoomId);
 
         if (chatRoomOpt.isEmpty()) {
@@ -134,6 +181,19 @@ public class ChatRoomService {
         }
 
         ChatRoom chatRoom = chatRoomOpt.get();
+
+        //proveri da li je ovaj user medju chatuserima
+        ChatUser chatUser = chatUserRepository.findByUser(userRepository.findByUsername(username).get())
+                .stream()
+                .filter(chatUser1 -> chatUser1.getChatRoom().getId().equals(chatRoomId))
+                .findFirst()
+                .orElse(null);
+
+        if (chatUser == null) {
+            return Result.failure("User is not in the chat room", 401);
+        }
+
+
         return Result
                 .success(new ChatRoomViewDto(chatRoom.getId(), chatRoom.getName(), chatRoom.getAdmin().getUsername()));
     }

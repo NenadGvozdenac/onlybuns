@@ -59,9 +59,10 @@ public class ChatController extends BaseController {
     }
 
     @Operation(summary = "Get chat room", description = "This endpoint allows a user to get chat room")
+    @ApiResponse(responseCode = "401", description = "User is not in the chat room")
     @GetMapping("/room")
     public ResponseEntity<ChatRoomViewDto> getChatRoom(@RequestParam Long id) {
-        var result = chatRoomService.getChatRoomById(id);
+        var result = chatRoomService.getChatRoomById(id, getLoggedInUsername());
         return createResponse(result);
     }
 
@@ -69,6 +70,17 @@ public class ChatController extends BaseController {
     @GetMapping("/messages")
     public ResponseEntity<List<ChatMessageDto>> getChatRoomMessages(@RequestParam Long id) {
         var result = chatRoomService.getMessageForRoom(id, getLoggedInUsername());
+        return createResponse(result);
+    }
+
+    @Operation(summary = "Remove user from chat room", description = "This endpoint allows a user to remove user from chat room")
+    @ApiResponse(responseCode = "403", description = "User not found.")
+    @ApiResponse(responseCode = "400", description = "User is not admin of the group")
+    @ApiResponse(responseCode = "401", description = "User is not in the chat room")
+    @ApiResponse(responseCode = "404", description = "Chat room not found.")
+    @PostMapping("/removeUser")
+    public ResponseEntity<ChatRoomViewDto> removeUserFromChatRoom(@RequestBody AddUserToChatRoomDto addDto) {
+        var result = chatRoomService.removeUserFromChatRoom(addDto.getId(), addDto.getUsername(), getLoggedInUsername());
         return createResponse(result);
     }
 }

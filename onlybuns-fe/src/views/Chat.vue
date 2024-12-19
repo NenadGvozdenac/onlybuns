@@ -28,8 +28,13 @@
                 </div>
             </div>
             <div class="col-auto">
-                <button v-if="chatRoom.admin === myUsername" class="btn btn-light btn-lg shadow-sm d-flex align-items-center" @click="openAddUserModal">
+                <button v-if="chatRoom.admin === myUsername"
+                    class="btn btn-light mb-2 btn-lg shadow-sm d-flex align-items-center" @click="openAddUserModal">
                     <i class="bi bi-person-plus-fill me-2"></i> Add User
+                </button>
+                <button v-if="chatRoom.admin === myUsername"
+                    class="btn btn-danger btn-lg shadow-sm d-flex align-items-center" @click="openRemoveUserModal">
+                    <i class="bi bi-person-dash-fill me-2"></i> Remove User
                 </button>
             </div>
         </div>
@@ -103,6 +108,54 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="removeUserModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Remove User from Chat Room</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-body p-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="removeUsernameInput"
+                                    placeholder="Enter username">
+                                <label for="removeUsernameInput">Username</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" @click="removeUser">Remove User</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-4">
+            <div id="successToast" class="toast align-items-center border-0 shadow-lg" role="alert"
+                style="background-color: #d4edda; color: #155724;">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-2" style="font-size: 1.2rem;"></i>
+                        <span></span>
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+
+            <div id="errorToast" class="toast align-items-center border-0 shadow-lg" role="alert"
+                style="background-color: #f8d7da; color: #721c24;">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center">
+                        <i class="bi bi-exclamation-circle-fill me-2" style="font-size: 1.2rem;"></i>
+                        <span></span>
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -138,7 +191,11 @@ export default {
             activeNotifications: [], // Replace infoMessages with activeNotifications
             myUsername: myUser,
             isTyping: false,
-            notificationId: 0 // Counter for unique notification IDs
+            notificationId: 0,
+            selectedUserToRemove: '',
+            removeUserModal: null,
+            successToast: null,
+            errorToast: null
         };
     },
     methods: {
@@ -198,6 +255,7 @@ export default {
                 console.log(this.chatRoom);
             } catch (error) {
                 console.log(error);
+                this.$router.push('/');
             }
         },
 
@@ -231,6 +289,12 @@ export default {
             modal.show();
         },
 
+        openRemoveUserModal() {
+            const modalElement = document.getElementById('removeUserModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        },
+
         async addUser() {
             const usernameInput = document.querySelector('#addUserModal input[type="text"]');
             const username = usernameInput.value.trim();
@@ -243,10 +307,40 @@ export default {
                     const modalElement = document.getElementById('addUserModal');
                     const modalInstance = bootstrap.Modal.getInstance(modalElement);
                     modalInstance.hide();
+                    this.showToast('User successfully added to the chat room!');
                 } catch (error) {
+                    this.showToast('Failed to add user to the chat room.', false);
                     console.error('Error adding user:', error);
                 }
             }
+        },
+
+        async removeUser() {
+            const removeUsernameInput = document.querySelector('#removeUserModal input[type="text"]');
+            const username = removeUsernameInput.value.trim();
+            const roomId = this.chatRoom.id;
+
+            if (username) {
+                try {
+                    console.log('Removing user:', username);
+                    await ChatService.removeUserFromRoom(roomId, username);
+                    removeUsernameInput.value = '';
+                    const modalElement = document.getElementById('removeUserModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    modalInstance.hide();
+                    this.showToast('User successfully removed from the chat room!');
+                } catch (error) {
+                    this.showToast('Failed to remove user from the chat room.', false);
+                    console.error('Error removing user:', error);
+                }
+            }
+        },
+
+        showToast(message, isSuccess = true) {
+            const toastEl = document.querySelector(isSuccess ? '#successToast' : '#errorToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toastEl.querySelector('.toast-body').textContent = message;
+            toast.show();
         },
 
         scrollToBottom() {
@@ -254,7 +348,8 @@ export default {
                 const scrollAnchor = this.$refs.scrollAnchor;
                 scrollAnchor?.scrollIntoView({ behavior: 'smooth' });
             });
-        }
+        },
+
     },
     mounted() {
         this.fetchChatRoom();
@@ -393,5 +488,16 @@ export default {
 
 .message-bubble {
     animation: fadeIn 0.3s ease-out;
+}
+
+.toast {
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+.toast.show {
+    opacity: 1;
+}
+.toast-container {
+    z-index: 1056;
 }
 </style>

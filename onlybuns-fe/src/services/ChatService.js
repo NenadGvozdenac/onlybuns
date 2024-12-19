@@ -72,6 +72,34 @@ class ChatService {
         }
     }
 
+    async removeUserFromRoom(roomId, username) {
+        try {
+            let token = localStorage.getItem('token');
+            
+            if (!token) {
+                throw new Error("No token saved!");
+            }
+    
+            const headers = {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json', 
+            };
+    
+            const data = {
+                id: roomId,          
+                username: username,  
+            };
+    
+            const response = await axios.post(`${API_URL}/removeUser`, data, { headers });
+    
+            return response.data;
+        } catch (error) {
+            console.error("Error removing user from chat room:", error);
+            throw error;
+        }
+    }
+    
+
     async fetchMessages(roomId) {
         try {
             let token = localStorage.getItem('token');
