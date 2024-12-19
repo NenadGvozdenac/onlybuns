@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.onlybuns.onlybuns.domain.services.ChatRoomService;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddUserToChatRoomDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.CreateChatRoomDto;
+import com.onlybuns.onlybuns.presentation.dtos.requests.CreateRoomDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.ChatMessageDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.ChatRoomViewDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,8 +34,8 @@ public class ChatController extends BaseController {
     @ApiResponse(responseCode = "400", description = "User is not admin of the group")
     @ApiResponse(responseCode = "404", description = "Chat room not found.")
     @PostMapping("/create")
-    public ResponseEntity<CreateChatRoomDto> createChatRoom(@RequestParam String roomName) {
-        var result = chatRoomService.createChatRoom(roomName, getLoggedInUsername());
+    public ResponseEntity<CreateChatRoomDto> createChatRoom(@RequestBody CreateRoomDto dto) {
+        var result = chatRoomService.createChatRoom(dto.getName(), getLoggedInUsername());
         return createResponse(result);
     }
 
@@ -60,6 +62,13 @@ public class ChatController extends BaseController {
     @GetMapping("/room")
     public ResponseEntity<ChatRoomViewDto> getChatRoom(@RequestParam Long id) {
         var result = chatRoomService.getChatRoomById(id);
+        return createResponse(result);
+    }
+
+    @Operation(summary = "Get chat room messages", description = "This endpoint allows a user to get chat room messages")
+    @GetMapping("/messages")
+    public ResponseEntity<List<ChatMessageDto>> getChatRoomMessages(@RequestParam Long id) {
+        var result = chatRoomService.getMessageForRoom(id, getLoggedInUsername());
         return createResponse(result);
     }
 }

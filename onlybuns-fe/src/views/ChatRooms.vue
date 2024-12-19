@@ -7,8 +7,25 @@
 
         <main class="content">
             <div class="container mt-5">
+                <!-- Add new room form -->
+                <div class="row mb-4">
+                    <div class="col-12 d-flex">
+                        <input 
+                            type="text" 
+                            class="form-control me-2" 
+                            v-model="newRoomName" 
+                            placeholder="Enter room name"
+                        >
+                        <button 
+                            class="btn btn-primary" 
+                            @click="createRoom"
+                        >
+                            Add New Room
+                        </button>
+                    </div>
+                </div>
+
                 <div class="row">
-                    <!-- Bootstrap grid: col-12 for mobile, col-md-6 for tablets, col-lg-4 for desktops -->
                     <div class="col-12 col-md-6 col-lg-4 mb-4" v-for="(card, index) in rooms" :key="index">
                         <ChatRoomCard :id="card.id" :name="card.name" :admin="card.admin"/>
                     </div>
@@ -55,6 +72,18 @@ export default {
                 console.log(this.rooms);
             } catch (error) {
                 console.log(error);
+            }
+        },
+
+        async createRoom() {
+            if (this.newRoomName.trim()) {
+                try {
+                    await ChatService.createRoom(this.newRoomName);
+                    this.newRoomName = ''; 
+                    this.fetchMyRooms();
+                } catch (error) {
+                    console.error('Failed to create room:', error);
+                }
             }
         }
 

@@ -3,13 +3,12 @@
         <NavbarAuthorized v-if="isLoggedIn()" />
         <NavbarUnauthorized v-else />
 
-         <!-- Notifications Container -->
-         <div class="notifications-container">
+        <!-- Notifications Container -->
+        <div class="notifications-container">
             <transition-group name="notification">
-                <div v-for="(notification, index) in activeNotifications" 
-                     :key="notification.id"
-                     class="notification alert alert-info d-inline-block py-2 px-3 rounded-pill shadow-sm"
-                     :style="{ top: `${index * 60 + 20}px` }">
+                <div v-for="(notification, index) in activeNotifications" :key="notification.id"
+                    class="notification alert alert-info d-inline-block py-2 px-3 rounded-pill shadow-sm"
+                    :style="{ top: `${index * 60 + 20}px` }">
                     <i class="bi bi-info-circle me-2"></i>
                     {{ notification.message }}
                 </div>
@@ -29,7 +28,7 @@
                 </div>
             </div>
             <div class="col-auto">
-                <button class="btn btn-light btn-lg shadow-sm d-flex align-items-center" @click="openAddUserModal">
+                <button v-if="chatRoom.admin === myUsername" class="btn btn-light btn-lg shadow-sm d-flex align-items-center" @click="openAddUserModal">
                     <i class="bi bi-person-plus-fill me-2"></i> Add User
                 </button>
             </div>
@@ -38,13 +37,15 @@
         <!-- Chat Messages Area -->
         <div class="row flex-grow-1 overflow-hidden position-relative">
             <div class="col p-0 d-flex flex-column position-absolute top-0 bottom-0 start-0 end-0">
-                <div ref="messagesContainer" class="flex-grow-1 overflow-auto p-3 chat-bg" 
-                     style="background: linear-gradient(to bottom, #f8f9fa, #e9ecef);">
+                <div ref="messagesContainer" class="flex-grow-1 overflow-auto p-3 chat-bg"
+                    style="background: linear-gradient(to bottom, #f8f9fa, #e9ecef);">
                     <div class="d-flex flex-column-reverse">
                         <!-- Only Chat Messages -->
                         <div class="mb-3" v-for="(msg, index) in messages" :key="index">
-                            <div :class="['d-flex', msg.username === myUsername ? 'justify-content-end' : 'justify-content-start']">
-                                <div :class="['message-bubble', msg.username === myUsername ? 'message-mine' : 'message-other']">
+                            <div
+                                :class="['d-flex', msg.username === myUsername ? 'justify-content-end' : 'justify-content-start']">
+                                <div
+                                    :class="['message-bubble', msg.username === myUsername ? 'message-mine' : 'message-other']">
                                     <div class="message-header d-flex justify-content-between align-items-center mb-1">
                                         <strong :class="msg.username === myUsername ? 'text-primary' : 'text-success'">
                                             {{ msg.username }}
@@ -65,14 +66,10 @@
                 <!-- Enhanced Message Input -->
                 <div class="bg-white border-top p-3 shadow-lg">
                     <div class="input-group input-group-lg">
-                        <input type="text" 
-                               class="form-control border-2 shadow-none" 
-                               placeholder="Type your message..." 
-                               v-model="messageInput"
-                               @keyup.enter="sendMessage">
-                        <button class="btn btn-primary px-4 shadow-none" 
-                                @click="sendMessage"
-                                :disabled="!messageInput.trim()">
+                        <input type="text" class="form-control border-2 shadow-none" placeholder="Type your message..."
+                            v-model="messageInput" @keyup.enter="sendMessage">
+                        <button class="btn btn-primary px-4 shadow-none" @click="sendMessage"
+                            :disabled="!messageInput.trim()">
                             <i class="bi bi-send-fill"></i>
                         </button>
                     </div>
@@ -155,7 +152,7 @@ export default {
                 message: message
             };
             this.activeNotifications.push(notification);
-            
+
             // Remove notification after duration
             setTimeout(() => {
                 this.activeNotifications = this.activeNotifications.filter(n => n.id !== notification.id);
@@ -201,6 +198,15 @@ export default {
                 console.log(this.chatRoom);
             } catch (error) {
                 console.log(error);
+            }
+        },
+
+        async fetchMessages() {
+            try {
+                this.messages = await ChatService.fetchMessages(this.$route.params.id);
+                console.log(this.messages);
+            } catch (error) {
+                console.error('Error fetching messages:', error);
             }
         },
 
@@ -252,6 +258,7 @@ export default {
     },
     mounted() {
         this.fetchChatRoom();
+        this.fetchMessages();
         this.connectSocket();
     },
     watch: {
@@ -277,9 +284,9 @@ export default {
 }
 
 .chat-bg {
-    background-image: 
-        radial-gradient(circle at 100% 100%, rgba(13,110,253,0.05) 0%, transparent 50%),
-        radial-gradient(circle at 0% 0%, rgba(13,110,253,0.05) 0%, transparent 50%);
+    background-image:
+        radial-gradient(circle at 100% 100%, rgba(13, 110, 253, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 0% 0%, rgba(13, 110, 253, 0.05) 0%, transparent 50%);
 }
 
 .message-bubble {
@@ -287,7 +294,7 @@ export default {
     padding: 0.75rem 1rem;
     border-radius: 1rem;
     margin-bottom: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .message-mine {
@@ -306,7 +313,7 @@ export default {
 
 .form-control:focus {
     border-color: #0d6efd;
-    box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
 .btn {
@@ -316,6 +323,7 @@ export default {
 .modal.fade .modal-dialog {
     transition: transform 0.2s ease-out;
 }
+
 .notifications-container {
     position: fixed;
     top: 0;
@@ -354,9 +362,9 @@ export default {
 }
 
 .chat-bg {
-    background-image: 
-        radial-gradient(circle at 100% 100%, rgba(13,110,253,0.05) 0%, transparent 50%),
-        radial-gradient(circle at 0% 0%, rgba(13,110,253,0.05) 0%, transparent 50%);
+    background-image:
+        radial-gradient(circle at 100% 100%, rgba(13, 110, 253, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 0% 0%, rgba(13, 110, 253, 0.05) 0%, transparent 50%);
 }
 
 
@@ -364,7 +372,7 @@ export default {
     .message-bubble {
         max-width: 90%;
     }
-    
+
     .modal-dialog {
         margin: 0.5rem;
     }
@@ -376,6 +384,7 @@ export default {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

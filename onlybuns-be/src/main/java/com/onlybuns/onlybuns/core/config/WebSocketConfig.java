@@ -11,8 +11,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlybuns.onlybuns.domain.models.ChatMessage;
-import com.onlybuns.onlybuns.domain.models.ChatRoom;
-import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.infrastructure.interfaces.ChatMessageRepository;
 import com.onlybuns.onlybuns.infrastructure.interfaces.ChatRoomRepository;
 import com.onlybuns.onlybuns.infrastructure.interfaces.ChatUserRepository;
@@ -87,9 +85,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
                     chatMessage.setChatRoom(chatRoomRepository.findById(roomIdLong));
                     chatMessage.setSender(userRepository.findByUsername(username).get()); 
                     chatMessage.setText(text);
-                    chatMessage.setTimestamp(java.time.LocalDateTime.now());
+                    chatMessage.setTimestamp(java.time.LocalDateTime.now().plusHours(1));
 
-                    //System.out.println(chatMessage.getId() + chatMessage.getChatRoom().getName() + chatMessage.getSender().getUsername() + chatMessage.getText() + chatMessage.getTimestamp());
+
+                    System.out.println(chatMessage.getId() + chatMessage.getChatRoom().getName() + chatMessage.getSender().getUsername() + chatMessage.getText() + chatMessage.getTimestamp());
 
                     chatMessageRepository.save(chatMessage);
 

@@ -71,6 +71,52 @@ class ChatService {
             throw error;
         }
     }
+
+    async fetchMessages(roomId) {
+        try {
+            let token = localStorage.getItem('token');
+            
+            if (!token) {
+                throw new Error("No token saved!");
+            }
+    
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+    
+            const response = await axios.get(`${API_URL}/messages?id=${roomId}`, { headers });
+    
+            return response.data;
+        } catch (error) {
+            console.error("Error getting messages:", error);
+            throw error;
+        }
+    }
+
+    async createRoom(name) {
+        try {
+            let token = localStorage.getItem('token');
+            
+            if (!token) {
+                throw new Error("No token saved!");
+            }
+    
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+
+            const response = await axios.post(
+                `${API_URL}/create`, 
+                { name: name },  // 'name' se šalje kao JSON objekat
+                { headers }
+            );
+    
+            return response.data;
+        } catch (error) {
+            console.error("Error creating room:", error);
+            throw error;
+        }
+    }
 }
 
 export default new ChatService();
