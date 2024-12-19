@@ -3,15 +3,34 @@
         <NavbarAuthorized v-if="isLoggedIn()" />
         <NavbarUnauthorized v-else />
 
-        <!-- Chat Room Header -->
-        <div class="row bg-primary text-white p-3 align-items-center">
-            <div class="col">
-                <h3 class="mb-0">{{ chatRoom.name }}</h3>
-                <small>Admin: {{ chatRoom.admin }}</small>
+         <!-- Notifications Container -->
+         <div class="notifications-container">
+            <transition-group name="notification">
+                <div v-for="(notification, index) in activeNotifications" 
+                     :key="notification.id"
+                     class="notification alert alert-info d-inline-block py-2 px-3 rounded-pill shadow-sm"
+                     :style="{ top: `${index * 60 + 20}px` }">
+                    <i class="bi bi-info-circle me-2"></i>
+                    {{ notification.message }}
+                </div>
+            </transition-group>
+        </div>
+
+        <!-- Enhanced Chat Room Header -->
+        <div class="row bg-gradient-primary text-white p-3 align-items-center shadow-sm">
+            <div class="col d-flex align-items-center">
+                <i class="bi bi-chat-dots-fill me-2 fs-4"></i>
+                <div>
+                    <h3 class="mb-0 fw-bold">{{ chatRoom.name }}</h3>
+                    <small class="opacity-75">
+                        <i class="bi bi-person-circle me-1"></i>
+                        Admin: {{ chatRoom.admin }}
+                    </small>
+                </div>
             </div>
             <div class="col-auto">
-                <button class="btn btn-light" @click="openAddUserModal">
-                    <i class="bi bi-person-add"></i> Add User
+                <button class="btn btn-light btn-lg shadow-sm d-flex align-items-center" @click="openAddUserModal">
+                    <i class="bi bi-person-plus-fill me-2"></i> Add User
                 </button>
             </div>
         </div>
@@ -19,51 +38,70 @@
         <!-- Chat Messages Area -->
         <div class="row flex-grow-1 overflow-hidden position-relative">
             <div class="col p-0 d-flex flex-column position-absolute top-0 bottom-0 start-0 end-0">
-                <!-- Messages Container -->
-                <div ref="messagesContainer" class="flex-grow-1 overflow-auto p-3" style="background-color: #f4f4f4; 
-                           display: flex; 
-                           flex-direction: column-reverse;">
+                <div ref="messagesContainer" class="flex-grow-1 overflow-auto p-3 chat-bg" 
+                     style="background: linear-gradient(to bottom, #f8f9fa, #e9ecef);">
                     <div class="d-flex flex-column-reverse">
-                        <!-- Example Message (You'll replace with v-for) -->
+                        <!-- Only Chat Messages -->
                         <div class="mb-3" v-for="(msg, index) in messages" :key="index">
-                            <div class="card">
-                                <div class="card-body py-2 px-3">
-                                    <strong>{{ msg.username }}</strong>
-                                    <p class="mb-0">{{ msg.message }}</p>
-                                    <small class="text-muted">{{ msg.timestamp }}</small>
+                            <div :class="['d-flex', msg.username === myUsername ? 'justify-content-end' : 'justify-content-start']">
+                                <div :class="['message-bubble', msg.username === myUsername ? 'message-mine' : 'message-other']">
+                                    <div class="message-header d-flex justify-content-between align-items-center mb-1">
+                                        <strong :class="msg.username === myUsername ? 'text-primary' : 'text-success'">
+                                            {{ msg.username }}
+                                        </strong>
+                                        <small class="text-muted ms-2">
+                                            <i class="bi bi-clock me-1"></i>
+                                            {{ msg.timestamp }}
+                                        </small>
+                                    </div>
+                                    <p class="mb-0 message-text">{{ msg.message }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div ref="scrollAnchor"></div>
                 </div>
 
-                <!-- Message Input (Fixed at Bottom) -->
-                <div class="bg-white border-top p-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Type your message..."
-                            v-model="messageInput">
-                        <button class="btn btn-primary" @click="sendMessage">
-                            <i class="bi bi-send"></i>
+                <!-- Enhanced Message Input -->
+                <div class="bg-white border-top p-3 shadow-lg">
+                    <div class="input-group input-group-lg">
+                        <input type="text" 
+                               class="form-control border-2 shadow-none" 
+                               placeholder="Type your message..." 
+                               v-model="messageInput"
+                               @keyup.enter="sendMessage">
+                        <button class="btn btn-primary px-4 shadow-none" 
+                                @click="sendMessage"
+                                :disabled="!messageInput.trim()">
+                            <i class="bi bi-send-fill"></i>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Add User Modal -->
+        <!-- Enhanced Add User Modal -->
         <div class="modal fade" id="addUserModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add User to Chat</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">
+                            <i class="bi bi-person-plus-fill me-2"></i>
+                            Add User to Chat
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body">
-                        <input type="text" class="form-control" placeholder="Enter username">
+                    <div class="modal-body p-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="usernameInput" placeholder="Enter username">
+                            <label for="usernameInput">Username</label>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" @click="addUser">Add</button>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary px-4" @click="addUser">
+                            <i class="bi bi-plus-lg me-2"></i>Add
+                        </button>
                     </div>
                 </div>
             </div>
@@ -83,11 +121,27 @@ export default {
         NavbarUnauthorized
     },
     data() {
+        let token = localStorage.getItem('token');
+        let myUser = '';
+
+        if (token) {
+            try {
+                myUser = JSON.parse(atob(token.split('.')[1])).sub;
+            } catch (error) {
+                console.error("Failed to parse token:", error);
+                myUser = '';
+            }
+        }
+
         return {
             socket: null,
             chatRoom: {},
-            messages: [],  // Stores chat messages
-            messageInput: '', // Input for sending messages
+            messages: [],
+            messageInput: '',
+            activeNotifications: [], // Replace infoMessages with activeNotifications
+            myUsername: myUser,
+            isTyping: false,
+            notificationId: 0 // Counter for unique notification IDs
         };
     },
     methods: {
@@ -95,28 +149,47 @@ export default {
             return localStorage.getItem('token') !== null;
         },
 
-        connectSocket() {
-            // Create a WebSocket connection to the backend
-            this.socket = new WebSocket('ws://localhost:8080/ws');
-            console.log(this.socket);
+        showNotification(message, duration = 3000) {
+            const notification = {
+                id: this.notificationId++,
+                message: message
+            };
+            this.activeNotifications.push(notification);
+            
+            // Remove notification after duration
+            setTimeout(() => {
+                this.activeNotifications = this.activeNotifications.filter(n => n.id !== notification.id);
+            }, duration);
+        },
 
-            // Handle when the connection is open
+        connectSocket() {
+            this.socket = new WebSocket('ws://localhost:8080/ws');
+
             this.socket.onopen = () => {
                 console.log('Connected to server');
-                // Join the room after connecting
-                this.socket.send(`join_room:${this.$route.params.id}`);
+                const joinMessage = JSON.stringify({
+                    type: "join_room",
+                    roomId: this.$route.params.id,
+                    username: this.myUsername,
+                });
+                this.socket.send(joinMessage);
             };
 
-            // Handle messages received from the server
             this.socket.onmessage = (event) => {
-                // const message = JSON.parse(event.data);
-                // if (message.type === 'new_message') {
-                //     this.messages.push(message);
-                // }
-                console.log(event.data);
+                const message = JSON.parse(event.data);
+
+                if (message.type === 'info') {
+                    this.showNotification(message.message);
+                } else if (message.type === 'chat') {
+                    this.messages.unshift({
+                        username: message.sender,
+                        message: message.text,
+                        timestamp: new Date().toLocaleString(),
+                    });
+                }
+                this.scrollToBottom();
             };
 
-            // Handle when the connection is closed
             this.socket.onclose = () => {
                 console.log('Disconnected from server');
             };
@@ -133,19 +206,16 @@ export default {
 
         sendMessage() {
             if (this.messageInput.trim()) {
-                const message = {
+                const messagePayload = {
                     type: 'new_message',
-                    roomId: this.chatRoom.id,
-                    username: 'John Doe', // Replace with actual user
-                    message: this.messageInput,
-                    timestamp: new Date().toLocaleTimeString()
+                    roomId: this.$route.params.id,
+                    username: this.myUsername,
+                    text: this.messageInput,
                 };
 
-                // Send the message to the server
-                this.socket.send(JSON.stringify(message));
-
-                // Clear the input
+                this.socket.send(JSON.stringify(messagePayload));
                 this.messageInput = '';
+                this.scrollToBottom();
             }
         },
 
@@ -159,35 +229,160 @@ export default {
             const usernameInput = document.querySelector('#addUserModal input[type="text"]');
             const username = usernameInput.value.trim();
             const roomId = this.chatRoom.id;
-            console.log(username);
-            console.log(roomId);
 
             if (username) {
-                console.log(`Attempting to add user: ${username} to room ID: ${roomId}`);
-
-                await ChatService.addUserToRoom(roomId, username);
-
-                // Reset input after attempting to add
-                usernameInput.value = '';
-
-                // Close modal (assumes Bootstrap modal is used)
-                const modalElement = document.getElementById('addUserModal');
-                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                modalInstance.hide();
+                try {
+                    await ChatService.addUserToRoom(roomId, username);
+                    usernameInput.value = '';
+                    const modalElement = document.getElementById('addUserModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    modalInstance.hide();
+                } catch (error) {
+                    console.error('Error adding user:', error);
+                }
             }
-        }
+        },
 
+        scrollToBottom() {
+            this.$nextTick(() => {
+                const scrollAnchor = this.$refs.scrollAnchor;
+                scrollAnchor?.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
     },
     mounted() {
         this.fetchChatRoom();
         this.connectSocket();
     },
+    watch: {
+        messages: {
+            handler() {
+                this.scrollToBottom();
+            },
+            deep: true
+        },
+        infoMessages: {
+            handler() {
+                this.scrollToBottom();
+            },
+            deep: true
+        }
+    }
 };
 </script>
 
 <style scoped>
-/* Ensure the messages container always scrolls to the bottom */
-.overflow-auto {
-    scroll-behavior: smooth;
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+}
+
+.chat-bg {
+    background-image: 
+        radial-gradient(circle at 100% 100%, rgba(13,110,253,0.05) 0%, transparent 50%),
+        radial-gradient(circle at 0% 0%, rgba(13,110,253,0.05) 0%, transparent 50%);
+}
+
+.message-bubble {
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.message-mine {
+    background: #e3f2fd;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.message-other {
+    background: white;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.message-text {
+    word-break: break-word;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.modal.fade .modal-dialog {
+    transition: transform 0.2s ease-out;
+}
+.notifications-container {
+    position: fixed;
+    top: 0;
+    right: 20px;
+    z-index: 1050;
+    pointer-events: none;
+}
+
+.notification {
+    position: absolute;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    min-width: 200px;
+    pointer-events: none;
+}
+
+/* Notification animations */
+.notification-enter-active,
+.notification-leave-active {
+    transition: all 0.3s ease;
+}
+
+.notification-enter-from {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+.notification-leave-to {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+/* Keep your existing styles */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+}
+
+.chat-bg {
+    background-image: 
+        radial-gradient(circle at 100% 100%, rgba(13,110,253,0.05) 0%, transparent 50%),
+        radial-gradient(circle at 0% 0%, rgba(13,110,253,0.05) 0%, transparent 50%);
+}
+
+
+@media (max-width: 768px) {
+    .message-bubble {
+        max-width: 90%;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+/* Animation for new messages */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-bubble {
+    animation: fadeIn 0.3s ease-out;
 }
 </style>
