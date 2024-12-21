@@ -13,6 +13,7 @@ import CreatePost from '@/components/Authorized/CreatePost.vue'
 import FollowingFeed from '@/views/FollowingFeed.vue'
 import ChatRooms from '@/views/ChatRooms.vue'
 import Chat from '@/views/Chat.vue'
+import AppAnalytics from '@/views/AppAnalytics.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -86,7 +87,12 @@ const router = createRouter({
       path: '/chat/:id',
       name: 'chat',
       component: Chat
-    }
+    },
+    {
+      path: '/analytics',
+      name: 'AppAnalytics',
+      component: AppAnalytics
+    },
   ]
 })
 

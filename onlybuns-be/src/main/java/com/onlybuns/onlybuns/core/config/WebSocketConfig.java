@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlybuns.onlybuns.domain.models.ChatMessage;
 import com.onlybuns.onlybuns.infrastructure.interfaces.ChatMessageRepository;
 import com.onlybuns.onlybuns.infrastructure.interfaces.ChatRoomRepository;
-import com.onlybuns.onlybuns.infrastructure.interfaces.ChatUserRepository;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 
 import org.springframework.web.socket.WebSocketSession;
@@ -28,9 +27,6 @@ import java.util.ArrayList;
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
-
-    @Autowired
-    private ChatUserRepository chatUserRepository;
 
     @Autowired
     private ChatRoomRepository chatRoomRepository;
@@ -57,6 +53,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
             public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
                 String payload = message.getPayload();
                 ObjectMapper objectMapper = new ObjectMapper(); // Use Jackson or any JSON library
+                @SuppressWarnings("unchecked")
                 Map<String, String> data = objectMapper.readValue(payload, Map.class);
 
                 if ("join_room".equals(data.get("type"))) {
