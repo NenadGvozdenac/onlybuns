@@ -27,6 +27,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="/registeredProfiles">Registered profiles</a></li>
+              <li><a class="dropdown-item" href="/analytics">OnlyBuns Analytics</a></li>
             </ul>
           </li>
 

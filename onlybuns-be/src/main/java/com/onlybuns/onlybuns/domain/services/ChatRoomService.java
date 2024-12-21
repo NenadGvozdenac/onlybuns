@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.onlybuns.onlybuns.domain.models.ChatUser;
 import com.onlybuns.onlybuns.domain.models.User;
+import com.onlybuns.onlybuns.domain.serviceinterfaces.ChatRoomInterface;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.models.ChatMessage;
 import com.onlybuns.onlybuns.domain.models.ChatRoom;
@@ -23,7 +24,7 @@ import com.onlybuns.onlybuns.presentation.dtos.responses.ChatMessageDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.ChatRoomViewDto;
 
 @Service
-public class ChatRoomService {
+public class ChatRoomService implements ChatRoomInterface {
 
     @Autowired
     private ChatUserRepository chatUserRepository;

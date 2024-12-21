@@ -5,14 +5,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.onlybuns.onlybuns.domain.services.ChatRoomService;
+import com.onlybuns.onlybuns.domain.serviceinterfaces.ChatRoomInterface;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddUserToChatRoomDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.CreateChatRoomDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.CreateRoomDto;
@@ -21,13 +22,14 @@ import com.onlybuns.onlybuns.presentation.dtos.responses.ChatRoomViewDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
-@Controller
+import io.swagger.v3.oas.annotations.tags.Tag;
+@Tag(name = "Chat Controller", description = "Endpoints for chat")
+@RestController
 @RequestMapping("/chat")
 public class ChatController extends BaseController {
 
     @Autowired
-    private ChatRoomService chatRoomService; 
+    private ChatRoomInterface chatRoomService; 
 
     @Operation(summary = "Create a room for chating", description = "This endpoint allows a user to create a room for chating")
     @ApiResponse(responseCode = "403", description = "User not found.")
