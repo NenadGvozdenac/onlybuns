@@ -70,7 +70,8 @@ public class TrendsService implements TrendsServiceInterface {
                             post.getComments().stream()
                                     .map(comment -> new CommentDto(comment.getId(),
                                             comment.getComment(),
-                                            comment.getCommentedAt()))
+                                            comment.getCommentedAt(),
+                                            comment.getUser().getUsername()))
                                     .collect(Collectors.toList()),
                             post.getUsersThatLiked().stream()
                                     .map(user -> new UserDto(user.getUsername(),
@@ -97,7 +98,8 @@ public class TrendsService implements TrendsServiceInterface {
                     post.getComments().stream()
                             .map(comment -> new CommentDto(comment.getId(),
                                     comment.getComment(),
-                                    comment.getCommentedAt()))
+                                    comment.getCommentedAt(),
+                                    comment.getUser().getUsername()))
                             .collect(Collectors.toList()),
                     post.getUsersThatLiked().stream()
                             .map(user -> new UserDto(user.getUsername(), user.getName(),

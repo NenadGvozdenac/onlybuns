@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table (name="comments")
+@Table(name = "comments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,9 +29,9 @@ public class Comment {
     @Column(nullable = false)
     private LocalDateTime commentedAt;
 
-    //nemanja ovo ti je za implementirati
-    // @Column(nullable = false)
-    // private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)

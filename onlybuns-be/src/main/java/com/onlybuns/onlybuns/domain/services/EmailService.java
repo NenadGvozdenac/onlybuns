@@ -203,4 +203,19 @@ public class EmailService implements EmailServiceInterface {
             return Result.failure("Error verifying user", 500);
         }
     }
+
+    public Result<String> sendSpamEmail(String email, String subject, String message) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setTo(email);
+            helper.setSubject(subject);
+            helper.setText(message, true);
+
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            System.out.println("Error sending spam email: " + e.getMessage());
+        }
+        return Result.success("Spam email sent successfully");
+    }
 }

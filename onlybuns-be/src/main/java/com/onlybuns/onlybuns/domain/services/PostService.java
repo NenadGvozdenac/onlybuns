@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,7 @@ import com.onlybuns.onlybuns.domain.models.Post;
 import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.AddressRepository;
+import com.onlybuns.onlybuns.infrastructure.interfaces.CommentRepositoryInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
@@ -44,8 +46,12 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Autowired
     private ImageService imageService;
+
     @Autowired
     private AddressRepository addressRepository;
+
+    @Autowired
+    private CommentRepositoryInterface commentRepositoryjpa;
 
     @Override
     @Transactional
@@ -170,6 +176,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                                     commentDto.setId(comment.getId());
                                     commentDto.setComment(comment.getComment());
                                     commentDto.setCommentedAt(comment.getCommentedAt());
+                                    commentDto.setUsername(comment.getUser().getUsername());
                                     return commentDto;
                                 })
                                 .collect(Collectors.toList());
@@ -226,6 +233,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                                     commentDto.setId(comment.getId());
                                     commentDto.setComment(comment.getComment());
                                     commentDto.setCommentedAt(comment.getCommentedAt());
+                                    commentDto.setUsername(comment.getUser().getUsername());
                                     return commentDto;
                                 })
                                 .collect(Collectors.toList());
@@ -466,4 +474,41 @@ public class PostService extends BaseService implements PostServiceInterface {
         }
     }
 
+    @Override
+    @Transactional
+    public Result<CommentDto> addComment(Long postId, String comment, String username) {
+        var postOptional = postRepositoryjpa.findById(postId);
+        if (postOptional.isEmpty()) {
+            return Result.failure("Post not found", 404);
+        }
+
+        var userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            return Result.failure("User not found", 409);
+        }
+
+        Post post = postOptional.get();
+        User user = userOptional.get();
+
+        // Create a new comment
+        Comment newComment = new Comment();
+        newComment.setComment(comment);
+        newComment.setCommentedAt(LocalDateTime.now());
+        newComment.setUser(user);
+        newComment.setPost(post);
+        // Save the comment
+        var createdcomment = commentRepositoryjpa.save(newComment);
+
+
+        post.getComments().add(createdcomment);
+        postRepositoryjpa.save(post);
+
+        // Create a CommentDto to return
+        CommentDto commentDto = new CommentDto();
+        commentDto.setId(createdcomment.getId());
+        commentDto.setComment(createdcomment.getComment());
+        commentDto.setCommentedAt(createdcomment.getCommentedAt());
+        commentDto.setUsername(user.getUsername());
+        return Result.success(commentDto);
+    }
 }
