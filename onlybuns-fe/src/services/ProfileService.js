@@ -19,6 +19,8 @@ class ProfileService {
 
             const response = await axios.get(`${API_URL}/profile`, authorization);
 
+            console.log('My profile:', response.data);
+
             return response.data;
         } catch (error) {
             throw error.response.data;

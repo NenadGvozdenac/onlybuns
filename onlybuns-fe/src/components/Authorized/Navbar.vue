@@ -27,6 +27,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="/registeredProfiles">Registered profiles</a></li>
+              <li><a class="dropdown-item" href="/analytics">OnlyBuns Analytics</a></li>
             </ul>
           </li>
 
@@ -45,7 +46,7 @@
               <li><a class="dropdown-item" href="/createpost">Create Post</a></li>
               <li><a class="dropdown-item" href="/trends">Trends</a></li>
               <li><a class="dropdown-item" href="/nearyou">Near You</a></li>
-              <li><a class="dropdown-item" href="/">Chats</a></li>
+              <li><a class="dropdown-item" href="/chatsRooms">Chats</a></li>
             </ul>
           </li>
 

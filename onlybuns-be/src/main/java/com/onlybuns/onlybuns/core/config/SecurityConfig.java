@@ -43,8 +43,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
             .cors(Customizer.withDefaults()) // Enable CORS
-            .authorizeHttpRequests(auth -> auth                
-                .requestMatchers("/public", "/").permitAll() // Allow public endpoints
+            .authorizeHttpRequests(auth -> auth                                
+                .requestMatchers("/public", "/ws", "/").permitAll() // Allow public endpoints
                 .requestMatchers("/auth/login", "/auth/register", "/profile").permitAll() // Allow login and register
                 .requestMatchers("/api/fetch-vets/**").permitAll()
                 .requestMatchers("/api/images/**").permitAll()
