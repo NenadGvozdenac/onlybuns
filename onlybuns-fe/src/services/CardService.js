@@ -7,6 +7,7 @@ class CardService {
     async fetchPosts() {
         try {
             const response = await axios.get(`${API_URL}/all`);
+            console.log("Response:", response.data);
             return response.data;
         } catch (error) {
             console.error("Error fetching cards:", error);
@@ -103,7 +104,26 @@ class CardService {
             throw error;
         }
     }
+    async postComment(id, commentText){
+        try {
+            const token = localStorage.getItem('token');
+        
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
 
+            let comment = {
+                text: commentText
+            }
+    
+            const response = await axios.post(`${API_URL}/${id}/comment`, comment, { headers });
+    
+            return response.data; 
+        } catch (error) {
+            console.error(`Error posting comment on post with ID ${id}:`, error);
+            throw error;
+        }
+    }
 }
 
 export default new CardService();

@@ -145,6 +145,24 @@ public class PostController extends BaseController {
         }
     }
 
+    @Operation(summary = "Add a comment to a post", description = "This endpoint allows users to add a comment to a specific post")
+    @ApiResponse(responseCode = "201", description = "Comment created successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid request data")
+    @ApiResponse(responseCode = "404", description = "Post not found")
+    @PostMapping("/{id}/comment")
+    public ResponseEntity<?> addComment(
+        @PathVariable Long id,
+        @RequestBody String comment) {
+        var result = postService.addComment(id, comment, getLoggedInUsername());
+        if (result.isSuccess()) {
+        return new ResponseEntity<>(result.getData(), HttpStatus.CREATED);
+        } else if (result.getMessage().equalsIgnoreCase("Post not found")) {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     private AddressDto parseAddressFromJson(String addressJson) {
         // Add logic here to parse the JSON address string into an AddressDto object
         // You can use libraries like Jackson or Gson for JSON parsing

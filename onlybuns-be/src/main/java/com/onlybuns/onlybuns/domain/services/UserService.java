@@ -105,7 +105,8 @@ public class UserService extends BaseService implements UserDetailsService, User
             newUser.setActive(true);
             newUser.setVerified(false);
             newUser.setAddress(address);
-
+            newUser.setLastLoggedIn(null);
+            newUser.setSentMail(false);
             // Save the new user in the repository
             var user = userRepository.save(newUser);
 

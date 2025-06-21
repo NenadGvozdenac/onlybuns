@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
+import com.onlybuns.onlybuns.presentation.dtos.responses.CommentDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.GetAllPostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostAndLocationDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.PostDto;
@@ -21,4 +22,5 @@ public interface PostServiceInterface {
     public Result<List<PostAndLocationDto>> getNearbyPosts(double latitude, double longitude, Double radius);
     public Result<PostDto> createPost(String description, MultipartFile image, AddressDto address, String username);
     public Result<List<GetAllPostDto>> getAllPostsByFollowing(String username);
+    public Result<CommentDto> addComment(Long id, String comment, String loggedInUsername);
 }

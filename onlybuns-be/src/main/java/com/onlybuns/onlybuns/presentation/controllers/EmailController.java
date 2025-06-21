@@ -53,4 +53,19 @@ public class EmailController extends BaseController {
         var result = emailService.verifyEmail(email_token);
         return createResponse(result);
     }
+
+
+    @Operation(summary = "Send a spam email",
+    description = "This endpoint allows for sending a spam email to a user. "
+                + "The request body should contain the user's email, subject, and message. "
+                + "Returns a message indicating the result of the email sending.")
+    @ApiResponse(responseCode = "200", description = "Email sent successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid email provided")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @PostMapping("/sendSpamEmail")
+    public ResponseEntity<String> sendSpamEmail() {
+        var result = emailService.sendSpamEmail("vojnicnemanjaa@gmail.com","New posts from your followers!","Hello " + "nigga" + ",\n\nThere have been " + "666" +
+                " new posts by your followers. Check them out!");
+        return createResponse(result);
+    }
 }

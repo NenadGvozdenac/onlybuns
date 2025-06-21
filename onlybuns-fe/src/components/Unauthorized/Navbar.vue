@@ -26,6 +26,11 @@
           <li v-if="userNotLoggedIn()" class="nav-item">
             <a class="btn btn-outline-primary ms-md-3" href="/login">Login</a>
           </li>
+
+          <!-- Spam button -->
+          <!-- <li class="nav-item">
+            <button class="btn btn-warning ms-md-3" @click="sendSpam">Send Spam</button>
+          </li> -->
         </ul>
       </div>
     </div>
@@ -34,6 +39,7 @@
 
 <script>
 import AuthService from '@/services/AuthService';
+import EmailService from '@/services/EmailService';
 export default {
   name: 'NavbarUnauthorized',
   methods: {
@@ -44,6 +50,16 @@ export default {
       AuthService.logout();
       // Refresh page
       location.reload();
+    },
+    sendSpam() {
+      // Placeholder for spam function
+      EmailService.sendSpam()
+        .then(response => {
+          console.log('Spam sent successfully:', response);
+        })
+        .catch(error => {
+          console.error('Error sending spam:', error);
+        });
     }
   }
 }

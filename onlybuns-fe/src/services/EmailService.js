@@ -12,6 +12,14 @@ class EmailService {
             throw error.response; // Handle errors appropriately
         }
     }
+    async sendSpam(){
+        try {
+            const response = await axios.post(`${API_URL}/sendSpamEmail`);
+            return response; // Return the response data
+        } catch (error) {
+            throw error.response; // Handle errors appropriately
+        }
+    }
 }
 
 export default new EmailService();
