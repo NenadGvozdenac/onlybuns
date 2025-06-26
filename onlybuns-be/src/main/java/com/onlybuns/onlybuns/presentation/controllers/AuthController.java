@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.onlybuns.onlybuns.domain.serviceinterfaces.UserServiceInterface;
+import com.onlybuns.onlybuns.infrastructure.metrics.MetricsService;
 import com.onlybuns.onlybuns.presentation.dtos.requests.LoginUserDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.RegisterUserDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.UserDto;
@@ -22,11 +23,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/auth")
 public class AuthController extends BaseController {
 
-    private UserServiceInterface userService;
+    private final UserServiceInterface userService;
+    private final MetricsService metricsService;
 
     @Autowired
-    public AuthController(UserServiceInterface userService) {
+    public AuthController(UserServiceInterface userService, MetricsService metricsService) {
         this.userService = userService;
+        this.metricsService = metricsService;
     }
     
     @Operation(summary = "Register a new user", 
@@ -54,6 +57,12 @@ public class AuthController extends BaseController {
     @PostMapping("/login")
     public ResponseEntity<UserLoginDto> loginUser(@RequestBody LoginUserDto loginUserDto) {
         var result = userService.loginUser(loginUserDto);
+        
+        // Track user login for metrics if login was successful
+        if (result.isSuccess()) {
+            metricsService.recordUserLogin(loginUserDto.getEmail());
+        }
+        
         return createResponse(result);
     }
 }

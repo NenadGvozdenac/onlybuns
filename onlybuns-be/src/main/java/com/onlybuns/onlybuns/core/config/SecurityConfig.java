@@ -55,6 +55,7 @@ public class SecurityConfig {
                 .requestMatchers("/post/*/mark-advertisement").permitAll() // Allow marking posts for advertisement
                 .requestMatchers("/post/*/unmark-advertisement").permitAll() // Allow unmarking posts for advertisement
                 //.requestMatchers("/email/sendSpamEmail").permitAll() // Allow sending spam email
+                .requestMatchers("/actuator/**").permitAll() // Allow actuator endpoints for monitoring
                 .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")     // TODO: Implement when needed
                 .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")   // TODO: Implement when needed
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()

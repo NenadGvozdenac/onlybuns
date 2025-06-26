@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
+import com.onlybuns.onlybuns.infrastructure.metrics.MetricsService;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.GetAllPostDto;
@@ -37,10 +38,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class PostController extends BaseController {
 
     private final PostServiceInterface postService;
+    private final MetricsService metricsService;
 
     @Autowired
-    public PostController(PostServiceInterface postService) {
+    public PostController(PostServiceInterface postService, MetricsService metricsService) {
         this.postService = postService;
+        this.metricsService = metricsService;
     }
     @Operation(summary = "Like a post", description = "This endpoint allows a user to like a post")
     @ApiResponse(responseCode = "403", description = "Post not found.")
@@ -128,19 +131,28 @@ public class PostController extends BaseController {
             @RequestParam("image") MultipartFile image,
             @RequestParam String address) {
 
+        // Start timing the post creation
+        var timer = metricsService.startPostCreationTimer();
+
         AddressDto addressDto = parseAddressFromJson(address);
 
         if (description.isEmpty() || image.isEmpty() || addressDto == null) {
+            metricsService.stopPostCreationTimer(timer); // Stop timer for failed request
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
             Result<PostDto> result = postService.createPost(description, image, addressDto, getLoggedInUsername());
             if (result.isSuccess()) {
+                // Record successful post creation
+                metricsService.recordPostCreation();
+                metricsService.stopPostCreationTimer(timer); // Stop timer for successful request
                 return new ResponseEntity<>(result.getData(), HttpStatus.CREATED);
             } else {
+                metricsService.stopPostCreationTimer(timer); // Stop timer for failed request
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (Exception e) {
+            metricsService.stopPostCreationTimer(timer); // Stop timer for exception
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -170,6 +182,12 @@ public class PostController extends BaseController {
     @PostMapping("/{id}/mark-advertisement")
     public ResponseEntity<String> markPostForAdvertisement(@PathVariable Long id) {
         var result = postService.markPostForAdvertisement(id);
+        
+        // Record advertisement metrics if successful
+        if (result.isSuccess()) {
+            metricsService.recordPostAdvertisement();
+        }
+        
         return createResponse(result);
     }
 

@@ -3,6 +3,7 @@ const amqp = require('amqplib');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
+const client = require('prom-client'); // Prometheus metrics
 
 const app = express();
 const server = http.createServer(app);
@@ -11,6 +12,36 @@ const io = socketIo(server, {
     origin: "*",
     methods: ["GET", "POST"]
   }
+});
+
+// Prometheus metrics setup
+const collectDefaultMetrics = client.collectDefaultMetrics;
+collectDefaultMetrics({ timeout: 5000 });
+
+// Custom metrics
+const messageCounter = new client.Counter({
+  name: 'advertising_messages_received_total',
+  help: 'Total number of advertising messages received',
+  labelNames: ['agency_name']
+});
+
+const activeConnectionsGauge = new client.Gauge({
+  name: 'advertising_websocket_connections_active',
+  help: 'Number of active WebSocket connections',
+  labelNames: ['agency_name']
+});
+
+const messageProcessingDuration = new client.Histogram({
+  name: 'advertising_message_processing_duration_seconds',
+  help: 'Duration of message processing in seconds',
+  labelNames: ['agency_name'],
+  buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5]
+});
+
+const queueSizeGauge = new client.Gauge({
+  name: 'advertising_queue_size',
+  help: 'Current size of the advertising queue',
+  labelNames: ['agency_name']
 });
 
 app.use(cors());
@@ -49,6 +80,8 @@ async function connectToRabbitMQ() {
     // Consume messages
     channel.consume(queueName, (message) => {
       if (message) {
+        const startTime = Date.now();
+        
         const content = JSON.parse(message.content.toString());
         const receivedAt = new Date().toISOString();
         // Generate a unique message ID for this received message
@@ -70,6 +103,13 @@ async function connectToRabbitMQ() {
         
         console.log(`[${AGENCY_NAME}] Received advertisement:`, messageData);
         
+        // Update metrics
+        messageCounter.inc({ agency_name: AGENCY_NAME });
+        queueSizeGauge.set({ agency_name: AGENCY_NAME }, receivedMessages.length);
+        
+        const processingTime = (Date.now() - startTime) / 1000;
+        messageProcessingDuration.observe({ agency_name: AGENCY_NAME }, processingTime);
+        
         // Emit to all connected clients via WebSocket
         io.emit('newAdvertisement', messageData);
         
@@ -85,6 +125,19 @@ async function connectToRabbitMQ() {
 }
 
 // REST API endpoints
+
+// Prometheus metrics endpoint
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', client.register.contentType);
+    const metrics = await client.register.metrics();
+    res.end(metrics);
+  } catch (error) {
+    console.error('Error generating metrics:', error);
+    res.status(500).send('Error generating metrics');
+  }
+});
+
 app.get('/api/messages', (req, res) => {
   res.json({
     agencyName: AGENCY_NAME,
@@ -163,6 +216,9 @@ app.delete('/api/messages/:messageId', (req, res) => {
 io.on('connection', (socket) => {
   console.log(`[${AGENCY_NAME}] Client connected to WebSocket`);
   
+  // Update connection metrics
+  activeConnectionsGauge.inc({ agency_name: AGENCY_NAME });
+  
   // Send existing messages to newly connected client
   socket.emit('initialData', {
     agencyName: AGENCY_NAME,
@@ -204,6 +260,9 @@ io.on('connection', (socket) => {
   
   socket.on('disconnect', () => {
     console.log(`[${AGENCY_NAME}] Client disconnected from WebSocket`);
+    
+    // Update connection metrics
+    activeConnectionsGauge.dec({ agency_name: AGENCY_NAME });
   });
 });
 

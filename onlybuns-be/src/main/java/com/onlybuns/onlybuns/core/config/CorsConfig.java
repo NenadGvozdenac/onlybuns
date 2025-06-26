@@ -16,7 +16,10 @@ public class CorsConfig implements WebMvcConfigurer {
                                  "http://localhost:3000",
                                  "http://localhost:3001",
                                  "http://localhost:3002",
-                                 "http://localhost:3003") // Allow your Vue.js frontend
+                                 "http://localhost:3003",
+                                 "http://localhost:3005",
+                                 "http://localhost:9090",
+                                 "http://prometheus:9090") // Allow your Vue.js frontend and Prometheus
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allowed HTTP methods
                 .allowCredentials(true); // Allow credentials (like cookies)
     }
