@@ -23,6 +23,10 @@ services:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
       JWT_SECRET: ${JWT_SECRET}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     volumes:
       - './onlybuns-be:/app'               # Mount source code
       - maven_cache:/root/.m2              # Mount Maven cache
@@ -30,6 +34,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - rabbitmq
     networks:
       - default
 
@@ -93,6 +98,73 @@ services:
     networks:
       - default
 
+  # RabbitMQ Message Queue
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    ports:
+      - '5672:5672'      # AMQP port
+      - '15672:15672'    # Management UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - default
+
+  # Advertising Agency 1
+  advertising-agency-1:
+    build:
+      context: ./advertising-agency
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    environment:
+      PORT: 3001
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      AGENCY_NAME: "AdAgency-Alpha"
+    depends_on:
+      - rabbitmq
+    networks:
+      - default
+
+  # Advertising Agency 2
+  advertising-agency-2:
+    build:
+      context: ./advertising-agency
+      dockerfile: Dockerfile
+    ports:
+      - '3002:3001'
+    environment:
+      PORT: 3001
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      AGENCY_NAME: "AdAgency-Beta"
+    depends_on:
+      - rabbitmq
+    networks:
+      - default
+
+  # Advertising Agency 3
+  advertising-agency-3:
+    build:
+      context: ./advertising-agency
+      dockerfile: Dockerfile
+    ports:
+      - '3003:3001'
+    environment:
+      PORT: 3001
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      AGENCY_NAME: "AdAgency-Gamma"
+    depends_on:
+      - rabbitmq
+    networks:
+      - default
+
   # pgAdmin service
   pgadmin:
     image: dpage/pgadmin4
@@ -111,3 +183,4 @@ volumes:
   maven_cache:
   images:
   redis_data:
+  rabbitmq_data:

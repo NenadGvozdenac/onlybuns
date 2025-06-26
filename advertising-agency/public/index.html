@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advertising Agency Dashboard</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .status-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .status-item h3 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .status-item span {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .connection-status {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .connection-status.connected {
+            background-color: #4CAF50;
+            box-shadow: 0 0 10px #4CAF50;
+        }
+
+        .connection-status.disconnected {
+            background-color: #f44336;
+            box-shadow: 0 0 10px #f44336;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .messages-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .messages-header h2 {
+            color: #333;
+            font-size: 1.8em;
+        }
+
+        .clear-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .clear-btn:hover {
+            background: #d32f2f;
+        }
+
+        .messages-container {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .message {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .message:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.new {
+            background: #e8f5e8;
+            border-color: #4CAF50;
+            animation: pulse 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .message-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .message-user {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .message-times {
+            text-align: right;
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        .message-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .message-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #999;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .no-messages {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        /* Scrollbar styling */
+        .messages-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .status {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .messages-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .message {
+                padding: 15px;
+            }
+
+            .message-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .message-times {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="agencyName">Advertising Agency Dashboard</h1>
+            <div class="status">
+                <div class="status-item">
+                    <h3>Connection</h3>
+                    <span id="connectionStatus">
+                        Connecting...
+                        <span class="connection-status disconnected" id="connectionIndicator"></span>
+                    </span>
+                </div>
+                <div class="status-item">
+                    <h3>Total Messages</h3>
+                    <span id="messageCount">0</span>
+                </div>
+                <div class="status-item">
+                    <h3>Agency ID</h3>
+                    <span id="agencyId">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="messages-header">
+                <h2>Received Advertisements</h2>
+                <button class="clear-btn" onclick="clearMessages()">Clear Messages</button>
+            </div>
+            
+            <div class="messages-container" id="messagesContainer">
+                <div class="loading">Loading messages...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let socket;
+        let messages = [];
+        let agencyName = '';
+
+        // Initialize WebSocket connection
+        function initializeSocket() {
+            socket = io();
+
+            socket.on('connect', () => {
+                updateConnectionStatus(true);
+            });
+
+            socket.on('disconnect', () => {
+                updateConnectionStatus(false);
+            });
+
+            socket.on('initialData', (data) => {
+                agencyName = data.agencyName;
+                messages = data.messages || [];
+                updateUI();
+            });
+
+            socket.on('newAdvertisement', (message) => {
+                messages.unshift(message);
+                if (messages.length > 100) {
+                    messages = messages.slice(0, 100);
+                }
+                updateUI();
+                highlightNewMessage();
+            });
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('connectionStatus');
+            const indicatorElement = document.getElementById('connectionIndicator');
+            
+            if (connected) {
+                statusElement.innerHTML = 'Connected <span class="connection-status connected" id="connectionIndicator"></span>';
+            } else {
+                statusElement.innerHTML = 'Disconnected <span class="connection-status disconnected" id="connectionIndicator"></span>';
+            }
+        }
+
+        function updateUI() {
+            // Update agency name and message count
+            document.getElementById('agencyName').textContent = agencyName || 'Advertising Agency Dashboard';
+            document.getElementById('agencyId').textContent = agencyName || 'Unknown';
+            document.getElementById('messageCount').textContent = messages.length;
+
+            // Update messages
+            const container = document.getElementById('messagesContainer');
+            
+            if (messages.length === 0) {
+                container.innerHTML = '<div class="no-messages">No advertisements received yet. Waiting for new posts...</div>';
+                return;
+            }
+
+            container.innerHTML = messages.map(message => `
+                <div class="message" data-id="${message.receivedAt}">
+                    <div class="message-header">
+                        <div>
+                            <div class="message-title">Advertisement from @${message.username}</div>
+                            <div class="message-user">User: ${message.username}</div>
+                        </div>
+                        <div class="message-times">
+                            <div>Posted: ${formatDate(message.createdAt)}</div>
+                            <div>Received: ${formatDate(message.receivedAt)}</div>
+                        </div>
+                    </div>
+                    <div class="message-description">${message.description}</div>
+                    <div class="message-meta">
+                        <span>Agency: ${message.agencyName}</span>
+                        <span>Message ID: ${message.receivedAt}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function highlightNewMessage() {
+            const container = document.getElementById('messagesContainer');
+            const firstMessage = container.querySelector('.message');
+            if (firstMessage) {
+                firstMessage.classList.add('new');
+                setTimeout(() => {
+                    firstMessage.classList.remove('new');
+                }, 2000);
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function clearMessages() {
+            if (confirm('Are you sure you want to clear all messages?')) {
+                messages = [];
+                updateUI();
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSocket();
+        });
+    </script>
+</body>
+</html>

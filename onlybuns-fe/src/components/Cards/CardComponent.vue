@@ -79,8 +79,17 @@
                         <img src="https://flowbite.com/docs/images/logo.svg" alt="OnlyBuns Logo" class="h-8 me-2">
                         <h5 class="h5 mb-0">OnlyBuns</h5>
                     </div>
-                    <button type="button" class="btn-close me-1" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
+                    <div class="d-flex align-items-center">
+                        <img 
+                            :src="isMarkedForAdvertisement ? '../../../public/ads.png' : '../../../public/noads.png'" 
+                            :alt="isMarkedForAdvertisement ? 'Advertisement Enabled' : 'Advertisement Disabled'"
+                            class="img-fluid rounded me-3 cursor-pointer" 
+                            style="min-height: 20px;max-height: 40px; max-width: 40px; min-width: 20px; aspect-ratio: 1; cursor: pointer;"
+                            @click="toggleAdvertisement"
+                            :title="isMarkedForAdvertisement ? 'Click to disable advertisement' : 'Click to enable advertisement'">
+                        <button type="button" class="btn-close me-1" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
                 </div>
                 <div class="modal-body p-0">
                     <div class="row g-0">
@@ -255,6 +264,10 @@ export default {
         },
         comments: {
             type: Array
+        },
+        isMarkedForAdvertisement: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -398,6 +411,51 @@ export default {
         },
         goToRegister() {
             window.location.href = '/register';
+        },
+        async toggleAdvertisement() {
+            if (this.myUsername === '') {
+                this.showLoginPrompt();
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    this.showLoginPrompt();
+                    return;
+                }
+
+                const endpoint = this.isMarkedForAdvertisement 
+                    ? `/post/${this.id}/unmark-advertisement`
+                    : `/post/${this.id}/mark-advertisement`;
+
+                const response = await fetch(`http://localhost:8080${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Update the local state
+                    this.$emit('advertisement-toggle', {
+                        postId: this.id,
+                        isMarkedForAdvertisement: !this.isMarkedForAdvertisement
+                    });
+                    
+                    // Show success message
+                    const action = this.isMarkedForAdvertisement ? 'removed from' : 'added to';
+                    alert(`Post successfully ${action} advertisement!`);
+                } else {
+                    alert(`Error: ${result.message || 'Failed to update advertisement status'}`);
+                }
+            } catch (error) {
+                console.error('Error toggling advertisement:', error);
+                alert('Error updating advertisement status. Please try again.');
+            }
         }
     }
 }

@@ -75,6 +75,7 @@ public class ProfileService implements ProfileServiceInterface {
                 post.getDescription(),
                 post.getNumberOfLikes(),
                 post.getUser().getUsername(),
+                post.isMarkedForAdvertisement(),
                 new AddressDto(post.getUser().getAddress().getStreet(),
                         post.getUser().getAddress().getNumber(),
                         post.getUser().getAddress().getCity(),
@@ -266,6 +267,7 @@ public class ProfileService implements ProfileServiceInterface {
                     post.getDescription(),
                     post.getNumberOfLikes(),
                     post.getUser().getUsername(),
+                    post.isMarkedForAdvertisement(),
                     null,
                     Collections.emptyList(), // Set comments as an empty list
                     Collections.emptyList() // Set usersThatLiked as an empty list (if needed)

@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.onlybuns.onlybuns.core.dto.PostAdvertisementDto;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.models.Address;
 import com.onlybuns.onlybuns.domain.models.Comment;
@@ -52,6 +52,9 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Autowired
     private CommentRepositoryInterface commentRepositoryjpa;
+
+    @Autowired
+    private AdvertisementService advertisementService;
 
     @Override
     @Transactional
@@ -151,6 +154,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                         postDto.setDateOfCreation(post.getDateOfCreation());
                         postDto.setNumberOfLikes(post.getNumberOfLikes());
                         postDto.setUsername(post.getUser().getUsername());
+                        postDto.setMarkedForAdvertisement(post.isMarkedForAdvertisement());
                         var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(),
                                 post.getImage().getMimetype(), post.getImage().getUploadedAt());
                         postDto.setImage(imageDto);
@@ -384,7 +388,7 @@ public class PostService extends BaseService implements PostServiceInterface {
             List<User> usersThatLiked = new ArrayList<User>();
             List<Comment> comments = new ArrayList<Comment>();
             Post post = new Post(0l, userOptional.get(), LocalDateTime.now().plusHours(1), description, 0, false,
-                    newaddress, savedimage, usersThatLiked, comments);
+                    false, newaddress, savedimage, usersThatLiked, comments);
             System.out.println("Post made ");
 
             // Save the post to the database
@@ -511,4 +515,53 @@ public class PostService extends BaseService implements PostServiceInterface {
         commentDto.setUsername(user.getUsername());
         return Result.success(commentDto);
     }
+
+    @Override
+    @Transactional
+    public Result<String> markPostForAdvertisement(Long postId) {
+        var postOptional = postRepositoryjpa.findById(postId);
+        if (postOptional.isEmpty()) {
+            return Result.failure("Post not found", 404);
+        }
+
+        Post post = postOptional.get();
+        
+        if (post.isMarkedForAdvertisement()) {
+            return Result.failure("Post is already marked for advertisement", 400);
+        }
+
+        post.setMarkedForAdvertisement(true);
+        postRepositoryjpa.save(post);
+
+        // Send advertisement to RabbitMQ
+        PostAdvertisementDto advertisementDto = new PostAdvertisementDto(
+            post.getDescription(),
+            post.getDateOfCreation(),
+            post.getUser().getUsername()
+        );
+        advertisementService.sendPostAdvertisement(advertisementDto);
+
+        return Result.success("Post successfully marked for advertisement");
+    }
+
+    @Override
+    @Transactional
+    public Result<String> unmarkPostForAdvertisement(Long postId) {
+        var postOptional = postRepositoryjpa.findById(postId);
+        if (postOptional.isEmpty()) {
+            return Result.failure("Post not found", 404);
+        }
+
+        Post post = postOptional.get();
+        
+        if (!post.isMarkedForAdvertisement()) {
+            return Result.failure("Post is not marked for advertisement", 400);
+        }
+
+        post.setMarkedForAdvertisement(false);
+        postRepositoryjpa.save(post);
+
+        return Result.success("Post successfully unmarked for advertisement");
+    }
+    
 }

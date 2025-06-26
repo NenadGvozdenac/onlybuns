@@ -163,6 +163,26 @@ public class PostController extends BaseController {
         }
     }
 
+    @Operation(summary = "Mark post for advertisement", description = "This endpoint allows administrators to mark a post for advertisement distribution")
+    @ApiResponse(responseCode = "200", description = "Post marked for advertisement successfully")
+    @ApiResponse(responseCode = "400", description = "Post is already marked for advertisement")
+    @ApiResponse(responseCode = "404", description = "Post not found")
+    @PostMapping("/{id}/mark-advertisement")
+    public ResponseEntity<String> markPostForAdvertisement(@PathVariable Long id) {
+        var result = postService.markPostForAdvertisement(id);
+        return createResponse(result);
+    }
+
+    @Operation(summary = "Unmark post for advertisement", description = "This endpoint allows administrators to unmark a post from advertisement distribution")
+    @ApiResponse(responseCode = "200", description = "Post unmarked for advertisement successfully")
+    @ApiResponse(responseCode = "400", description = "Post is not marked for advertisement")
+    @ApiResponse(responseCode = "404", description = "Post not found")
+    @PostMapping("/{id}/unmark-advertisement")
+    public ResponseEntity<String> unmarkPostForAdvertisement(@PathVariable Long id) {
+        var result = postService.unmarkPostForAdvertisement(id);
+        return createResponse(result);
+    }
+
     private AddressDto parseAddressFromJson(String addressJson) {
         // Add logic here to parse the JSON address string into an AddressDto object
         // You can use libraries like Jackson or Gson for JSON parsing

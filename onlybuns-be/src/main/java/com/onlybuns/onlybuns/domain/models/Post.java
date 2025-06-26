@@ -47,6 +47,9 @@ public class Post {
     @Column(nullable = false)
     private boolean isDeleted;
 
+    @Column(nullable = false)
+    private boolean isMarkedForAdvertisement = false;
+
     @OneToOne(cascade = CascadeType.ALL)
     private Address location;
 
