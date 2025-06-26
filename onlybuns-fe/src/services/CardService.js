@@ -4,11 +4,30 @@ const API_URL = 'http://localhost:8080/post';
 
 class CardService {
 
+    // Helper method to map backend response properties to frontend expected properties
+    mapPostData(post) {
+        if (post && typeof post.markedForAdvertisement !== 'undefined') {
+            return {
+                ...post,
+                isMarkedForAdvertisement: post.markedForAdvertisement
+            };
+        }
+        return post;
+    }
+
+    // Helper method to map array of posts
+    mapPostsData(posts) {
+        if (Array.isArray(posts)) {
+            return posts.map(post => this.mapPostData(post));
+        }
+        return posts;
+    }
+
     async fetchPosts() {
         try {
             const response = await axios.get(`${API_URL}/all`);
             console.log("Response:", response.data);
-            return response.data;
+            return this.mapPostsData(response.data);
         } catch (error) {
             console.error("Error fetching cards:", error);
             throw error;
@@ -24,7 +43,7 @@ class CardService {
             };
 
             const response = await axios.get(`${API_URL}/following`, { headers });
-            return response.data;
+            return this.mapPostsData(response.data);
         } catch (error) {
             console.error("Error fetching following cards:", error);
             throw error;

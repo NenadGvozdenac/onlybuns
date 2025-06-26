@@ -116,6 +116,39 @@
             background: #d32f2f;
         }
 
+        .clear-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .remove-btn {
+            background: #ff5722;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #e64a19;
+            transform: scale(1.1);
+        }
+
+        .message-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
         .messages-container {
             max-height: 600px;
             overflow-y: auto;
@@ -240,6 +273,44 @@
             background: #a8a8a8;
         }
 
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideInNotification 0.3s ease-out;
+            max-width: 300px;
+            word-wrap: break-word;
+        }
+
+        .notification.success {
+            background-color: #4CAF50;
+        }
+
+        .notification.info {
+            background-color: #2196F3;
+        }
+
+        .notification.error {
+            background-color: #f44336;
+        }
+
+        @keyframes slideInNotification {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -278,8 +349,15 @@
                 gap: 10px;
             }
 
+            .message-actions {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
             .message-times {
                 text-align: left;
+                margin-left: 10px;
             }
         }
     </style>
@@ -310,7 +388,7 @@
         <div class="content">
             <div class="messages-header">
                 <h2>Received Advertisements</h2>
-                <button class="clear-btn" onclick="clearMessages()">Clear Messages</button>
+                <button class="clear-btn" id="clearBtn" onclick="clearMessages()">Clear All Messages</button>
             </div>
             
             <div class="messages-container" id="messagesContainer">
@@ -350,6 +428,18 @@
                 updateUI();
                 highlightNewMessage();
             });
+
+            socket.on('queueCleared', () => {
+                messages = [];
+                updateUI();
+                showNotification('All advertisements have been cleared from the queue', 'success');
+            });
+
+            socket.on('messageRemoved', (data) => {
+                messages = messages.filter(msg => msg.messageId !== data.messageId);
+                updateUI();
+                showNotification(`Advertisement removed: ${data.messageId}`, 'info');
+            });
         }
 
         function updateConnectionStatus(connected) {
@@ -378,21 +468,24 @@
             }
 
             container.innerHTML = messages.map(message => `
-                <div class="message" data-id="${message.receivedAt}">
+                <div class="message" data-id="${message.messageId}">
                     <div class="message-header">
                         <div>
                             <div class="message-title">Advertisement from @${message.username}</div>
                             <div class="message-user">User: ${message.username}</div>
                         </div>
-                        <div class="message-times">
-                            <div>Posted: ${formatDate(message.createdAt)}</div>
-                            <div>Received: ${formatDate(message.receivedAt)}</div>
+                        <div class="message-actions">
+                            <button class="remove-btn" onclick="removeMessage('${message.messageId}')" title="Remove this advertisement">×</button>
+                            <div class="message-times">
+                                <div>Posted: ${formatDate(message.createdAt)}</div>
+                                <div>Received: ${formatDate(message.receivedAt)}</div>
+                            </div>
                         </div>
                     </div>
                     <div class="message-description">${message.description}</div>
                     <div class="message-meta">
                         <span>Agency: ${message.agencyName}</span>
-                        <span>Message ID: ${message.receivedAt}</span>
+                        <span>Message ID: ${message.messageId}</span>
                     </div>
                 </div>
             `).join('');
@@ -422,10 +515,76 @@
         }
 
         function clearMessages() {
-            if (confirm('Are you sure you want to clear all messages?')) {
-                messages = [];
-                updateUI();
+            if (confirm('Are you sure you want to clear all messages? This action cannot be undone.')) {
+                const clearBtn = document.getElementById('clearBtn');
+                clearBtn.disabled = true;
+                clearBtn.textContent = 'Clearing...';
+                
+                // Call the backend API to clear messages
+                fetch('/api/messages', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Messages will be cleared via WebSocket event
+                        showNotification('Clearing all advertisements...', 'info');
+                    } else {
+                        throw new Error('Failed to clear messages');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error clearing messages:', error);
+                    showNotification('Failed to clear advertisements', 'error');
+                })
+                .finally(() => {
+                    clearBtn.disabled = false;
+                    clearBtn.textContent = 'Clear All Messages';
+                });
             }
+        }
+
+        function removeMessage(messageId) {
+            if (confirm('Are you sure you want to remove this advertisement?')) {
+                // Call the backend API to remove specific message
+                fetch(`/api/messages/${messageId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Message will be removed via WebSocket event
+                        showNotification('Removing advertisement...', 'info');
+                    } else {
+                        throw new Error('Failed to remove message');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error removing message:', error);
+                    showNotification('Failed to remove advertisement', 'error');
+                });
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            // Add to body
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
         }
 
         // Initialize the application

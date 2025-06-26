@@ -81,12 +81,12 @@
                     </div>
                     <div class="d-flex align-items-center">
                         <img 
-                            :src="isMarkedForAdvertisement ? '../../../public/ads.png' : '../../../public/noads.png'" 
-                            :alt="isMarkedForAdvertisement ? 'Advertisement Enabled' : 'Advertisement Disabled'"
+                            :src="localIsMarkedForAdvertisement ? '../../../public/ads.png' : '../../../public/noads.png'" 
+                            :alt="localIsMarkedForAdvertisement ? 'Advertisement Enabled' : 'Advertisement Disabled'"
                             class="img-fluid rounded me-3 cursor-pointer" 
                             style="min-height: 20px;max-height: 40px; max-width: 40px; min-width: 20px; aspect-ratio: 1; cursor: pointer;"
                             @click="toggleAdvertisement"
-                            :title="isMarkedForAdvertisement ? 'Click to disable advertisement' : 'Click to enable advertisement'">
+                            :title="localIsMarkedForAdvertisement ? 'Click to disable advertisement' : 'Click to enable advertisement'">
                         <button type="button" class="btn-close me-1" data-bs-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
@@ -286,12 +286,22 @@ export default {
         return {
             likes: 0,
             myUsername: myUser,
-            hasLiked: false
+            hasLiked: false,
+            localIsMarkedForAdvertisement: this.isMarkedForAdvertisement
         };
     },
     created() {
         this.likes = this.likesCount;
         this.hasLiked = this.usersThatLike != null ? this.usersThatLike.some(user => user.username === this.myUsername) : false;
+    },
+    watch: {
+        // Watch for changes in the prop and update local state
+        isMarkedForAdvertisement: {
+            handler(newValue) {
+                this.localIsMarkedForAdvertisement = newValue;
+            },
+            immediate: true
+        }
     },
     computed: {
         truncatedDescription() {
@@ -425,7 +435,7 @@ export default {
                     return;
                 }
 
-                const endpoint = this.isMarkedForAdvertisement 
+                const endpoint = this.localIsMarkedForAdvertisement 
                     ? `/post/${this.id}/unmark-advertisement`
                     : `/post/${this.id}/mark-advertisement`;
 
@@ -437,20 +447,21 @@ export default {
                     }
                 });
 
-                const result = await response.json();
-
-                if (result.success) {
+                if (response.ok) {
                     // Update the local state
+                    this.localIsMarkedForAdvertisement = !this.localIsMarkedForAdvertisement;
+                    
                     this.$emit('advertisement-toggle', {
                         postId: this.id,
-                        isMarkedForAdvertisement: !this.isMarkedForAdvertisement
+                        isMarkedForAdvertisement: this.localIsMarkedForAdvertisement
                     });
                     
                     // Show success message
-                    const action = this.isMarkedForAdvertisement ? 'removed from' : 'added to';
-                    alert(`Post successfully ${action} advertisement!`);
+                    const action = this.localIsMarkedForAdvertisement ? 'added to' : 'removed from';
+                    //alert(`Post successfully ${action} advertisement!`);
                 } else {
-                    alert(`Error: ${result.message || 'Failed to update advertisement status'}`);
+                    const errorText = await response.text();
+                    //alert(`Error: ${errorText || 'Failed to update advertisement status'}`);
                 }
             } catch (error) {
                 console.error('Error toggling advertisement:', error);

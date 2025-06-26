@@ -51,10 +51,13 @@ async function connectToRabbitMQ() {
       if (message) {
         const content = JSON.parse(message.content.toString());
         const receivedAt = new Date().toISOString();
+        // Generate a unique message ID for this received message
+        const messageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         
         const messageData = {
           ...content,
           receivedAt,
+          messageId,
           agencyName: AGENCY_NAME
         };
         
@@ -98,6 +101,64 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+// Clear advertisements queue
+app.delete('/api/messages', (req, res) => {
+  const clearedCount = receivedMessages.length;
+  receivedMessages = [];
+  
+  console.log(`[${AGENCY_NAME}] Cleared ${clearedCount} advertisements from queue`);
+  
+  // Notify all connected clients that the queue has been cleared
+  io.emit('queueCleared', {
+    agencyName: AGENCY_NAME,
+    clearedCount,
+    clearedAt: new Date().toISOString()
+  });
+  
+  res.json({
+    success: true,
+    message: `Cleared ${clearedCount} advertisements from queue`,
+    agencyName: AGENCY_NAME,
+    clearedCount,
+    clearedAt: new Date().toISOString()
+  });
+});
+
+// Clear specific advertisement by ID
+app.delete('/api/messages/:messageId', (req, res) => {
+  const messageId = req.params.messageId;
+  const initialLength = receivedMessages.length;
+  
+  receivedMessages = receivedMessages.filter(msg => msg.messageId !== messageId);
+  
+  const removedCount = initialLength - receivedMessages.length;
+  
+  if (removedCount > 0) {
+    console.log(`[${AGENCY_NAME}] Removed advertisement with ID ${messageId} from queue`);
+    
+    // Notify all connected clients that a specific message was removed
+    io.emit('messageRemoved', {
+      agencyName: AGENCY_NAME,
+      messageId,
+      removedAt: new Date().toISOString()
+    });
+    
+    res.json({
+      success: true,
+      message: `Removed advertisement with ID ${messageId}`,
+      agencyName: AGENCY_NAME,
+      messageId,
+      removedAt: new Date().toISOString()
+    });
+  } else {
+    res.status(404).json({
+      success: false,
+      message: `Advertisement with ID ${messageId} not found`,
+      agencyName: AGENCY_NAME
+    });
+  }
+});
+
 // WebSocket connection
 io.on('connection', (socket) => {
   console.log(`[${AGENCY_NAME}] Client connected to WebSocket`);
@@ -106,6 +167,39 @@ io.on('connection', (socket) => {
   socket.emit('initialData', {
     agencyName: AGENCY_NAME,
     messages: receivedMessages
+  });
+  
+  // Handle clear queue request from client
+  socket.on('clearQueue', () => {
+    const clearedCount = receivedMessages.length;
+    receivedMessages = [];
+    
+    console.log(`[${AGENCY_NAME}] Queue cleared via WebSocket. Cleared ${clearedCount} advertisements`);
+    
+    // Notify all connected clients that the queue has been cleared
+    io.emit('queueCleared', {
+      agencyName: AGENCY_NAME,
+      clearedCount,
+      clearedAt: new Date().toISOString()
+    });
+  });
+  
+  // Handle remove specific message request from client
+  socket.on('removeMessage', (messageId) => {
+    const initialLength = receivedMessages.length;
+    receivedMessages = receivedMessages.filter(msg => msg.messageId !== messageId);
+    const removedCount = initialLength - receivedMessages.length;
+    
+    if (removedCount > 0) {
+      console.log(`[${AGENCY_NAME}] Removed advertisement with ID ${messageId} via WebSocket`);
+      
+      // Notify all connected clients that a specific message was removed
+      io.emit('messageRemoved', {
+        agencyName: AGENCY_NAME,
+        messageId,
+        removedAt: new Date().toISOString()
+      });
+    }
   });
   
   socket.on('disconnect', () => {
