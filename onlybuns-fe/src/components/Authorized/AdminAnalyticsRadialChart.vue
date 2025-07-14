@@ -69,7 +69,7 @@
           },
           {
             count: this.usersJustPosted,
-            label: 'Only Posted',
+            label: 'Posted',
             percentage: (this.usersJustPosted / this.totalUsers * 100).toFixed(1)
           },
           {
