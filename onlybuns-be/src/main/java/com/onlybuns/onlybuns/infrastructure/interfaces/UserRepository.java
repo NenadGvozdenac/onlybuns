@@ -18,10 +18,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     List<User> findByVerifiedTrue();
     List<User> findBySentMailFalse();
-    
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+      @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT u FROM User u WHERE u.username = :username")
     Optional<User> findByUsernameForFollowUnfollow(String username);
+    
+    // Pessimistic lock methods for user registration
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT u FROM User u WHERE u.username = :username")
+    Optional<User> findByUsernameWithLock(@Param("username") String username);
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    Optional<User> findByEmailWithLock(@Param("email") String email);
     
     @Transactional
     void deleteByVerifiedFalse();
@@ -29,4 +37,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query(value = "SELECT * FROM users WHERE username = :username FOR UPDATE", nativeQuery = true)
     void lockUserTableByUsername(@Param("username") String username);
+    
+    // Additional pessimistic lock method for email
+    @Transactional
+    @Query(value = "SELECT * FROM users WHERE email = :email FOR UPDATE", nativeQuery = true)
+    void lockUserTableByEmail(@Param("email") String email);
 }
