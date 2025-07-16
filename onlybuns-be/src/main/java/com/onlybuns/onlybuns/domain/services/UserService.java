@@ -50,7 +50,9 @@ public class UserService extends BaseService implements UserDetailsService, User
         // Converting UserInfo to UserDetails
         return userDetail.map(UserInfoDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-    }    @Override
+    }    
+    
+    @Override
     @Transactional
     public Result<UserDto> registerUser(RegisterUserDto registerUserDto) {
         try {
