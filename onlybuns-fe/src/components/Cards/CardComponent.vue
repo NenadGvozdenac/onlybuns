@@ -124,8 +124,7 @@
                                             <div class="comment-item">
                                                 <span class="username fw-semibold text-primary me-1">@{{
                                                     comment.username }}</span>
-                                                <!-- <span class="comment-text text-dark">{{ JSON.parse(comment.comment).text
-                                                    }}</span> -->
+                                                <span class="comment-text text-dark">{{ comment.comment }}</span>
                                                 <div class="comment-meta text-muted small mt-1">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                                                         fill="currentColor" class="bi bi-clock me-1"
@@ -212,7 +211,6 @@
             </div>
         </div>
     </div>
-
 </template>
 
 <script>
@@ -358,7 +356,10 @@ export default {
             }
             console.log("Posting comment for post ID:", this.id);
             const commentInput = document.querySelector(`#commentModal-${this.id} input[type="text"]`);
-            const commentText = commentInput.value.trim();
+
+            let commentText = commentInput.value.trim();
+            // Remove all leading/trailing single/double quotes and whitespace
+            commentText = commentText.replace(/^["']+|["']+$/g, '').trim();
 
             if (!commentText) {
                 console.log("Comment cannot be empty");

@@ -107,18 +107,13 @@ class CardService {
     async postComment(id, commentText){
         try {
             const token = localStorage.getItem('token');
-        
             const headers = {
                 Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
             };
-
-            let comment = {
-                text: commentText
-            }
-    
-            const response = await axios.post(`${API_URL}/${id}/comment`, comment, { headers });
-    
-            return response.data; 
+            // Send as JSON object to match backend DTO
+            const response = await axios.post(`${API_URL}/${id}/comment`, { comment: commentText }, { headers });
+            return response.data;
         } catch (error) {
             console.error(`Error posting comment on post with ID ${id}:`, error);
             throw error;
