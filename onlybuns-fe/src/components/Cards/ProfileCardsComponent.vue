@@ -137,19 +137,27 @@
                             </div>
 
                             <!-- Comments section with enhanced scrolling -->
-                            <div class="flex-grow-1 overflow-y-auto" style="scrollbar-width: thin;">
-                                <div class="comments-section h-100">
-                                    <h6 class="text-muted small px-3 pt-3 mb-2 sticky-top bg-white">Comments:</h6>
+                            <div class="d-flex flex-column flex-grow-1" style="min-height: 0; overflow: hidden;">
+                                <h6 class="text-muted small px-3 pt-3 mb-2 bg-white border-bottom">Comments:</h6>
+                                <div class="comments-section overflow-y-auto flex-grow-1" style="max-height: calc(96vh - 250px);">
                                     <ul class="list-unstyled mb-0">
                                         <li v-for="(comment, index) in comments" :key="index"
-                                            class="border-bottom px-3 py-2 hover-bg-light">
-                                            <div class="d-flex" style="gap: 8px;">
-                                                <span class="text-muted text-break"
-                                                    style="word-wrap: break-word; min-width: 0;">
-                                                    {{ comment.comment }}
-                                                </span>
-                                                <span class="text-muted small flex-shrink-0">@{{ comment.author
-                                                    }}</span>
+                                            class="border-bottom px-3 py-3 hover-bg-light">
+                                            <div class="comment-item">
+                                                <span class="username fw-semibold text-primary me-1">@{{
+                                                    comment.username }}</span>
+                                                <span class="comment-text text-dark">{{ comment.comment }}</span>
+                                                <div class="comment-meta text-muted small mt-1">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                        fill="currentColor" class="bi bi-clock me-1"
+                                                        viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                                                        <path
+                                                            d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
+                                                    </svg>
+                                                    {{ formatCommentDate(comment.commentedAt) }}
+                                                </div>
                                             </div>
                                         </li>
                                     </ul>
@@ -161,7 +169,8 @@
                                 <div class="input-group">
                                     <input type="text" class="form-control bg-light border-0 text-break"
                                         placeholder="Add a comment..." aria-label="Add a comment" />
-                                    <button class="btn btn-link text-decoration-none flex-shrink-0">Post</button>
+                                    <button class="btn btn-link text-decoration-none flex-shrink-0"
+                                        @click="postComment">Post</button>
                                 </div>
                             </div>
                         </div>
@@ -439,6 +448,58 @@ export default {
                 console.error('Error updating post:', error);
             }
         },
+        async postComment() {
+            if (this.myUsername === '') {
+                this.showLoginPrompt();
+                return;
+            }
+            console.log("Posting comment for post ID:", this.id);
+            const commentInput = document.querySelector(`#commentModal-${this.id} input[type="text"]`);
+
+            let commentText = commentInput.value.trim();
+            // Remove all leading/trailing single/double quotes and whitespace
+            commentText = commentText.replace(/^["']+|["']+$/g, '').trim();
+
+            if (!commentText) {
+                console.log("Comment cannot be empty");
+                return;
+            }
+
+            try {
+                await CardService.postComment(this.id, commentText);
+                this.$emit('refresh-page');
+                commentInput.value = '';
+                // Create current date array in the same format as dateOfCreation
+                const now = new Date();
+                const commentedAt = [
+                    now.getFullYear(),
+                    now.getMonth() + 1, // getMonth() returns 0-based month
+                    now.getDate(),
+                    now.getHours(),
+                    now.getMinutes(),
+                    now.getSeconds()
+                ];
+                this.comments.push({
+                    username: this.myUsername,
+                    comment: commentText,
+                    commentedAt: commentedAt
+                });
+            } catch (error) {
+                console.error('Error posting comment:', error);
+            }
+        },
+        formatCommentDate(dateArray) {
+            if (!dateArray || dateArray.length < 6) return 'Invalid date';
+
+            const [year, month, day, hour, minute, second] = dateArray;
+            const date = new Date(year, month - 1, day, hour, minute, second);
+
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        },
         showModal() {
             const modal = new bootstrap.Modal(document.getElementById(`commentModal-${this.id}`));
             modal.show();
@@ -523,5 +584,108 @@ export default {
 
 .hover-bg-light:hover {
     background-color: rgba(0, 0, 0, 0.02);
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    color: blue;
+}
+
+.hover-bg-light:hover {
+    background-color: #f8f9fa !important;
+}
+
+.comment-item {
+    line-height: 1.4;
+}
+
+.username {
+    color: #0d6efd !important;
+    font-weight: 600;
+}
+
+.comment-text {
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+}
+
+.comments-section {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+    overflow-y: auto;
+    max-height: calc(96vh - 250px);
+}
+
+.comments-section::-webkit-scrollbar {
+    width: 8px;
+}
+
+.comments-section::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-radius: 4px;
+}
+
+.comments-section::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: 4px;
+}
+
+.comments-section::-webkit-scrollbar-thumb:hover {
+    background-color: #a0aec0;
+}
+
+.comment-item {
+    line-height: 1.4;
+}
+
+.username {
+    color: #0d6efd !important;
+    font-weight: 600;
+}
+
+.comment-text {
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+}
+
+.comments-section {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+    overflow-y: auto;
+    max-height: calc(96vh - 250px);
+}
+
+.comments-section::-webkit-scrollbar {
+    width: 8px;
+}
+
+.comments-section::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-radius: 4px;
+}
+
+.comments-section::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: 4px;
+}
+
+.comments-section::-webkit-scrollbar-thumb:hover {
+    background-color: #a0aec0;
 }
 </style>
