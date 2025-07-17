@@ -370,6 +370,21 @@ export default {
                 await CardService.postComment(this.id, commentText);
                 this.$emit('refresh-page');
                 commentInput.value = '';
+                // Create current date array in the same format as dateOfCreation
+                const now = new Date();
+                const commentedAt = [
+                    now.getFullYear(),
+                    now.getMonth() + 1, // getMonth() returns 0-based month
+                    now.getDate(),
+                    now.getHours(),
+                    now.getMinutes(),
+                    now.getSeconds()
+                ];
+                this.comments.push({
+                    username: this.myUsername,
+                    comment: commentText,
+                    commentedAt: commentedAt
+                });
             } catch (error) {
                 console.error('Error posting comment:', error);
             }
