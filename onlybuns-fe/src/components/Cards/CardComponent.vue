@@ -115,9 +115,9 @@
                             </div>
 
                             <!-- Comments section with enhanced scrolling -->
-                            <div class="flex-grow-1 overflow-y-auto" style="scrollbar-width: thin;">
-                                <div class="comments-section h-100">
-                                    <h6 class="text-muted small px-3 pt-3 mb-2 sticky-top bg-white">Comments:</h6>
+                            <div class="d-flex flex-column flex-grow-1" style="min-height: 0; overflow: hidden;">
+                                <h6 class="text-muted small px-3 pt-3 mb-2 bg-white border-bottom">Comments:</h6>
+                                <div class="comments-section overflow-y-auto flex-grow-1" style="max-height: calc(96vh - 250px);">
                                     <ul class="list-unstyled mb-0">
                                         <li v-for="(comment, index) in comments" :key="index"
                                             class="border-bottom px-3 py-3 hover-bg-light">
@@ -484,19 +484,22 @@ a:hover {
 .comments-section {
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 #f7fafc;
+    overflow-y: auto;
+    max-height: calc(96vh - 250px);
 }
 
 .comments-section::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
 }
 
 .comments-section::-webkit-scrollbar-track {
     background: #f7fafc;
+    border-radius: 4px;
 }
 
 .comments-section::-webkit-scrollbar-thumb {
     background-color: #cbd5e0;
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 .comments-section::-webkit-scrollbar-thumb:hover {
