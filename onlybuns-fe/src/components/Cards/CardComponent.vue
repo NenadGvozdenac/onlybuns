@@ -133,8 +133,8 @@
                                             <div class="comment-item">
                                                 <span class="username fw-semibold text-primary me-1">@{{
                                                     comment.username }}</span>
-                                                <span class="comment-text text-dark">{{ JSON.parse(comment.comment).text
-                                                    }}</span>
+                                                <!-- <span class="comment-text text-dark">{{ JSON.parse(comment.comment).text
+                                                    }}</span> -->
                                                 <div class="comment-meta text-muted small mt-1">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                                                         fill="currentColor" class="bi bi-clock me-1"

@@ -34,6 +34,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - message-queue
       - rabbitmq
     networks:
       - default
@@ -78,6 +79,7 @@ services:
     environment:
       MONGO_URI: ${MONGO_URI}
       PORT: ${VETS_AND_PETS_BE_PORT}
+      MESSAGE_QUEUE_URL: http://message-queue:4000
     volumes:
       - './vets-and-pets-be:/app'    # Mounts the code to the container for hot-reload
       - '/app/node_modules'          # Avoids conflicts with host node_modules
@@ -85,6 +87,23 @@ services:
     depends_on:
       - mongodb
       - redis
+      - message-queue
+    networks:
+      - default
+
+  # Message Queue service (Node.js with WebSocket and REST API)
+  message-queue:
+    build:
+      context: ./message-queue
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+    volumes:
+      - './message-queue:/app'    # Mounts the code to the container for hot-reload
+      - '/app/node_modules'       # Avoids conflicts with host node_modules
     networks:
       - default
 

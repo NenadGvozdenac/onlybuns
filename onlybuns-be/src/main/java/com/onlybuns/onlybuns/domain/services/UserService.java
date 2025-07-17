@@ -50,8 +50,8 @@ public class UserService extends BaseService implements UserDetailsService, User
         // Converting UserInfo to UserDetails
         return userDetail.map(UserInfoDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-    }
-
+    }    
+    
     @Override
     @Transactional
     public Result<UserDto> registerUser(RegisterUserDto registerUserDto) {
@@ -61,19 +61,20 @@ public class UserService extends BaseService implements UserDetailsService, User
                 return Result.failure("Passwords do not match", 400);
             }
 
-            // Lock the user table to prevent concurrent registration of the same username
+            // Apply pessimistic locks to prevent concurrent registration with same username or email
             userRepository.lockUserTableByUsername(registerUserDto.getUsername());
+            userRepository.lockUserTableByEmail(registerUserDto.getEmail());
 
             // Check if username exists in bloom filter
             if (bloomFilterService.contains(registerUserDto.getUsername())) {
-                // Check if a user with the same username exists for real, because bloom filter is not 100% accurate
-                if(userRepository.findByUsername(registerUserDto.getUsername()).isPresent()) {
+                // Check if a user with the same username exists for real with pessimistic lock
+                if(userRepository.findByUsernameWithLock(registerUserDto.getUsername()).isPresent()) {
                     return Result.failure("Username already exists", 409);
                 }
             }
 
-            // Check if a user with the same email exists
-            var userOptional = userRepository.findByEmail(registerUserDto.getEmail());
+            // Check if a user with the same email exists with pessimistic lock
+            var userOptional = userRepository.findByEmailWithLock(registerUserDto.getEmail());
 
             if(userOptional.isPresent()) {
                 return Result.failure("User with the same email already exists", 409);

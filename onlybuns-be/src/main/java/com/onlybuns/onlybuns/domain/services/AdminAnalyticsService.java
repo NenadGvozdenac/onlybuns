@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.onlybuns.onlybuns.core.misc.Result;
+import com.onlybuns.onlybuns.domain.models.Comment;
 import com.onlybuns.onlybuns.domain.models.Post;
 import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.domain.models.UserRole;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.AdminAnalyticsInterface;
+import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryCustom;
 import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.responses.AdminAnalyticsDto;
@@ -23,6 +25,9 @@ public class AdminAnalyticsService implements AdminAnalyticsInterface {
 
     @Autowired
     private PostRepositoryInterface postRepository;
+
+    @Autowired
+    private PostRepositoryCustom postRepositoryCustom;
 
     public Result<AdminAnalyticsDto> getAdminAnalytics(String admingUsername) {
 
@@ -49,31 +54,26 @@ public class AdminAnalyticsService implements AdminAnalyticsInterface {
         int usersJustPosted = 0;
         int usersJustCommented = 0;
         int usersWithoutPostsOrComments = 0;
-        //int usersWithBoth = 0;
 
+        //radijalni grafik
         for (User user : users){
             List<Post> posts = user.getPosts();
-            // List<Comment> comments = user.getComments();
+            List<Comment> comments = user.getComments();
 
-            if(posts.size() > 0){ // && comments.size() == 0){
+            if(posts.size() > 0){ 
                 usersJustPosted++;
             }
 
-            // if(posts.size() == 0 && comments.size() > 0){
-            //     usersJustCommented++;
-            // }
-
-            if(posts.size() == 0){// && comments.size() == 0){
-                usersWithoutPostsOrComments++;
+            if(posts.size() == 0 && comments.size() > 0){
+                usersJustCommented++;
             }
 
-            //if(posts.size() > 0 && comments.size() > 0){
-            //    usersWithBoth++;
-            //}
+            if(posts.size() == 0 && comments.size() == 0){
+                usersWithoutPostsOrComments++;
+            }
         }
 
         List<Post> posts = postRepository.findAll();
-
         for (Post post : posts){
             if(post.getDateOfCreation().isAfter(LocalDateTime.now().plusHours(1).minusWeeks(1))){
                 postsPerWeek++;
@@ -88,21 +88,22 @@ public class AdminAnalyticsService implements AdminAnalyticsInterface {
             }
 
         }
-        // List<Comment> comments = post.getComments();
-    
-        // for (Comment comment : comments){
-        //     if(comment.getDateOfCreation().isAfter(LocalDateTime.now().plusHours(1).minusWeeks(1))){
-        //         commentsPerWeek++;
-        //     }
-        
-        //     if(comment.getDateOfCreation().isAfter(LocalDateTime.now().plusHours(1).minusMonths(1))){
-        //         commentsPerMonth++;
-        //     }
 
-        //     if(comment.getDateOfCreation().isAfter(LocalDateTime.now().plusHours(1).minusYears(1))){
-        //         commentsPerYear++;
-        //     }
-        // }
+        List<Comment> comments = postRepositoryCustom.findAllComments();
+    
+        for (Comment comment : comments){
+            if(comment.getCommentedAt().isAfter(LocalDateTime.now().plusHours(1).minusWeeks(1))){
+                commentsPerWeek++;
+            }
+        
+            if(comment.getCommentedAt().isAfter(LocalDateTime.now().plusHours(1).minusMonths(1))){
+                commentsPerMonth++;
+            }
+
+            if(comment.getCommentedAt().isAfter(LocalDateTime.now().plusHours(1).minusYears(1))){
+                commentsPerYear++;
+            }
+        }
 
         AdminAnalyticsDto adminAnalyticsDto = new AdminAnalyticsDto(postsPerWeek, postsPerMonth, postsPerYear, commentsPerWeek, commentsPerMonth, commentsPerYear, usersJustPosted, usersJustCommented, usersWithoutPostsOrComments);
 
