@@ -46,6 +46,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - '${ONLYBUNS_FE_PORT}:5173'
+      - '9091:9091'  # Metrics port
     volumes:
       - './onlybuns-fe:/app'
       - '/app/node_modules'

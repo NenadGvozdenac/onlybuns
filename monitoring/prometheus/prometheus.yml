@@ -19,6 +19,13 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
 
+  # OnlyBuns Frontend Vue.js Application
+  - job_name: 'onlybuns-frontend'
+    static_configs:
+      - targets: ['onlybuns-frontend:9091']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
   # Advertising Agencies
   - job_name: 'advertising-agency-1'
     static_configs:

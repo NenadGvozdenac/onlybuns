@@ -13,8 +13,11 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 5173
+# Make the startup script executable
+RUN chmod +x /app/start.sh
 
-# Start the application with --host flag
-CMD ["npm", "run", "dev", "--", "--host"]
+# Expose the ports the app runs on
+EXPOSE 5173 9091
+
+# Start both the metrics server and the main application
+CMD ["/bin/sh", "/app/start.sh"]
