@@ -20,9 +20,10 @@ public class TestRedisConfiguration {
 
     @Bean
     @Primary
-    public RedisTemplate<String, Object> redisTemplate() {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         @SuppressWarnings("unchecked")
         RedisTemplate<String, Object> mockTemplate = mock(RedisTemplate.class);
+        mockTemplate.setConnectionFactory(redisConnectionFactory);
         return mockTemplate;
     }
 }

@@ -2,10 +2,14 @@ package com.onlybuns.onlybuns;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+
+import org.springframework.context.annotation.Import;
+import com.onlybuns.onlybuns.config.TestRedisConfiguration;
 
 import com.onlybuns.onlybuns.domain.services.UserService;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
@@ -22,8 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application-test.properties")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@Import(TestRedisConfiguration.class)
+@EnableAutoConfiguration(exclude = {
+    org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration.class
+})
 public class UserRegistrationConcurrencyTest {
 
     @Autowired
