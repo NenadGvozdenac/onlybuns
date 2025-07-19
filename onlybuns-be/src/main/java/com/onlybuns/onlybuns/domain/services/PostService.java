@@ -61,7 +61,8 @@ public class PostService extends BaseService implements PostServiceInterface {
     @CacheEvict(value = "trends", allEntries = true)
     public Result<PostDto> likePost(Long postId, String userUsername) {
 
-        var postOptional = postRepositoryjpa.findById(postId);
+        // Koristimo pesimistično zaključavanje da sprečimo race condition
+        var postOptional = postRepositoryjpa.findByIdWithLock(postId);
 
         if (postOptional.isPresent()) {
 
@@ -77,6 +78,13 @@ public class PostService extends BaseService implements PostServiceInterface {
 
                 if (userAlreadyLiked) {
                     return Result.failure("User already liked this post.", 400);
+                }
+
+                // Simulacija spore operacije za testiranje konkurentnog pristupa
+                try {
+                    Thread.sleep(1000); // 1 sekunda delay
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
 
                 post.getUsersThatLiked().add(user);
@@ -100,10 +108,12 @@ public class PostService extends BaseService implements PostServiceInterface {
     }
 
     @Override
+    @Transactional
     @CacheEvict(value = "trends", allEntries = true)
     public Result<PostDto> unlikePost(Long postId, String userUsername) {
             
-            var postOptional = postRepositoryjpa.findById(postId);
+            // Koristimo pesimistično zaključavanje da sprečimo race condition
+            var postOptional = postRepositoryjpa.findByIdWithLock(postId);
     
             if (postOptional.isPresent()) {
     
@@ -117,6 +127,13 @@ public class PostService extends BaseService implements PostServiceInterface {
     
                     if (!userAlreadyLiked) {
                         return Result.failure("User didn't like this post.", 400);
+                    }
+
+                    // Simulacija spore operacije za testiranje konkurentnog pristupa
+                    try {
+                        Thread.sleep(1000); // 1 sekunda delay
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
     
                     post.getUsersThatLiked().remove(user);
