@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.onlybuns.onlybuns.core.dto.PostAdvertisementDto;
+import com.onlybuns.onlybuns.core.misc.CommentRateLimiter;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.models.Address;
 import com.onlybuns.onlybuns.domain.models.Comment;
@@ -55,6 +56,9 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Autowired
     private AdvertisementService advertisementService;
+
+    @Autowired
+    private CommentRateLimiter commentRateLimiter;
 
     @Override
     @Transactional
@@ -508,6 +512,10 @@ public class PostService extends BaseService implements PostServiceInterface {
             return Result.failure("User not found", 409);
         }
 
+        // ✅ Rate limit provera pre nastavka
+        if (!commentRateLimiter.isAllowed(username)) {
+            return Result.failure("Too many requests. Please wait before commenting again.", 429);
+        }
         Post post = postOptional.get();
         User user = userOptional.get();
 
