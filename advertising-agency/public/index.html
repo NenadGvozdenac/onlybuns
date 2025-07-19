@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -181,6 +182,7 @@
                 opacity: 0;
                 transform: translateX(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -191,9 +193,11 @@
             0% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.02);
             }
+
             100% {
                 transform: scale(1);
             }
@@ -305,6 +309,7 @@
                 opacity: 0;
                 transform: translateX(100%);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -362,6 +367,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -390,7 +396,7 @@
                 <h2>Received Advertisements</h2>
                 <button class="clear-btn" id="clearBtn" onclick="clearMessages()">Clear All Messages</button>
             </div>
-            
+
             <div class="messages-container" id="messagesContainer">
                 <div class="loading">Loading messages...</div>
             </div>
@@ -445,7 +451,7 @@
         function updateConnectionStatus(connected) {
             const statusElement = document.getElementById('connectionStatus');
             const indicatorElement = document.getElementById('connectionIndicator');
-            
+
             if (connected) {
                 statusElement.innerHTML = 'Connected <span class="connection-status connected" id="connectionIndicator"></span>';
             } else {
@@ -461,7 +467,7 @@
 
             // Update messages
             const container = document.getElementById('messagesContainer');
-            
+
             if (messages.length === 0) {
                 container.innerHTML = '<div class="no-messages">No advertisements received yet. Waiting for new posts...</div>';
                 return;
@@ -477,7 +483,7 @@
                         <div class="message-actions">
                             <button class="remove-btn" onclick="removeMessage('${message.messageId}')" title="Remove this advertisement">×</button>
                             <div class="message-times">
-                                <div>Posted: ${formatDate(message.createdAt)}</div>
+                                <div>Posted: ${formatDate(message.dateOfCreation)}</div>
                                 <div>Received: ${formatDate(message.receivedAt)}</div>
                             </div>
                         </div>
@@ -502,16 +508,43 @@
             }
         }
 
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
+        function formatDate(dateValue) {
+            console.log('Formatting date:', dateValue, 'Type:', typeof dateValue, 'Is Array:', Array.isArray(dateValue));
+
+            try {
+                let date;
+
+                // Check if it's an array format [year, month, day, hour, minute, second]
+                if (Array.isArray(dateValue)) {
+                    console.log('Processing as array:', dateValue);
+                    // Convert array to Date object (month is 0-based in JS Date constructor)
+                    date = new Date(dateValue[0], dateValue[1] - 1, dateValue[2],
+                        dateValue[3] || 0, dateValue[4] || 0, dateValue[5] || 0);
+                } else {
+                    console.log('Processing as string/other:', dateValue);
+                    // Try to parse as ISO string or other date format
+                    date = new Date(dateValue);
+                }
+
+                console.log('Created date object:', date);
+
+                if (isNaN(date.getTime())) {
+                    return 'Invalid Date';
+                }
+
+                // Format as: "Dec 19, 2025 at 2:30 PM"
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            } catch (error) {
+                console.error('Date formatting error:', error, 'for value:', dateValue);
+                return 'Invalid Date';
+            }
         }
 
         function clearMessages() {
@@ -519,7 +552,7 @@
                 const clearBtn = document.getElementById('clearBtn');
                 clearBtn.disabled = true;
                 clearBtn.textContent = 'Clearing...';
-                
+
                 // Call the backend API to clear messages
                 fetch('/api/messages', {
                     method: 'DELETE',
@@ -527,22 +560,22 @@
                         'Content-Type': 'application/json'
                     }
                 })
-                .then(response => {
-                    if (response.ok) {
-                        // Messages will be cleared via WebSocket event
-                        showNotification('Clearing all advertisements...', 'info');
-                    } else {
-                        throw new Error('Failed to clear messages');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error clearing messages:', error);
-                    showNotification('Failed to clear advertisements', 'error');
-                })
-                .finally(() => {
-                    clearBtn.disabled = false;
-                    clearBtn.textContent = 'Clear All Messages';
-                });
+                    .then(response => {
+                        if (response.ok) {
+                            // Messages will be cleared via WebSocket event
+                            showNotification('Clearing all advertisements...', 'info');
+                        } else {
+                            throw new Error('Failed to clear messages');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error clearing messages:', error);
+                        showNotification('Failed to clear advertisements', 'error');
+                    })
+                    .finally(() => {
+                        clearBtn.disabled = false;
+                        clearBtn.textContent = 'Clear All Messages';
+                    });
             }
         }
 
@@ -555,18 +588,18 @@
                         'Content-Type': 'application/json'
                     }
                 })
-                .then(response => {
-                    if (response.ok) {
-                        // Message will be removed via WebSocket event
-                        showNotification('Removing advertisement...', 'info');
-                    } else {
-                        throw new Error('Failed to remove message');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error removing message:', error);
-                    showNotification('Failed to remove advertisement', 'error');
-                });
+                    .then(response => {
+                        if (response.ok) {
+                            // Message will be removed via WebSocket event
+                            showNotification('Removing advertisement...', 'info');
+                        } else {
+                            throw new Error('Failed to remove message');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error removing message:', error);
+                        showNotification('Failed to remove advertisement', 'error');
+                    });
             }
         }
 
@@ -575,10 +608,10 @@
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.textContent = message;
-            
+
             // Add to body
             document.body.appendChild(notification);
-            
+
             // Auto remove after 3 seconds
             setTimeout(() => {
                 if (notification.parentNode) {
@@ -593,4 +626,5 @@
         });
     </script>
 </body>
+
 </html>

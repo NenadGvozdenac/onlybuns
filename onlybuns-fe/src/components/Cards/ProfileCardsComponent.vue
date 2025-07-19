@@ -101,6 +101,12 @@
                         <img src="https://flowbite.com/docs/images/logo.svg" alt="OnlyBuns Logo" class="h-8 me-2">
                         <h5 class="h5 mb-0">OnlyBuns</h5>
                     </div>
+                        <img v-if="isAdmin" :src="localIsMarkedForAdvertisement ? '../../../public/ads.png' : '../../../public/noads.png'"
+                            :alt="localIsMarkedForAdvertisement ? 'Advertisement Enabled' : 'Advertisement Disabled'"
+                            class="img-fluid rounded me-3 cursor-pointer"
+                            style="min-height: 20px;max-height: 40px; max-width: 40px; min-width: 20px; aspect-ratio: 1; cursor: pointer;"
+                            @click="toggleAdvertisement"
+                            :title="localIsMarkedForAdvertisement ? 'Click to disable advertisement' : 'Click to enable advertisement'">
                     <button type="button" class="btn-close me-1" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
@@ -306,6 +312,7 @@
 
 <script>
 import CardService from '@/services/CardService';
+import AuthService from '@/services/AuthService';
 
 export default {
     name: 'ProfileCardsComponent',
@@ -343,6 +350,14 @@ export default {
         },
         comments: {
             type: Array
+        },
+        isMarkedForAdvertisement: {
+            type: Boolean,
+            default: false
+        },
+        isAdmin: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -385,6 +400,9 @@ export default {
             const formattedHour = String(hour).padStart(2, '0');
             const formattedMinute = String(minute).padStart(2, '0');
             return `${formattedHour}:${formattedMinute}`;
+        },
+        isAdmin() {
+            return AuthService.isAdmin();
         },
     },
     methods: {

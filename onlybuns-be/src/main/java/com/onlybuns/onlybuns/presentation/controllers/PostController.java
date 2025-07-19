@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
+import com.onlybuns.onlybuns.domain.services.RateLimitService;
 import com.onlybuns.onlybuns.infrastructure.metrics.MetricsService;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
@@ -39,11 +40,13 @@ public class PostController extends BaseController {
 
     private final PostServiceInterface postService;
     private final MetricsService metricsService;
+    private final RateLimitService rateLimitService;
 
     @Autowired
-    public PostController(PostServiceInterface postService, MetricsService metricsService) {
+    public PostController(PostServiceInterface postService, MetricsService metricsService, RateLimitService rateLimitService) {
         this.postService = postService;
         this.metricsService = metricsService;
+        this.rateLimitService = rateLimitService;
     }
     @Operation(summary = "Like a post", description = "This endpoint allows a user to like a post")
     @ApiResponse(responseCode = "403", description = "Post not found.")
@@ -161,12 +164,24 @@ public class PostController extends BaseController {
     @ApiResponse(responseCode = "201", description = "Comment created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid request data")
     @ApiResponse(responseCode = "404", description = "Post not found")
+    @ApiResponse(responseCode = "429", description = "Rate limit exceeded - maximum 60 comments per hour")
     @PostMapping("/{id}/comment")
     public ResponseEntity<?> addComment(
         @PathVariable Long id,
         @RequestBody com.onlybuns.onlybuns.presentation.dtos.requests.AddCommentRequest request) {
+        
+        String username = getLoggedInUsername();
+        
+        // Check rate limit for comments
+        if (!rateLimitService.isCommentAllowed(username)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .body("Rate limit exceeded. You can post maximum 60 comments per hour. " +
+                      "Remaining comments: " + rateLimitService.getRemainingComments(username));
+        }
+        
         String comment = request.getComment();
-        var result = postService.addComment(id, comment, getLoggedInUsername());
+        var result = postService.addComment(id, comment, username);
+        
         if (result.isSuccess()) {
             return new ResponseEntity<>(result.getData(), HttpStatus.CREATED);
         } else if (result.getMessage().equalsIgnoreCase("Post not found")) {

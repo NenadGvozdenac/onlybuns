@@ -11,6 +11,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostAdvertisementDto {
     private String description;
-    private LocalDateTime createdAt;
+    private LocalDateTime dateOfCreation;
     private String username;
 }

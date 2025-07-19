@@ -124,6 +124,7 @@ async function connectToRabbitMQ() {
   }
 }
 
+
 // REST API endpoints
 
 // Prometheus metrics endpoint
@@ -139,10 +140,11 @@ app.get('/metrics', async (req, res) => {
 });
 
 app.get('/api/messages', (req, res) => {
+  console.log(`[${AGENCY_NAME}] GET /api/messages - Returning ${receivedMessages.length} messages`);
   res.json({
     agencyName: AGENCY_NAME,
     messages: receivedMessages,
-    totalReceived: receivedMessages.length
+    totalReceived: receivedMessages.length,
   });
 });
 

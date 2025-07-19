@@ -80,10 +80,9 @@
                         <h5 class="h5 mb-0">OnlyBuns</h5>
                     </div>
                     <div class="d-flex align-items-center">
-                        <img 
-                            :src="localIsMarkedForAdvertisement ? '../../../public/ads.png' : '../../../public/noads.png'" 
+                        <img v-if="isAdmin" :src="localIsMarkedForAdvertisement ? '../../../public/ads.png' : '../../../public/noads.png'"
                             :alt="localIsMarkedForAdvertisement ? 'Advertisement Enabled' : 'Advertisement Disabled'"
-                            class="img-fluid rounded me-3 cursor-pointer" 
+                            class="img-fluid rounded me-3 cursor-pointer"
                             style="min-height: 20px;max-height: 40px; max-width: 40px; min-width: 20px; aspect-ratio: 1; cursor: pointer;"
                             @click="toggleAdvertisement"
                             :title="localIsMarkedForAdvertisement ? 'Click to disable advertisement' : 'Click to enable advertisement'">
@@ -126,7 +125,8 @@
                             <!-- Comments section with enhanced scrolling -->
                             <div class="d-flex flex-column flex-grow-1" style="min-height: 0; overflow: hidden;">
                                 <h6 class="text-muted small px-3 pt-3 mb-2 bg-white border-bottom">Comments:</h6>
-                                <div class="comments-section overflow-y-auto flex-grow-1" style="max-height: calc(96vh - 250px);">
+                                <div class="comments-section overflow-y-auto flex-grow-1"
+                                    style="max-height: calc(96vh - 250px);">
                                     <ul class="list-unstyled mb-0">
                                         <li v-for="(comment, index) in comments" :key="index"
                                             class="border-bottom px-3 py-3 hover-bg-light">
@@ -263,6 +263,10 @@ export default {
         comments: {
             type: Array
         },
+        isAdmin: {
+            type: Boolean,
+            default: false
+        },
         isMarkedForAdvertisement: {
             type: Boolean,
             default: false
@@ -317,6 +321,9 @@ export default {
             const formattedMinute = String(minute).padStart(2, '0');
             return `${formattedHour}:${formattedMinute}`;
         },
+        isAdmin() {
+            return AuthService.isAdmin();
+        }
     },
     methods: {
         findRedirectRoute() {
@@ -424,6 +431,38 @@ export default {
                 day: 'numeric'
             });
         },
+
+        showRateLimitAlert() {
+            const alertHTML = `
+                    <div class="alert alert-warning alert-dismissible fade show position-fixed" 
+                        style="top: 20px; right: 20px; z-index: 9999; max-width: 400px;" 
+                        role="alert">
+                        <div class="d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" 
+                                class="bi bi-clock me-2" viewBox="0 0 16 16">
+                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                            </svg>
+                            <div>
+                                <strong>Slow down!</strong><br>
+                                <small>You've reached the comment limit. Please wait before posting more comments.</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    `;
+
+            // Add to body
+            document.body.insertAdjacentHTML('beforeend', alertHTML);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                const alert = document.querySelector('.alert-warning');
+                if (alert) {
+                    alert.remove();
+                }
+            }, 5000);
+        },
         showModal() {
             const modal = new bootstrap.Modal(document.getElementById(`commentModal-${this.id}`));
             modal.show();
@@ -451,7 +490,7 @@ export default {
                     return;
                 }
 
-                const endpoint = this.localIsMarkedForAdvertisement 
+                const endpoint = this.localIsMarkedForAdvertisement
                     ? `/post/${this.id}/unmark-advertisement`
                     : `/post/${this.id}/mark-advertisement`;
 
@@ -466,12 +505,12 @@ export default {
                 if (response.ok) {
                     // Update the local state
                     this.localIsMarkedForAdvertisement = !this.localIsMarkedForAdvertisement;
-                    
+
                     this.$emit('advertisement-toggle', {
                         postId: this.id,
                         isMarkedForAdvertisement: this.localIsMarkedForAdvertisement
                     });
-                    
+
                     // Show success message
                     const action = this.localIsMarkedForAdvertisement ? 'added to' : 'removed from';
                     //alert(`Post successfully ${action} advertisement!`);
