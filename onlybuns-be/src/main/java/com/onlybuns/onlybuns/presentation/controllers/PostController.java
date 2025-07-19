@@ -164,14 +164,15 @@ public class PostController extends BaseController {
     @PostMapping("/{id}/comment")
     public ResponseEntity<?> addComment(
         @PathVariable Long id,
-        @RequestBody String comment) {
+        @RequestBody com.onlybuns.onlybuns.presentation.dtos.requests.AddCommentRequest request) {
+        String comment = request.getComment();
         var result = postService.addComment(id, comment, getLoggedInUsername());
         if (result.isSuccess()) {
-        return new ResponseEntity<>(result.getData(), HttpStatus.CREATED);
+            return new ResponseEntity<>(result.getData(), HttpStatus.CREATED);
         } else if (result.getMessage().equalsIgnoreCase("Post not found")) {
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

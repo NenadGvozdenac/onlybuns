@@ -124,17 +124,16 @@
                             </div>
 
                             <!-- Comments section with enhanced scrolling -->
-                            <div class="flex-grow-1 overflow-y-auto" style="scrollbar-width: thin;">
-                                <div class="comments-section h-100">
-                                    <h6 class="text-muted small px-3 pt-3 mb-2 sticky-top bg-white">Comments:</h6>
+                            <div class="d-flex flex-column flex-grow-1" style="min-height: 0; overflow: hidden;">
+                                <h6 class="text-muted small px-3 pt-3 mb-2 bg-white border-bottom">Comments:</h6>
+                                <div class="comments-section overflow-y-auto flex-grow-1" style="max-height: calc(96vh - 250px);">
                                     <ul class="list-unstyled mb-0">
                                         <li v-for="(comment, index) in comments" :key="index"
                                             class="border-bottom px-3 py-3 hover-bg-light">
                                             <div class="comment-item">
                                                 <span class="username fw-semibold text-primary me-1">@{{
                                                     comment.username }}</span>
-                                                <!-- <span class="comment-text text-dark">{{ JSON.parse(comment.comment).text
-                                                    }}</span> -->
+                                                <span class="comment-text text-dark">{{ comment.comment }}</span>
                                                 <div class="comment-meta text-muted small mt-1">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                                                         fill="currentColor" class="bi bi-clock me-1"
@@ -221,7 +220,6 @@
             </div>
         </div>
     </div>
-
 </template>
 
 <script>
@@ -381,7 +379,10 @@ export default {
             }
             console.log("Posting comment for post ID:", this.id);
             const commentInput = document.querySelector(`#commentModal-${this.id} input[type="text"]`);
-            const commentText = commentInput.value.trim();
+
+            let commentText = commentInput.value.trim();
+            // Remove all leading/trailing single/double quotes and whitespace
+            commentText = commentText.replace(/^["']+|["']+$/g, '').trim();
 
             if (!commentText) {
                 console.log("Comment cannot be empty");
@@ -392,6 +393,21 @@ export default {
                 await CardService.postComment(this.id, commentText);
                 this.$emit('refresh-page');
                 commentInput.value = '';
+                // Create current date array in the same format as dateOfCreation
+                const now = new Date();
+                const commentedAt = [
+                    now.getFullYear(),
+                    now.getMonth() + 1, // getMonth() returns 0-based month
+                    now.getDate(),
+                    now.getHours(),
+                    now.getMinutes(),
+                    now.getSeconds()
+                ];
+                this.comments.push({
+                    username: this.myUsername,
+                    comment: commentText,
+                    commentedAt: commentedAt
+                });
             } catch (error) {
                 console.error('Error posting comment:', error);
             }
@@ -552,19 +568,22 @@ a:hover {
 .comments-section {
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 #f7fafc;
+    overflow-y: auto;
+    max-height: calc(96vh - 250px);
 }
 
 .comments-section::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
 }
 
 .comments-section::-webkit-scrollbar-track {
     background: #f7fafc;
+    border-radius: 4px;
 }
 
 .comments-section::-webkit-scrollbar-thumb {
     background-color: #cbd5e0;
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 .comments-section::-webkit-scrollbar-thumb:hover {
