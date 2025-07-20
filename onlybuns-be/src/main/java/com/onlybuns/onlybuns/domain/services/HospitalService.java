@@ -1,132 +1,91 @@
 package com.onlybuns.onlybuns.domain.services;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.URI;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlybuns.onlybuns.core.misc.Result;
+import com.onlybuns.onlybuns.domain.models.AddressInformation;
 import com.onlybuns.onlybuns.domain.models.HospitalInformation;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.HospitalServiceInterface;
 
 @Service
 public class HospitalService implements HospitalServiceInterface {
 
-    private final String messageQueueUrl = "http://message-queue:4000";
-    private final String vetsAndPetsUrl = "http://vets-and-pets-be:3000";
-    private final String queueName = "hospital-data";
+    private String messageQueueUrl = "http://message-queue:4000";
+
+    private String vetsAndPetsUrl = "http://vets-and-pets-be:3000";
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private RestTemplate restTemplate;
 
     @Override
     public Result<List<HospitalInformation>> connectToNodeServer() {
         try {
-            // First, trigger Vets&Pets to send data to message queue
             triggerVetsToSendData();
-            
-            // Give some time for Vets&Pets to send all data
+
+            // Treba vremena da se saceka da se poruke posalju u queue
             Thread.sleep(2000);
-            
-            // Then consume all messages from message queue
-            List<HospitalInformation> hospitalInformationList = consumeMessagesFromQueue();
-            
-            return Result.success(hospitalInformationList);
+
+            // Dobavljanje podataka iz queue
+            List<HospitalInformation> hospitalData = consumeMessagesFromQueue();
+
+            // Vraca rezultat sa listom bolnica
+            return Result.success(hospitalData);
         } catch (Exception e) {
             return Result.failure("Failed to fetch hospital data: " + e.getMessage(), 500);
         }
     }
-    
+
     private void triggerVetsToSendData() {
         try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(vetsAndPetsUrl + "/api/send-vets-to-queue"))
-                    .POST(HttpRequest.BodyPublishers.noBody())
-                    .header("Content-Type", "application/json")
-                    .build();
-                    
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            
-            if (response.statusCode() == 200) {
-                System.out.println("Successfully triggered Vets&Pets to send data to message queue");
-            } else {
-                System.err.println("Failed to trigger Vets&Pets: " + response.statusCode() + " - " + response.body());
-            }
+            String url = vetsAndPetsUrl + "/api/send-vets-to-queue";
+            restTemplate.postForObject(url, null, String.class);
+            System.out.println("Successfully triggered Vets&Pets to send data to message queue");
         } catch (Exception e) {
             System.err.println("Error triggering Vets&Pets to send data: " + e.getMessage());
-            // Don't fail the whole process, just log the error
         }
     }
 
     private List<HospitalInformation> consumeMessagesFromQueue() {
-        List<HospitalInformation> hospitalInformationList = new ArrayList<>();
-        
         try {
-            HttpClient client = HttpClient.newHttpClient();
-            
-            // Keep consuming until no more messages
-            boolean hasMoreMessages = true;
-            int maxRetries = 10; // Prevent infinite loop
-            int retryCount = 0;
-            
-            while (hasMoreMessages && retryCount < maxRetries) {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(messageQueueUrl + "/api/queue/" + queueName + "/consume?limit=50"))
-                        .GET()
-                        .header("Content-Type", "application/json")
-                        .build();
-                        
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                
-                if (response.statusCode() == 200) {
-                    JsonNode responseNode = objectMapper.readTree(response.body());
-                    JsonNode messagesNode = responseNode.get("messages");
-                    
-                    if (messagesNode != null && messagesNode.isArray() && messagesNode.size() > 0) {
-                        for (JsonNode messageNode : messagesNode) {
-                            try {
-                                HospitalInformation hospitalInfo = objectMapper.readValue(messageNode.toString(), HospitalInformation.class);
-                                hospitalInformationList.add(hospitalInfo);
-                                System.out.println("Consumed hospital information from message queue: " + hospitalInfo);
-                            } catch (JsonProcessingException e) {
-                                System.err.println("Error parsing message from queue: " + e.getMessage());
-                                System.err.println("Raw message: " + messageNode.toString());
-                            }
-                        }
-                        
-                        // Check if there might be more messages
-                        hasMoreMessages = messagesNode.size() == 50; // If we got max limit, there might be more
-                    } else {
-                        hasMoreMessages = false;
-                    }
-                } else {
-                    System.err.println("Failed to consume messages from queue: " + response.statusCode() + " - " + response.body());
-                    hasMoreMessages = false;
-                }
-                
-                retryCount++;
-                
-                // Small delay between requests
-                if (hasMoreMessages) {
-                    Thread.sleep(100);
-                }
+            String url = messageQueueUrl + "/api/queue/hospital-data/consume?limit=50";
+            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+
+            if (response == null || !response.containsKey("messages")) {
+                return List.of();
             }
-            
-            System.out.println("Finished consuming messages. Total received: " + hospitalInformationList.size());
-            
+
+            List<Map<String, Object>> messages = (List<Map<String, Object>>) response.get("messages");
+
+            return messages.stream()
+                .map(message -> mapToHospitalInformation(message))
+                .toList();
+
         } catch (Exception e) {
             System.err.println("Error consuming messages from queue: " + e.getMessage());
+            return List.of();
         }
-        
-        return hospitalInformationList;
+    }
+
+    private HospitalInformation mapToHospitalInformation(Map<String, Object> messageData) {
+        HospitalInformation hospital = new HospitalInformation();
+        hospital.setId((String) messageData.get("_id"));
+        hospital.setName((String) messageData.get("name"));
+        hospital.setDescription((String) messageData.get("description"));
+
+        AddressInformation location = new AddressInformation();
+
+        Map<String, Object> locationData = (Map<String, Object>) messageData.get("location");
+
+        location.setLatitude(Double.valueOf(locationData.get("latitude").toString()));
+        location.setLongitude(Double.valueOf(locationData.get("longitude").toString()));
+
+        hospital.setLocation(location);
+
+        return hospital;
     }
 }
