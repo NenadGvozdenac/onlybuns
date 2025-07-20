@@ -2,8 +2,6 @@ package com.onlybuns.onlybuns.domain.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -11,14 +9,9 @@ import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.client.WebSocketConnectionManager;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.models.HospitalInformation;
@@ -27,45 +20,28 @@ import com.onlybuns.onlybuns.domain.serviceinterfaces.HospitalServiceInterface;
 @Service
 public class HospitalService implements HospitalServiceInterface {
 
-    private WebSocketSession webSocketSession;
-    private final String messageQueueUrl = "ws://message-queue:4000/ws?queue=hospital-data";
+    private final String messageQueueUrl = "http://message-queue:4000";
     private final String vetsAndPetsUrl = "http://vets-and-pets-be:3000";
-    private List<HospitalInformation> hospitalInformationList = new ArrayList<>();
-    private CompletableFuture<Result<List<HospitalInformation>>> futureResult = new CompletableFuture<>();
-    private volatile boolean dataReceivingComplete = false;
+    private final String queueName = "hospital-data";
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Override
     public Result<List<HospitalInformation>> connectToNodeServer() {
-        // Clear the hospital information list every time the connection is attempted
-        clearQueue();
-        
-        if (webSocketSession != null && webSocketSession.isOpen()) {
-            return Result.failure(null, 500);  // Connection is already open
-        }
-
         try {
             // First, trigger Vets&Pets to send data to message queue
             triggerVetsToSendData();
             
-            // Then connect to message queue to receive the data
-            StandardWebSocketClient client = new StandardWebSocketClient();
-            WebSocketConnectionManager manager = new WebSocketConnectionManager(client, new HospitalHandler(), messageQueueUrl);
-            manager.start();
+            // Give some time for Vets&Pets to send all data
+            Thread.sleep(2000);
             
-            // Block and wait for the future to complete with timeout
-            return futureResult.get(30, TimeUnit.SECONDS);  // 30 second timeout
+            // Then consume all messages from message queue
+            List<HospitalInformation> hospitalInformationList = consumeMessagesFromQueue();
+            
+            return Result.success(hospitalInformationList);
         } catch (Exception e) {
-            if (webSocketSession != null && webSocketSession.isOpen()) {
-                try {
-                    webSocketSession.close();
-                } catch (Exception closeException) {
-                    System.err.println("Error closing WebSocket: " + closeException.getMessage());
-                }
-            }
-            return Result.failure("Failed to establish connection: " + e.getMessage(), 500);
+            return Result.failure("Failed to fetch hospital data: " + e.getMessage(), 500);
         }
     }
     
@@ -91,102 +67,66 @@ public class HospitalService implements HospitalServiceInterface {
         }
     }
 
-    private void clearQueue() {
-        hospitalInformationList.clear();
-        futureResult = new CompletableFuture<>();
-        dataReceivingComplete = false;
-        if (webSocketSession != null && webSocketSession.isOpen()) {
-            try {
-                webSocketSession.close();
-            } catch (Exception e) {
-                System.err.println("Error closing previous WebSocket session: " + e.getMessage());
-            }
-        }
-        webSocketSession = null;
-    }
-
-    private class HospitalHandler extends TextWebSocketHandler {
-        private long lastMessageTime = System.currentTimeMillis();
-        private final long MESSAGE_TIMEOUT = 5000; // 5 seconds timeout between messages
+    private List<HospitalInformation> consumeMessagesFromQueue() {
+        List<HospitalInformation> hospitalInformationList = new ArrayList<>();
         
-        @Override
-        public void handleTextMessage(WebSocketSession session, TextMessage message) {
-            try {
-                String payload = message.getPayload();
-                lastMessageTime = System.currentTimeMillis();
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            
+            // Keep consuming until no more messages
+            boolean hasMoreMessages = true;
+            int maxRetries = 10; // Prevent infinite loop
+            int retryCount = 0;
+            
+            while (hasMoreMessages && retryCount < maxRetries) {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(messageQueueUrl + "/api/queue/" + queueName + "/consume?limit=50"))
+                        .GET()
+                        .header("Content-Type", "application/json")
+                        .build();
+                        
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 
-                // Handle welcome message from message queue
-                if (payload.contains("\"type\":\"welcome\"")) {
-                    System.out.println("Connected to message queue successfully");
-                    // Start timeout checker after welcome message
-                    scheduleTimeoutCheck();
-                    return;
+                if (response.statusCode() == 200) {
+                    JsonNode responseNode = objectMapper.readTree(response.body());
+                    JsonNode messagesNode = responseNode.get("messages");
+                    
+                    if (messagesNode != null && messagesNode.isArray() && messagesNode.size() > 0) {
+                        for (JsonNode messageNode : messagesNode) {
+                            try {
+                                HospitalInformation hospitalInfo = objectMapper.readValue(messageNode.toString(), HospitalInformation.class);
+                                hospitalInformationList.add(hospitalInfo);
+                                System.out.println("Consumed hospital information from message queue: " + hospitalInfo);
+                            } catch (JsonProcessingException e) {
+                                System.err.println("Error parsing message from queue: " + e.getMessage());
+                                System.err.println("Raw message: " + messageNode.toString());
+                            }
+                        }
+                        
+                        // Check if there might be more messages
+                        hasMoreMessages = messagesNode.size() == 50; // If we got max limit, there might be more
+                    } else {
+                        hasMoreMessages = false;
+                    }
+                } else {
+                    System.err.println("Failed to consume messages from queue: " + response.statusCode() + " - " + response.body());
+                    hasMoreMessages = false;
                 }
                 
-                HospitalInformation hospitalInformation = objectMapper.readValue(payload, HospitalInformation.class);
-
-                if (hospitalInformation != null) {
-                    hospitalInformationList.add(hospitalInformation);
-                    System.out.println("Received hospital information from message queue: " + hospitalInformation);
-                    // Reset timeout after receiving data
-                    scheduleTimeoutCheck();
+                retryCount++;
+                
+                // Small delay between requests
+                if (hasMoreMessages) {
+                    Thread.sleep(100);
                 }
-            } catch (JsonProcessingException e) {
-                System.err.println("Error parsing message from message queue: " + e.getMessage());
-                System.err.println("Raw message: " + message.getPayload());
             }
+            
+            System.out.println("Finished consuming messages. Total received: " + hospitalInformationList.size());
+            
+        } catch (Exception e) {
+            System.err.println("Error consuming messages from queue: " + e.getMessage());
         }
         
-        private void scheduleTimeoutCheck() {
-            // Use a separate thread to check for timeout
-            CompletableFuture.runAsync(() -> {
-                try {
-                    Thread.sleep(MESSAGE_TIMEOUT);
-                    if (System.currentTimeMillis() - lastMessageTime >= MESSAGE_TIMEOUT && !dataReceivingComplete) {
-                        System.out.println("No more messages received for " + MESSAGE_TIMEOUT + "ms. Completing data reception.");
-                        completeDataReception();
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            });
-        }
-        
-        private void completeDataReception() {
-            if (!dataReceivingComplete) {
-                dataReceivingComplete = true;
-                System.out.println("Data reception completed. Received " + hospitalInformationList.size() + " hospitals");
-                if (webSocketSession != null && webSocketSession.isOpen()) {
-                    try {
-                        webSocketSession.close();
-                    } catch (Exception e) {
-                        System.err.println("Error closing WebSocket session: " + e.getMessage());
-                    }
-                }
-                futureResult.complete(Result.success(hospitalInformationList));
-            }
-        }
-
-        @Override
-        public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-            // Once the connection is closed, complete the future with the result if not already completed
-            if (!dataReceivingComplete) {
-                completeDataReception();
-            }
-        }
-        
-        @Override
-        public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-            webSocketSession = session;
-            System.out.println("WebSocket connection to message queue established");
-        }
-        
-        @Override
-        public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-            System.err.println("WebSocket transport error: " + exception.getMessage());
-            if (!futureResult.isDone()) {
-                futureResult.complete(Result.failure("WebSocket transport error: " + exception.getMessage(), 500));
-            }
-        }
+        return hospitalInformationList;
     }
 }
