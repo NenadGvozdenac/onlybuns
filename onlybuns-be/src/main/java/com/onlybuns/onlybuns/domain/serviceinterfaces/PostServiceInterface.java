@@ -23,4 +23,6 @@ public interface PostServiceInterface {
     public Result<PostDto> createPost(String description, MultipartFile image, AddressDto address, String username);
     public Result<List<GetAllPostDto>> getAllPostsByFollowing(String username);
     public Result<CommentDto> addComment(Long id, String comment, String loggedInUsername);
+    public Result<String> markPostForAdvertisement(Long postId);
+    public Result<String> unmarkPostForAdvertisement(Long postId);
 }

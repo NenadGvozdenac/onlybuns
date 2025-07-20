@@ -30,6 +30,10 @@ class AuthService {
     isLoggedIn() {
         return localStorage.getItem('token') !== null; // Check if token is present
     }
+    isAdmin() {
+        const role = this.getLoggedInUserRole();
+        return role === 'ADMIN'; // Check if the user has admin role
+    }
 
     getLoggedInUsername() {
         let username = '';

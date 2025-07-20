@@ -22,6 +22,7 @@ public class PostDto implements Serializable {
     private String description;
     private int numberOfLikes;
     private String username;
+    private boolean isMarkedForAdvertisement;
     private AddressDto address;
     private List<CommentDto> comments;
     private List<UserDto> users;

@@ -3,6 +3,28 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8080';
 
 class ProfileService {
+    // Helper method to map backend response properties to frontend expected properties
+    mapPostData(post) {
+        if (post && typeof post.markedForAdvertisement !== 'undefined') {
+            return {
+                ...post,
+                isMarkedForAdvertisement: post.markedForAdvertisement
+            };
+        }
+        return post;
+    }
+
+    // Helper method to map profile data containing posts
+    mapProfileData(profile) {
+        if (profile && profile.activePosts && Array.isArray(profile.activePosts)) {
+            return {
+                ...profile,
+                activePosts: profile.activePosts.map(post => this.mapPostData(post))
+            };
+        }
+        return profile;
+    }
+
     async getMyProfile() {
         try {
             const token = localStorage.getItem('token');
@@ -21,7 +43,7 @@ class ProfileService {
 
             console.log('My profile:', response.data);
 
-            return response.data;
+            return this.mapProfileData(response.data);
         } catch (error) {
             throw error.response.data;
         }
@@ -29,7 +51,7 @@ class ProfileService {
 
     async getProfile(username) {
         const response = await axios.get(`${API_URL}/profile?username=${username}`);
-        return response.data;
+        return this.mapProfileData(response.data);
     }
 
     async updateProfile(profile) {

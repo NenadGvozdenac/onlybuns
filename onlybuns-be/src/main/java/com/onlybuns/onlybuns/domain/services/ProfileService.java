@@ -75,6 +75,7 @@ public class ProfileService implements ProfileServiceInterface {
                 post.getDescription(),
                 post.getNumberOfLikes(),
                 post.getUser().getUsername(),
+                post.isMarkedForAdvertisement(),
                 new AddressDto(post.getUser().getAddress().getStreet(),
                         post.getUser().getAddress().getNumber(),
                         post.getUser().getAddress().getCity(),
@@ -84,6 +85,7 @@ public class ProfileService implements ProfileServiceInterface {
                 post.getComments().stream().map(comment -> {
                     CommentDto commentDto = new CommentDto();
                     commentDto.setId(comment.getId());
+                    commentDto.setUsername(comment.getUser().getUsername());
                     commentDto.setComment(comment.getComment());
                     commentDto.setCommentedAt(comment.getCommentedAt());
                     return commentDto;
@@ -266,6 +268,7 @@ public class ProfileService implements ProfileServiceInterface {
                     post.getDescription(),
                     post.getNumberOfLikes(),
                     post.getUser().getUsername(),
+                    post.isMarkedForAdvertisement(),
                     null,
                     Collections.emptyList(), // Set comments as an empty list
                     Collections.emptyList() // Set usersThatLiked as an empty list (if needed)

@@ -6,7 +6,9 @@
                 <div v-for="(card, index) in cards.filter((_, i) => i % 3 === 0)" :key="index">
                     <CardComponent :id="card.id" :image="card.image" :likesCount="card.numberOfLikes"
                         :description="card.description" :commentsCount="card.comments.length" :username="card.username"
-                        :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users" :comments="card.comments" />
+                        :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users" :comments="card.comments" 
+                        :isMarkedForAdvertisement="card.isMarkedForAdvertisement" 
+                        @advertisement-toggle="handleAdvertisementToggle" />
                 </div>
             </div>
 
@@ -15,7 +17,9 @@
                 <div v-for="(card, index) in cards.filter((_, i) => i % 3 === 1)" :key="index">
                     <CardComponent :id="card.id" :image="card.image" :likesCount="card.numberOfLikes"
                         :description="card.description" :commentsCount="card.comments.length" :username="card.username"
-                        :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users" :comments="card.comments" />
+                        :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users" :comments="card.comments" 
+                        :isMarkedForAdvertisement="card.isMarkedForAdvertisement" 
+                        @advertisement-toggle="handleAdvertisementToggle" />
                 </div>
             </div>
 
@@ -24,7 +28,9 @@
                 <div v-for="(card, index) in cards.filter((_, i) => i % 3 === 2)" :key="index">
                     <CardComponent :id="card.id" :image="card.image" :likesCount="card.numberOfLikes"
                         :description="card.description" :commentsCount="card.comments.length" :username="card.username"
-                        :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users" :comments="card.comments" />
+                        :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users" :comments="card.comments" 
+                        :isMarkedForAdvertisement="card.isMarkedForAdvertisement" 
+                        @advertisement-toggle="handleAdvertisementToggle" />
                 </div>
             </div>
         </div>
@@ -55,6 +61,13 @@ export default {
                 this.cards = await CardService.fetchFollowingPosts();
             } catch (error) {
                 console.error("Failed to load cards: ", error)
+            }
+        },
+        handleAdvertisementToggle(event) {
+            // Update the local card data to reflect the change
+            const card = this.cards.find(c => c.id === event.postId);
+            if (card) {
+                card.isMarkedForAdvertisement = event.isMarkedForAdvertisement;
             }
         }
     }
