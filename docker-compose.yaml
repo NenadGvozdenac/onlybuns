@@ -23,6 +23,10 @@ services:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
       JWT_SECRET: ${JWT_SECRET}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     volumes:
       - './onlybuns-be:/app'               # Mount source code
       - maven_cache:/root/.m2              # Mount Maven cache
@@ -30,6 +34,8 @@ services:
     depends_on:
       - postgres
       - redis
+      - message-queue
+      - rabbitmq
     networks:
       - default
 
@@ -40,6 +46,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - '${ONLYBUNS_FE_PORT}:5173'
+      - '9091:9091'  # Metrics port
     volumes:
       - './onlybuns-fe:/app'
       - '/app/node_modules'
@@ -73,6 +80,7 @@ services:
     environment:
       MONGO_URI: ${MONGO_URI}
       PORT: ${VETS_AND_PETS_BE_PORT}
+      MESSAGE_QUEUE_URL: http://message-queue:4000
     volumes:
       - './vets-and-pets-be:/app'    # Mounts the code to the container for hot-reload
       - '/app/node_modules'          # Avoids conflicts with host node_modules
@@ -80,6 +88,23 @@ services:
     depends_on:
       - mongodb
       - redis
+      - message-queue
+    networks:
+      - default
+
+  # Message Queue service (Node.js with WebSocket and REST API)
+  message-queue:
+    build:
+      context: ./message-queue
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+    volumes:
+      - './message-queue:/app'    # Mounts the code to the container for hot-reload
+      - '/app/node_modules'       # Avoids conflicts with host node_modules
     networks:
       - default
 
@@ -90,6 +115,73 @@ services:
       - '${REDIS_PORT}:6379'
     volumes:
       - redis_data:/data
+    networks:
+      - default
+
+  # RabbitMQ Message Queue
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    ports:
+      - '5672:5672'      # AMQP port
+      - '15672:15672'    # Management UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - default
+
+  # Advertising Agency 1
+  advertising-agency-1:
+    build:
+      context: ./advertising-agency
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    environment:
+      PORT: 3001
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      AGENCY_NAME: "AdAgency-Alpha"
+    depends_on:
+      - rabbitmq
+    networks:
+      - default
+
+  # Advertising Agency 2
+  advertising-agency-2:
+    build:
+      context: ./advertising-agency
+      dockerfile: Dockerfile
+    ports:
+      - '3002:3001'
+    environment:
+      PORT: 3001
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      AGENCY_NAME: "AdAgency-Beta"
+    depends_on:
+      - rabbitmq
+    networks:
+      - default
+
+  # Advertising Agency 3
+  advertising-agency-3:
+    build:
+      context: ./advertising-agency
+      dockerfile: Dockerfile
+    ports:
+      - '3003:3001'
+    environment:
+      PORT: 3001
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      AGENCY_NAME: "AdAgency-Gamma"
+    depends_on:
+      - rabbitmq
     networks:
       - default
 
@@ -106,8 +198,62 @@ services:
     networks:
       - default
 
+  # Prometheus monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - '9090:9090'
+    volumes:
+      - './monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml'
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--storage.tsdb.retention.time=30d'
+    networks:
+      - default
+
+  # Grafana dashboard
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3005:3000'
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - './monitoring/grafana/provisioning:/etc/grafana/provisioning'
+      - './monitoring/grafana/dashboards:/var/lib/grafana/dashboards'
+    depends_on:
+      - prometheus
+    networks:
+      - default
+
+  # Node Exporter for system metrics
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - '9100:9100'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - default
+
 volumes:
   mongo_data:
   maven_cache:
   images:
   redis_data:
+  rabbitmq_data:
+  prometheus_data:
+  grafana_data:

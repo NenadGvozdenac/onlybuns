@@ -88,7 +88,8 @@
                                 :likesCount="card.numberOfLikes" :description="card.description"
                                 :commentsCount="card.comments.length" :username="user.username"
                                 :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
-                                :comments="card.comments" />
+                                :comments="card.comments" :isMarkedForAdvertisement="card.isMarkedForAdvertisement" 
+                                @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
 
@@ -98,7 +99,8 @@
                                 :likesCount="card.numberOfLikes" :description="card.description"
                                 :commentsCount="card.comments.length" :username="user.username"
                                 :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
-                                :comments="card.comments" />
+                                :comments="card.comments" :isMarkedForAdvertisement="card.isMarkedForAdvertisement" 
+                                @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -107,7 +109,8 @@
                                 :likesCount="card.numberOfLikes" :description="card.description"
                                 :commentsCount="card.comments.length" :username="user.username"
                                 :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
-                                :comments="card.comments" />
+                                :comments="card.comments" :isMarkedForAdvertisement="card.isMarkedForAdvertisement" 
+                                @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
                 </div>
@@ -300,6 +303,13 @@ export default {
         closeModal() {
             this.showModal = false;
         },
+        handleAdvertisementToggle(event) {
+            // Update the local post data to reflect the change
+            const post = this.user.activePosts.find(p => p.id === event.postId);
+            if (post) {
+                post.isMarkedForAdvertisement = event.isMarkedForAdvertisement;
+            }
+        }
 
     }
 }

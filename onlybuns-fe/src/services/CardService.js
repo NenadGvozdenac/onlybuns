@@ -4,10 +4,30 @@ const API_URL = 'http://localhost:8080/post';
 
 class CardService {
 
+    // Helper method to map backend response properties to frontend expected properties
+    mapPostData(post) {
+        if (post && typeof post.markedForAdvertisement !== 'undefined') {
+            return {
+                ...post,
+                isMarkedForAdvertisement: post.markedForAdvertisement
+            };
+        }
+        return post;
+    }
+
+    // Helper method to map array of posts
+    mapPostsData(posts) {
+        if (Array.isArray(posts)) {
+            return posts.map(post => this.mapPostData(post));
+        }
+        return posts;
+    }
+
     async fetchPosts() {
         try {
             const response = await axios.get(`${API_URL}/all`);
-            return response.data;
+            console.log("Response:", response.data);
+            return this.mapPostsData(response.data);
         } catch (error) {
             console.error("Error fetching cards:", error);
             throw error;
@@ -23,7 +43,7 @@ class CardService {
             };
 
             const response = await axios.get(`${API_URL}/following`, { headers });
-            return response.data;
+            return this.mapPostsData(response.data);
         } catch (error) {
             console.error("Error fetching following cards:", error);
             throw error;
@@ -103,7 +123,21 @@ class CardService {
             throw error;
         }
     }
-
+    async postComment(id, commentText){
+        try {
+            const token = localStorage.getItem('token');
+            const headers = {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+            // Send as JSON object to match backend DTO
+            const response = await axios.post(`${API_URL}/${id}/comment`, { comment: commentText }, { headers });
+            return response.data;
+        } catch (error) {
+            console.error(`Error posting comment on post with ID ${id}:`, error);
+            throw error;
+        }
+    }
 }
 
 export default new CardService();

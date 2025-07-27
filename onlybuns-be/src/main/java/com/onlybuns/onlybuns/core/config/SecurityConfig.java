@@ -43,14 +43,19 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
             .cors(Customizer.withDefaults()) // Enable CORS
-            .authorizeHttpRequests(auth -> auth                
-                .requestMatchers("/public", "/").permitAll() // Allow public endpoints
+            .authorizeHttpRequests(auth -> auth                                
+                .requestMatchers("/public", "/ws", "/").permitAll() // Allow public endpoints
                 .requestMatchers("/auth/login", "/auth/register", "/profile").permitAll() // Allow login and register
                 .requestMatchers("/api/fetch-vets/**").permitAll()
                 .requestMatchers("/api/images/**").permitAll()
                 .requestMatchers("/profile/verifiedProfiles").permitAll() // Allow getting verified profiles
                 .requestMatchers("/post/all").permitAll() // Allow getting posts to all users
                 .requestMatchers("/email/verify/**").permitAll() // Allow email verification
+                .requestMatchers("/post/*/comment").permitAll() // Allow comments for any post
+                .requestMatchers("/post/*/mark-advertisement").permitAll() // Allow marking posts for advertisement
+                .requestMatchers("/post/*/unmark-advertisement").permitAll() // Allow unmarking posts for advertisement
+                //.requestMatchers("/email/sendSpamEmail").permitAll() // Allow sending spam email
+                .requestMatchers("/actuator/**").permitAll() // Allow actuator endpoints for monitoring
                 .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")     // TODO: Implement when needed
                 .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")   // TODO: Implement when needed
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()

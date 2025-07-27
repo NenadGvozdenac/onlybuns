@@ -74,7 +74,9 @@
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
                                 :username="post.username" :dateOfCreation="post.dateOfCreation"
-                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                                :usersThatLike="post.users" :comments="post.comments" 
+                                :isMarkedForAdvertisement="post.isMarkedForAdvertisement" 
+                                @refresh-page="refreshPage" @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -83,7 +85,9 @@
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
                                 :username="post.username" :dateOfCreation="post.dateOfCreation"
-                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                                :usersThatLike="post.users" :comments="post.comments" 
+                                :isMarkedForAdvertisement="post.isMarkedForAdvertisement" 
+                                @refresh-page="refreshPage" @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -92,7 +96,9 @@
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
                                 :username="post.username" :dateOfCreation="post.dateOfCreation"
-                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                                :usersThatLike="post.users" :comments="post.comments" 
+                                :isMarkedForAdvertisement="post.isMarkedForAdvertisement" 
+                                @refresh-page="refreshPage" @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -101,7 +107,9 @@
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
                                 :username="post.username" :dateOfCreation="post.dateOfCreation"
-                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                                :usersThatLike="post.users" :comments="post.comments" 
+                                :isMarkedForAdvertisement="post.isMarkedForAdvertisement" 
+                                @refresh-page="refreshPage" @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
                 </div>
@@ -116,7 +124,9 @@
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
                                 :username="post.username" :dateOfCreation="post.dateOfCreation"
-                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                                :usersThatLike="post.users" :comments="post.comments" 
+                                :isMarkedForAdvertisement="post.isMarkedForAdvertisement" 
+                                @refresh-page="refreshPage" @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -125,7 +135,9 @@
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
                                 :username="post.username" :dateOfCreation="post.dateOfCreation"
-                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                                :usersThatLike="post.users" :comments="post.comments" 
+                                :isMarkedForAdvertisement="post.isMarkedForAdvertisement" 
+                                @refresh-page="refreshPage" @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -134,7 +146,9 @@
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
                                 :username="post.username" :dateOfCreation="post.dateOfCreation"
-                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                                :usersThatLike="post.users" :comments="post.comments" 
+                                :isMarkedForAdvertisement="post.isMarkedForAdvertisement" 
+                                @refresh-page="refreshPage" @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -143,7 +157,9 @@
                             <CardComponent :id="post.id" :image="post.image" :likesCount="post.numberOfLikes"
                                 :description="post.description" :commentsCount="post.comments.length"
                                 :username="post.username" :dateOfCreation="post.dateOfCreation"
-                                :usersThatLike="post.users" :comments="post.comments" @refresh-page="refreshPage" />
+                                :usersThatLike="post.users" :comments="post.comments" 
+                                :isMarkedForAdvertisement="post.isMarkedForAdvertisement" 
+                                @refresh-page="refreshPage" @advertisement-toggle="handleAdvertisementToggle" />
                         </div>
                     </div>
                 </div>
@@ -189,6 +205,20 @@ export default {
     methods: {
         refreshPage() {
             window.location.reload();
+        },
+        handleAdvertisementToggle(event) {
+            // Update the local post data to reflect the change
+            // Check in mostPopularPostsLastSevenDays
+            let post = this.trends.mostPopularPostsLastSevenDays.find(p => p.id === event.postId);
+            if (post) {
+                post.isMarkedForAdvertisement = event.isMarkedForAdvertisement;
+            }
+            
+            // Check in mostPopularPosts
+            post = this.trends.mostPopularPosts.find(p => p.id === event.postId);
+            if (post) {
+                post.isMarkedForAdvertisement = event.isMarkedForAdvertisement;
+            }
         }
     }
 }

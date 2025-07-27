@@ -12,6 +12,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.onlybuns.onlybuns.core.dto.PostAdvertisementDto;
+import com.onlybuns.onlybuns.core.misc.CommentRateLimiter;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.models.Address;
 import com.onlybuns.onlybuns.domain.models.Comment;
@@ -20,6 +22,7 @@ import com.onlybuns.onlybuns.domain.models.Post;
 import com.onlybuns.onlybuns.domain.models.User;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.AddressRepository;
+import com.onlybuns.onlybuns.infrastructure.interfaces.CommentRepositoryInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryInterface;
 import com.onlybuns.onlybuns.infrastructure.interfaces.UserRepository;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
@@ -44,15 +47,26 @@ public class PostService extends BaseService implements PostServiceInterface {
 
     @Autowired
     private ImageService imageService;
+
     @Autowired
     private AddressRepository addressRepository;
+
+    @Autowired
+    private CommentRepositoryInterface commentRepositoryjpa;
+
+    @Autowired
+    private AdvertisementService advertisementService;
+
+    @Autowired
+    private CommentRateLimiter commentRateLimiter;
 
     @Override
     @Transactional
     @CacheEvict(value = "trends", allEntries = true)
     public Result<PostDto> likePost(Long postId, String userUsername) {
 
-        var postOptional = postRepositoryjpa.findById(postId);
+        // Koristimo pesimistično zaključavanje da sprečimo race condition
+        var postOptional = postRepositoryjpa.findByIdWithLock(postId);
 
         if (postOptional.isPresent()) {
 
@@ -68,6 +82,13 @@ public class PostService extends BaseService implements PostServiceInterface {
 
                 if (userAlreadyLiked) {
                     return Result.failure("User already liked this post.", 400);
+                }
+
+                // Simulacija spore operacije za testiranje konkurentnog pristupa
+                try {
+                    Thread.sleep(1000); // 1 sekunda delay
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
 
                 post.getUsersThatLiked().add(user);
@@ -91,10 +112,12 @@ public class PostService extends BaseService implements PostServiceInterface {
     }
 
     @Override
+    @Transactional
     @CacheEvict(value = "trends", allEntries = true)
     public Result<PostDto> unlikePost(Long postId, String userUsername) {
             
-            var postOptional = postRepositoryjpa.findById(postId);
+            // Koristimo pesimistično zaključavanje da sprečimo race condition
+            var postOptional = postRepositoryjpa.findByIdWithLock(postId);
     
             if (postOptional.isPresent()) {
     
@@ -108,6 +131,13 @@ public class PostService extends BaseService implements PostServiceInterface {
     
                     if (!userAlreadyLiked) {
                         return Result.failure("User didn't like this post.", 400);
+                    }
+
+                    // Simulacija spore operacije za testiranje konkurentnog pristupa
+                    try {
+                        Thread.sleep(1000); // 1 sekunda delay
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
     
                     post.getUsersThatLiked().remove(user);
@@ -145,6 +175,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                         postDto.setDateOfCreation(post.getDateOfCreation());
                         postDto.setNumberOfLikes(post.getNumberOfLikes());
                         postDto.setUsername(post.getUser().getUsername());
+                        postDto.setMarkedForAdvertisement(post.isMarkedForAdvertisement());
                         var imageDto = new ImageDto(imageService.getImageBase64(post.getImage().getId()).getData(),
                                 post.getImage().getMimetype(), post.getImage().getUploadedAt());
                         postDto.setImage(imageDto);
@@ -170,6 +201,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                                     commentDto.setId(comment.getId());
                                     commentDto.setComment(comment.getComment());
                                     commentDto.setCommentedAt(comment.getCommentedAt());
+                                    commentDto.setUsername(comment.getUser().getUsername());
                                     return commentDto;
                                 })
                                 .collect(Collectors.toList());
@@ -226,6 +258,7 @@ public class PostService extends BaseService implements PostServiceInterface {
                                     commentDto.setId(comment.getId());
                                     commentDto.setComment(comment.getComment());
                                     commentDto.setCommentedAt(comment.getCommentedAt());
+                                    commentDto.setUsername(comment.getUser().getUsername());
                                     return commentDto;
                                 })
                                 .collect(Collectors.toList());
@@ -376,7 +409,7 @@ public class PostService extends BaseService implements PostServiceInterface {
             List<User> usersThatLiked = new ArrayList<User>();
             List<Comment> comments = new ArrayList<Comment>();
             Post post = new Post(0l, userOptional.get(), LocalDateTime.now().plusHours(1), description, 0, false,
-                    newaddress, savedimage, usersThatLiked, comments);
+                    false, newaddress, savedimage, usersThatLiked, comments);
             System.out.println("Post made ");
 
             // Save the post to the database
@@ -466,4 +499,94 @@ public class PostService extends BaseService implements PostServiceInterface {
         }
     }
 
+    @Override
+    @Transactional
+    public Result<CommentDto> addComment(Long postId, String comment, String username) {
+        var postOptional = postRepositoryjpa.findById(postId);
+        if (postOptional.isEmpty()) {
+            return Result.failure("Post not found", 404);
+        }
+
+        var userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            return Result.failure("User not found", 409);
+        }
+
+        // ✅ Rate limit provera pre nastavka
+        if (!commentRateLimiter.isAllowed(username)) {
+            return Result.failure("Too many requests. Please wait before commenting again.", 429);
+        }
+        Post post = postOptional.get();
+        User user = userOptional.get();
+
+        // Create a new comment
+        Comment newComment = new Comment();
+        newComment.setComment(comment);
+        newComment.setCommentedAt(LocalDateTime.now());
+        newComment.setUser(user);
+        newComment.setPost(post);
+        // Save the comment
+        var createdcomment = commentRepositoryjpa.save(newComment);
+
+
+        post.getComments().add(createdcomment);
+        postRepositoryjpa.save(post);
+
+        // Create a CommentDto to return
+        CommentDto commentDto = new CommentDto();
+        commentDto.setId(createdcomment.getId());
+        commentDto.setComment(createdcomment.getComment());
+        commentDto.setCommentedAt(createdcomment.getCommentedAt());
+        commentDto.setUsername(user.getUsername());
+        return Result.success(commentDto);
+    }
+
+    @Override
+    @Transactional
+    public Result<String> markPostForAdvertisement(Long postId) {
+        var postOptional = postRepositoryjpa.findById(postId);
+        if (postOptional.isEmpty()) {
+            return Result.failure("Post not found", 404);
+        }
+
+        Post post = postOptional.get();
+        
+        if (post.isMarkedForAdvertisement()) {
+            return Result.failure("Post is already marked for advertisement", 400);
+        }
+
+        post.setMarkedForAdvertisement(true);
+        postRepositoryjpa.save(post);
+
+        // Send advertisement to RabbitMQ
+        PostAdvertisementDto advertisementDto = new PostAdvertisementDto(
+            post.getDescription(),
+            post.getDateOfCreation(),
+            post.getUser().getUsername()
+        );
+        advertisementService.sendPostAdvertisement(advertisementDto);
+
+        return Result.success("Post successfully marked for advertisement");
+    }
+
+    @Override
+    @Transactional
+    public Result<String> unmarkPostForAdvertisement(Long postId) {
+        var postOptional = postRepositoryjpa.findById(postId);
+        if (postOptional.isEmpty()) {
+            return Result.failure("Post not found", 404);
+        }
+
+        Post post = postOptional.get();
+        
+        if (!post.isMarkedForAdvertisement()) {
+            return Result.failure("Post is not marked for advertisement", 400);
+        }
+
+        post.setMarkedForAdvertisement(false);
+        postRepositoryjpa.save(post);
+
+        return Result.success("Post successfully unmarked for advertisement");
+    }
+    
 }

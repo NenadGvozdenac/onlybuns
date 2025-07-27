@@ -27,6 +27,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="/registeredProfiles">Registered profiles</a></li>
+              <li><a class="dropdown-item" href="/analytics">OnlyBuns Analytics</a></li>
             </ul>
           </li>
 
@@ -45,7 +46,7 @@
               <li><a class="dropdown-item" href="/createpost">Create Post</a></li>
               <li><a class="dropdown-item" href="/trends">Trends</a></li>
               <li><a class="dropdown-item" href="/nearyou">Near You</a></li>
-              <li><a class="dropdown-item" href="/">Chats</a></li>
+              <li><a class="dropdown-item" href="/chatsRooms">Chats</a></li>
             </ul>
           </li>
 
@@ -58,6 +59,10 @@
           <li v-if="!userNotLoggedIn()" class="nav-item">
             <a class="nav-link active btn btn-danger text-white" aria-current="page" @click="logout()">LOGOUT</a>
           </li>
+          <!-- Spam button -->
+          <!-- <li class="nav-item">
+            <button class="btn btn-warning ms-md-3" @click="sendSpam">Send Spam</button>
+          </li> -->
         </ul>
       </div>
     </div>
@@ -66,6 +71,7 @@
 
 <script>
 import AuthService from '@/services/AuthService';
+import EmailService from '@/services/EmailService';
 export default {
   name: 'NavbarAuthorized',
   methods: {
@@ -82,6 +88,17 @@ export default {
       this.$router.push('/').then(() => {
         window.location.reload();
       });
+    },
+    sendSpam() {
+      // Placeholder for spam function
+      EmailService.sendSpam()
+        .then(response => {
+          console.log('Spam sent successfully:', response);
+          alert('Spam sent successfully!');
+        })
+        .catch(error => { 
+          console.error('Error sending spam:', error);
+        });
     }
   }
 }

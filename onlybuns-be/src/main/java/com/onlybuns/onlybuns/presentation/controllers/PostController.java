@@ -20,6 +20,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlybuns.onlybuns.core.misc.Result;
 import com.onlybuns.onlybuns.domain.serviceinterfaces.PostServiceInterface;
+import com.onlybuns.onlybuns.domain.services.RateLimitService;
+import com.onlybuns.onlybuns.infrastructure.metrics.MetricsService;
 import com.onlybuns.onlybuns.presentation.dtos.requests.AddressDto;
 import com.onlybuns.onlybuns.presentation.dtos.requests.UpdatePostDto;
 import com.onlybuns.onlybuns.presentation.dtos.responses.GetAllPostDto;
@@ -37,10 +39,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class PostController extends BaseController {
 
     private final PostServiceInterface postService;
+    private final MetricsService metricsService;
+    private final RateLimitService rateLimitService;
 
     @Autowired
-    public PostController(PostServiceInterface postService) {
+    public PostController(PostServiceInterface postService, MetricsService metricsService, RateLimitService rateLimitService) {
         this.postService = postService;
+        this.metricsService = metricsService;
+        this.rateLimitService = rateLimitService;
     }
     @Operation(summary = "Like a post", description = "This endpoint allows a user to like a post")
     @ApiResponse(responseCode = "403", description = "Post not found.")
@@ -128,21 +134,87 @@ public class PostController extends BaseController {
             @RequestParam("image") MultipartFile image,
             @RequestParam String address) {
 
+        // Start timing the post creation
+        var timer = metricsService.startPostCreationTimer();
+
         AddressDto addressDto = parseAddressFromJson(address);
 
         if (description.isEmpty() || image.isEmpty() || addressDto == null) {
+            metricsService.stopPostCreationTimer(timer); // Stop timer for failed request
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
             Result<PostDto> result = postService.createPost(description, image, addressDto, getLoggedInUsername());
             if (result.isSuccess()) {
+                // Record successful post creation
+                metricsService.recordPostCreation();
+                metricsService.stopPostCreationTimer(timer); // Stop timer for successful request
                 return new ResponseEntity<>(result.getData(), HttpStatus.CREATED);
             } else {
+                metricsService.stopPostCreationTimer(timer); // Stop timer for failed request
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (Exception e) {
+            metricsService.stopPostCreationTimer(timer); // Stop timer for exception
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Operation(summary = "Add a comment to a post", description = "This endpoint allows users to add a comment to a specific post")
+    @ApiResponse(responseCode = "201", description = "Comment created successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid request data")
+    @ApiResponse(responseCode = "404", description = "Post not found")
+    @ApiResponse(responseCode = "429", description = "Rate limit exceeded - maximum 60 comments per hour")
+    @PostMapping("/{id}/comment")
+    public ResponseEntity<?> addComment(
+        @PathVariable Long id,
+        @RequestBody com.onlybuns.onlybuns.presentation.dtos.requests.AddCommentRequest request) {
+        
+        String username = getLoggedInUsername();
+        
+        // Check rate limit for comments
+        if (!rateLimitService.isCommentAllowed(username)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .body("Rate limit exceeded. You can post maximum 60 comments per hour. " +
+                      "Remaining comments: " + rateLimitService.getRemainingComments(username));
+        }
+        
+        String comment = request.getComment();
+        var result = postService.addComment(id, comment, username);
+        
+        if (result.isSuccess()) {
+            return new ResponseEntity<>(result.getData(), HttpStatus.CREATED);
+        } else if (result.getMessage().equalsIgnoreCase("Post not found")) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Operation(summary = "Mark post for advertisement", description = "This endpoint allows administrators to mark a post for advertisement distribution")
+    @ApiResponse(responseCode = "200", description = "Post marked for advertisement successfully")
+    @ApiResponse(responseCode = "400", description = "Post is already marked for advertisement")
+    @ApiResponse(responseCode = "404", description = "Post not found")
+    @PostMapping("/{id}/mark-advertisement")
+    public ResponseEntity<String> markPostForAdvertisement(@PathVariable Long id) {
+        var result = postService.markPostForAdvertisement(id);
+        
+        // Record advertisement metrics if successful
+        if (result.isSuccess()) {
+            metricsService.recordPostAdvertisement();
+        }
+        
+        return createResponse(result);
+    }
+
+    @Operation(summary = "Unmark post for advertisement", description = "This endpoint allows administrators to unmark a post from advertisement distribution")
+    @ApiResponse(responseCode = "200", description = "Post unmarked for advertisement successfully")
+    @ApiResponse(responseCode = "400", description = "Post is not marked for advertisement")
+    @ApiResponse(responseCode = "404", description = "Post not found")
+    @PostMapping("/{id}/unmark-advertisement")
+    public ResponseEntity<String> unmarkPostForAdvertisement(@PathVariable Long id) {
+        var result = postService.unmarkPostForAdvertisement(id);
+        return createResponse(result);
     }
 
     private AddressDto parseAddressFromJson(String addressJson) {

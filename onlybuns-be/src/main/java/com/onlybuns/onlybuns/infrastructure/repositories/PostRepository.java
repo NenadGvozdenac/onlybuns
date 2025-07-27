@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.onlybuns.onlybuns.domain.models.Post;
 import com.onlybuns.onlybuns.domain.models.User;
+import com.onlybuns.onlybuns.domain.models.Comment;
 import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryCustom;
 import com.onlybuns.onlybuns.infrastructure.interfaces.PostRepositoryInterface;
 
@@ -78,5 +79,14 @@ public class PostRepository implements PostRepositoryCustom {
         List<User> mostLikedUsers = userLikes.entrySet().stream().sorted((u1, u2) -> u2.getValue().compareTo(u1.getValue())).limit(5).map(u -> u.getKey()).collect(Collectors.toList());
 
         return mostLikedUsers;
+    }
+
+    // Get all comments from all posts in the database
+    public List<Comment> findAllComments() {
+        List<Post> allPosts = postRepository.findAll();
+        
+        return allPosts.stream()
+            .flatMap(post -> post.getComments().stream())
+            .collect(Collectors.toList());
     }
 }

@@ -25,13 +25,13 @@
 
                         <!-- Stats Row -->
                         <div class="stats-container">
-                            <div class="stat-item">
+                            <div class="stat-item" @click="activeSection = 'followers'">
                                 <div class="stat-content border-end">
                                     <h4 class="fw-bold mb-1">{{ user.followers.length }}</h4>
                                     <p class="stat-label">Followers</p>
                                 </div>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat-item" @click="activeSection = 'following'">
                                 <div class="stat-content">
                                     <h4 class="fw-bold mb-1">{{ user.following.length }}</h4>
                                     <p class="stat-label">Following</p>
@@ -58,11 +58,42 @@
                                 <div>
                                     <div class="info-label">Address</div>
                                     <div class="info-value">
-                                        {{ user.address.street }} {{ user.address.number }}, {{ user.address.city }}, 
+                                        {{ user.address.street }} {{ user.address.number }}, {{ user.address.city }},
                                         {{ user.address.country }}
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Followers/Following Section -->
+        <div v-if="activeSection === 'followers' || activeSection === 'following'" class="connections-container mt-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{{ activeSection === 'followers' ? 'Followers' : 'Following' }}</h4>
+                    <button class="btn btn-link" @click="activeSection = null">Close</button>
+                </div>
+                <div class="card-body">
+                    <div v-if="activeSection === 'followers' && user.followers.length === 0"
+                        class="text-center text-muted">
+                        No followers yet
+                    </div>
+                    <div v-else-if="activeSection === 'following' && user.following.length === 0"
+                        class="text-center text-muted">
+                        Not following anyone
+                    </div>
+                    <div v-else class="list-group">
+                        <div v-for="connection in user[activeSection]" :key="connection.username"
+                            class="list-group-item list-group-item-action"
+                            @click="goToUserProfile(connection.username)">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ connection.name }} {{ connection.surname }}</h5>
+                            </div>
+                            <p class="mb-1">@{{ connection.username }}</p>
+                            <small class="text-muted">{{ connection.email }}</small>
                         </div>
                     </div>
                 </div>
@@ -74,19 +105,13 @@
             <div v-if="user.activePosts.length" class="posts-grid">
                 <div class="row">
                     <div class="col-md-4" v-for="colIndex in 3" :key="colIndex">
-                        <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === colIndex - 1)" :key="index">
-                            <ProfileCardsComponent 
-                                :key="card.id" 
-                                :id="card.id" 
-                                :image="card.image"
-                                :likesCount="card.numberOfLikes" 
-                                :description="card.description"
-                                :commentsCount="card.comments.length" 
-                                :username="user.username"
-                                :dateOfCreation="card.dateOfCreation" 
-                                :usersThatLike="card.users"
-                                :comments="card.comments" 
-                            />
+                        <div v-for="(card, index) in user.activePosts.filter((_, i) => i % 3 === colIndex - 1)"
+                            :key="index">
+                            <ProfileCardsComponent :key="card.id" :id="card.id" :image="card.image"
+                                :likesCount="card.numberOfLikes" :description="card.description"
+                                :commentsCount="card.comments.length" :username="user.username"
+                                :dateOfCreation="card.dateOfCreation" :usersThatLike="card.users"
+                                :comments="card.comments" />
                         </div>
                     </div>
                 </div>
@@ -134,13 +159,21 @@ export default {
                 activePosts: [],
                 followers: [],
                 following: []
-            }
+            },
+            activeSection: null
         }
     },
     mounted() {
         this.getUser();
     },
     methods: {
+        goToUserProfile(username) {
+            // Navigate to user profile with the specific username
+            this.$router.push({ 
+                path: '/user-profile', 
+                query: { username: username } 
+            });
+        },
         getUser() {
             ProfileService.getMyProfile()
                 .then(response => {
@@ -189,7 +222,7 @@ export default {
     height: 120px;
     border-radius: 50%;
     border: 4px solid white;
-    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
     position: relative;
     margin-top: -60px;
     margin-bottom: 1rem;
@@ -208,7 +241,7 @@ export default {
     padding: 0.5rem 1.5rem;
     border-radius: 50rem;
     font-weight: 500;
-    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
     transition: all 0.3s ease;
 }
 
@@ -288,5 +321,30 @@ export default {
 
 :deep(.card:hover) {
     transform: translateY(-5px);
+}
+
+.stat-item {
+    width: 33.333%;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.stat-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.connections-container {
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+.list-group-item {
+    transition: background-color 0.3s ease;
+    cursor: pointer; /* Ensure pointer cursor on list items */
+}
+
+.list-group-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 </style>
